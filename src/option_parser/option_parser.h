@@ -7,6 +7,7 @@
 // representing every option activated bitwisely (defined in launch_options.h).
 // if a filename for a script is given, store the filename into filename
 // else set it to NULL
+// if an error occurred, returns -1
 int parse_given_args(int argc, char **argv, char **filename);
 
 // this function checks bitwisely if a current mode is activated in options
