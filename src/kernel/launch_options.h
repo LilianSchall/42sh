@@ -3,6 +3,6 @@
 
 #define SCRIPT_READING 0x1
 #define PRETTY_PRINT 0x2
-#define DEBUG_MODE 0x4
+#define VERBOSE 0x4
 
 #endif /* !LAUNCH_OPTIONS */
