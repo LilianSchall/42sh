@@ -1,7 +1,7 @@
 #include "AST.h"
 
-struct AST *new_AST(struct token *value, struct AST *left_child,
-        struct AST *right_child)
+struct AST *new_AST(struct token *value, enum AST_type type, 
+        struct AST *left_child, struct AST *right_child)
 {
     if (value == NULL || type == NULL)
         return NULL;
