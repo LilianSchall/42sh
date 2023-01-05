@@ -1,7 +1,7 @@
 #include "AST.h"
 
 struct AST *new_AST(struct token *value, enum AST_type type, 
-        struct AST *left_child, struct AST *right_child)
+        struct linked_list *linked_list)
 {
     if (value == NULL || type == NULL)
         return NULL;
@@ -13,8 +13,7 @@ struct AST *new_AST(struct token *value, enum AST_type type,
 
     my_AST->value = value;
     my_AST->type = type;
-    my_AST->left_child = left_child;
-    my_AST->right_child = right_child;
+    my_AST->linked_list = linked_list;
 
     return my_AST;
 }
@@ -23,8 +22,9 @@ void free_AST(struct AST *tree)
 {
     if(tree)
     {
-        free_AST(tree->left_child);
-        free_AST(tree->right_child);
+        // free all childs
+        list_deep_free(my_AST->linked_list, free_AST());
+
         free_token(token);
         free(tree);
     }
