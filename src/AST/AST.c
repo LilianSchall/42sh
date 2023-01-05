@@ -20,12 +20,12 @@ struct AST *new_AST(struct token *value, enum AST_type type,
 
 void free_AST(struct AST *tree)
 {
-    if(tree)
-    {
-        // free all childs
-        list_deep_free(my_AST->linked_list, free_AST());
+    if (tree == NULL)
+        return;
 
-        free_token(token);
-        free(tree);
-    }
+    // free all childs
+    list_deep_free(my_AST->linked_list, free_AST);
+
+    free_token(token);
+    free(tree);
 }
