@@ -4,11 +4,24 @@ static struct token *parse_quoted_word(char **word_begin_ptr,
         bool *reading_quote, char **input);
 static struct token *parse_unquoted_word(char **word_begin_ptr,
         bool *reading_quote, char **input);
-
 static void skip_char(char **stream, int offset);
 static void offset_char(char **stream, int offset);
 static char *get_word(char **word_begin_ptr, char **input);
+static struct token *create_token(char **word_begin_ptr, char **input,
+        char **token_value);
+static void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
+        char **input, bool *reading_quote);
 
+struct token *create_token(char **word_begin_ptr, char **input, 
+        char **token_value)
+{
+    char *symbol = get_word(word_begin_ptr, input);
+
+    int index = find_special_tokens(symbol, token_value);
+
+    //here index serves as an enum
+    return new_token(symbol, index == -1 ? WORD : index);
+}
 
 // this function skips a char by replacing it by -1 
 // and goes by offset char to the right
@@ -28,10 +41,12 @@ void offset_char(char **stream, int offset)
 // enclosed by the two pointers
 char *get_word(char **word_begin_ptr, char **input)
 {
-    char tmp = GETCHAR(input, 1);
-    GETCHAR(input,1) = '\0';
+    int offset = GETCHAR(input, 0) == ' ' || GETCHAR(input, 0) == '\t' ||
+        GETCHAR(input, 0) == 0 ? 0 : 1;
+    char tmp = GETCHAR(input, offset);
+    GETCHAR(input, offset) = '\0';
     char *word = my_strdup(*word_begin_ptr);
-    GETCHAR(input, 1) = tmp;
+    GETCHAR(input, offset) = tmp;
 
     return word;
 }
@@ -104,6 +119,9 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     
     if (find_delims(GETCHAR(input, 0), delims) == -1)
         return NULL;
+    
+    if (GETCHAR(input, 0) == 0)
+        return create_token(word_begin_ptr, input, token_value); 
 
     // the current char is a delimitator
     // if it is an escape char
@@ -136,21 +154,40 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     // now we have a token
     // that is at the end no matter what
     
-    char *symbol = get_word(word_begin_ptr, input);
-
-    int index = find_special_tokens(symbol, token_value);
-
-    //here index serves as an enum
-    struct token *token = new_token(symbol, index == -1 ? WORD : index); 
+    struct token *token = create_token(word_begin_ptr, input, token_value);
 
     offset_char(input, -1);
 
     return token;
 }
 
+void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
+        char **input, bool *reading_quote)
+{
+    struct token *current_token = NULL;
+
+    // we based our parsing on wheter we read a quoted word or not
+    if (*reading_quote)
+        current_token = parse_quoted_word(word_begin_ptr, reading_quote,
+                input);
+    else
+        current_token = parse_unquoted_word(word_begin_ptr, reading_quote,
+                input);
+
+    // if there is a new token
+    if (current_token)
+    {
+        // we add it to list
+        token_list = list_append(token_list, current_token);
+        *word_begin_ptr = NULL;
+    }
+}
 
 struct linked_list *build_token_list(char *input)
 {
+    if (strlen(input) == 0)
+        return NULL;
+
     bool reading_quote = false;
 
     char *word_begin_ptr = NULL;
@@ -158,29 +195,18 @@ struct linked_list *build_token_list(char *input)
     struct linked_list *token_list = new_list();
     
     for (; *input != '\0'; input++)
-    {
-        struct token *current_token = NULL;
+        execute_parsing(token_list, &word_begin_ptr, &input, &reading_quote);
 
-        // we based our parsing on wheter we read a quoted word or not
-        if (reading_quote)
-            current_token = parse_quoted_word(&word_begin_ptr, &reading_quote,
-                    &input);
-        else
-            current_token = parse_unquoted_word(&word_begin_ptr, &reading_quote,
-                    &input);
-
-        // if there is a new token
-        if (current_token)
-        {
-            // we add it to list
-            token_list = list_append(token_list, current_token);
-            current_token = NULL;
-            word_begin_ptr = NULL;
-        }
-    }
-    
     if (reading_quote) // single_quote missmatch
+    {
+        deep_free_list(token_list, free_token);
         return NULL;
+    }
+
+    if (word_begin_ptr)
+        execute_parsing(token_list, &word_begin_ptr, &input, &reading_quote);
+    
+
 
     return token_list;
 }
