@@ -9,6 +9,7 @@ static size_t my_strlen(char *str)
     {
         if (str[i] != -1)
             len++;
+        i++;
     }
 
     return len;
@@ -49,11 +50,15 @@ int find_special_tokens(char *str, char **special_tokens)
 
 int find_delims(char c, char *delims)
 {
-    for (size_t i = 0; delims[i]; i++)
+    size_t i = 0;
+    for (; delims[i]; i++)
     {
         if (c == delims[i])
             return i;
     }
+
+    if (c == '\0')
+        return i;
 
     return -1;
 }

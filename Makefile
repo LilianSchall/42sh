@@ -6,7 +6,7 @@ MAIN = src/main.c
 MAIN_OBJ = $(MAIN:.c=.o)
 SRC_OBJ = $(SRC:.c=.o)
 
-TEST_SRC = tests/option_parser/test01.c #$(wildcard tests/*/*.c)
+TEST_SRC = $(wildcard tests/*/*.c)
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
 EXE = 42sh
