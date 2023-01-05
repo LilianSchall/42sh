@@ -18,6 +18,8 @@ struct echo_option {
 
 // execute the command 'echo' on the given AST
 // return 0 is command is successfuly executate, else 2
-int exec_echo(struct AST *tree);
+int echo_fn(struct AST *tree);
+
+struct linked_list *get_argv_signe_AST(struct AST *new_AST);
 
 #endif /* !EXEC_ECHO_H */

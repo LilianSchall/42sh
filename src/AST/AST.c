@@ -3,12 +3,12 @@
 struct AST *new_AST(struct token *value, enum AST_type type, 
         struct linked_list *linked_list)
 {
-    if (value == NULL || type == NULL)
+    if (value == NULL)
         return NULL;
 
     struct AST *my_AST = malloc(sizeof(struct AST));
     
-    if (value == my_AST)
+    if (NULL == my_AST)
         return NULL;
 
     my_AST->value = value;
@@ -24,7 +24,7 @@ void free_AST(void *data)
     if (tree == NULL)
         return;
 
-    list_deep_free(tree->linked_list, free_AST);
+    deep_free_list(tree->linked_list, free_AST);
 
     free_token(tree->value);
     free(tree);
