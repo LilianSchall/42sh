@@ -1,26 +1,36 @@
 #include "execution.h"
 
-
-// execute the node only when the parent node is a COMMAND type
-// will do a 
-int executee_node_AST(struct AST *tree)
-{
-    if (tree == NULL)
-        return 0;
-    
-    if(tree.type == type.SEQUENCE)
-    {
-        int returnValue = 0; 
-    }
-
-    if true
-        retnrun true
-    if ezfzefz
-        fork(fefez)
-    if()
-}
-
 int execute_AST(struct AST *tree)
 {
-    return executee_node_AST(tree);
+    if (!tree)
+        return 0;
+    int ret_val = 0;
+    for (struct linked_node *node = tree->linked_list;
+            node && ret_val != 2; node = node->next)
+    {
+        struct AST *child = node->data;
+        switch (child->type)
+        {
+            case COMMAND:
+                ret_val = execute_AST_command(child);
+                breaK;
+            case SEQUENCE:
+                ret_val = execute_AST(child);
+                break;
+            case CONDITION:
+            {
+                switch (child->token.type)
+                {
+                    case IF:
+                        ret_val = execute_AST_if(child);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            default:
+                break;
+        }
+    }
+    return ret_val;
 }
