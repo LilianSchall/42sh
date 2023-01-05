@@ -1,6 +1,7 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#include "execution/execution.h"
 #include "io_backend/io_backend.h"
 #include "launch_options.h"
 #include "lexer/lexer.h"
