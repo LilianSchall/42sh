@@ -1,6 +1,10 @@
 #ifndef OPTION_PARSER_H
 #define OPTION_PARSER_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+
 #include "kernel/launch_options.h"
 
 // this function parse the given argument and returns an integer

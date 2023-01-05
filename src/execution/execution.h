@@ -2,7 +2,7 @@
 #define EXECUTION_H
 
 #include "AST/AST.h"
-#include "builtins/builtins.h"
+#include "builtin/builtin.h"
 
 // execute the given AST
 // returns the status code after executing the AST
