@@ -17,7 +17,10 @@ enum AST_type
 {
   COMMAND,
   ARG,
+  SEQUENCE,
   CONDITION, // if, elif, else clause
+  WHILE,
+
 };
 
 // create a tree with the right attributes and returns it.
@@ -27,6 +30,6 @@ struct AST *new_AST(struct token *value, enum AST_type type,
 
 // free a every node of an AST tree
 // if tree is NULL, does nothing
-void free_AST(struct AST *tree);
+void free_AST(void *data);
 
 #endif /* !AST_H */

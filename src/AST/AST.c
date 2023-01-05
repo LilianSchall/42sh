@@ -18,8 +18,9 @@ struct AST *new_AST(struct token *value, enum AST_type type,
     return my_AST;
 }
 
-void free_AST(struct AST *tree)
+void free_AST(void *data)
 {
+    struct AST *tree = data;
     if (tree == NULL)
         return;
 
