@@ -1,4 +1,4 @@
-#include "execution/exec_echo.h"
+#include "builtin/exec_echo.h"
 
 
 struct linked_list *get_argv_signe_AST(struct AST *new_AST)
@@ -7,7 +7,6 @@ struct linked_list *get_argv_signe_AST(struct AST *new_AST)
 
     while(new_AST)
     {
-        printf("%s\n",new_AST->value->symbol);
         ll_ast = list_append(ll_ast, new_AST->value->symbol);
         new_AST = list_head(new_AST->linked_list);
     }
@@ -30,11 +29,10 @@ struct echo_option *new_echo_option(void)
 }
 
 // check which option is/are activated in your echo tree
-int get_echo_option(struct AST *new_AST, struct echo_option *echo_option)
+int get_echo_option(struct linked_list *ast_word_list, struct echo_option *echo_option)
 {
     // get the word
-    char *word = new_AST->value->symbol;
-    printf("| option : %s |\n", word);
+    char *word = list_head(ast_word_list);
     int index = 0;
 
     // word is not an option
@@ -50,7 +48,7 @@ int get_echo_option(struct AST *new_AST, struct echo_option *echo_option)
         else if (word[index] == 'E')
             echo_option->option_E = 1;
         else if (word[index] == 'e')
-        echo_option->option_e = 1;
+            echo_option->option_e = 1;
         else
         {   
             // may be add a cache here
@@ -60,62 +58,70 @@ int get_echo_option(struct AST *new_AST, struct echo_option *echo_option)
     }
 
     // check if next word is also new option
-    new_AST = new_AST->linked_list->head->data;
-    return get_echo_option(new_AST, echo_option);
+    ast_word_list = list_pop(ast_word_list);
+    return get_echo_option(ast_word_list, echo_option);
     
 }
 
 
-int print_echo_words(struct AST *new_AST, struct echo_option *echo_option)
+// will print all words in the list and apply rules on them
+int print_echo_words(struct linked_list *ast_word_list, 
+        struct echo_option *echo_option)
 {
-    if (new_AST == NULL)
+    if (ast_word_list == NULL || ast_word_list->head == NULL)
         return 0;
     
     // get the word of the node
-    char *word = new_AST->value->symbol;
+    char *word = list_head(ast_word_list);
 
-    if (echo_option->option_e) //enable \n, ...
-    { 
-        printf("%s", word);
-    }
-    else //disable \n, ...
+    if(!echo_option->option_e && echo_option->option_E)
     {
-        for(int i = 0; word[i] != '\0'; i++)
-            putchar(word[i]);
+        printf(word);
+    }
+    else  //apply -e
+    {   
+        word = str_replace(word,"\\n","\n");
+        word = str_replace(word,"\\t","\t");
+        word = str_replace(word,"\\\\","\\");
+        printf(word);
     }
 
     // check if it is not a leaf
-    if(new_AST->linked_list && new_AST->linked_list->head &&
-        new_AST->linked_list->head->data)
+    if(ast_word_list->head->next)
     {
-        new_AST = new_AST->linked_list->head->data;
+        ast_word_list = list_pop(ast_word_list);
         printf(" ");
-        return print_echo_words(new_AST, echo_option); // print next word
+        return print_echo_words(ast_word_list, echo_option); // print next word
     }
 
     return 0;
 }
 
 
+// echo  builtin function
+// take an AST as parameter
 int echo_fn(struct AST *tree)
 {
     //get the first child of the 'echo' AST
     struct AST *new_AST = tree->linked_list->head->data;
 
+    // get a linked list of all words of the AST
+    struct linked_list *ast_word_list = get_argv_signe_AST(new_AST);
+
     // check which options is/are activated
     struct echo_option *echo_option = new_echo_option();
+    int return_value = get_echo_option(ast_word_list, echo_option);
 
-    int return_value = get_echo_option(new_AST, echo_option);
-
-    return_value = print_echo_words(new_AST, echo_option);
+    // print all words
+    return_value = print_echo_words(ast_word_list, echo_option);
 
     if(!echo_option->option_n) // print the final newline
         printf("\n");
 
     fflush(stdout);
 
-    printf("%d  %d  %d\n", echo_option->option_e, echo_option->option_E, echo_option->option_n);
-
     free(echo_option);
+    free_list(ast_word_list);
+
     return return_value;
 }

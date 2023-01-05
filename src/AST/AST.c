@@ -24,8 +24,10 @@ void free_AST(void *data)
     if (tree == NULL)
         return;
 
-    deep_free_list(tree->linked_list, free_AST);
+    if(tree->linked_list)
+        deep_free_list(tree->linked_list, free_AST);
 
-    free_token(tree->value);
+    if(tree->value)
+        free_token(tree->value);
     free(tree);
 }
