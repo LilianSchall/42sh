@@ -18,13 +18,13 @@ int main(int argc, char **argv)
     return options;
 #endif
     
-    char input[] = "echo foo;";
+    char input[] = "if echo true&& false;then echo foo; else echo fada ; fi";
     struct linked_list *token_list = build_token_list(input);
     for (struct linked_node *node = token_list->head; node; node = node->next)
     {
         struct token *token = node->data;   
-        printf("sym: %s\n",token->symbol);
-        printf("type: %d\n", token->type);
+        printf("sym: $%s$\n",token->symbol);
+        printf("type: %d$\n", token->type);
     }
     deep_free_list(token_list, free_token);
 

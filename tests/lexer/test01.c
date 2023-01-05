@@ -30,7 +30,7 @@ Test(lexer, test_echo_foo)
 
     deep_free_list(token_list, free_token);
 }
-#if 0
+
 Test(lexer, test_echo_foo_semicolon)
 {
     char input[] = "echo foo;";
@@ -47,4 +47,52 @@ Test(lexer, test_echo_foo_semicolon)
     deep_free_list(token_list, free_token);
 }
 
-#endif
+Test(lexer, if_echo_true_then_echo_foo_fi)
+{
+    char input[] = "if echo true; then echo foo; fi";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct linked_node *node = token_list->head;
+    
+    test_token(&node, "if", IF);
+    test_token(&node, "echo", WORD);
+    test_token(&node, "true", WORD);
+    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "then", THEN);
+    test_token(&node, "echo", WORD);
+    test_token(&node, "foo", WORD);
+    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "fi", FI);
+    cr_expect_eq(node, NULL);
+
+    deep_free_list(token_list, free_token);
+}
+
+Test(lexer, if_cond_and_cond_then_echo_else_echo_fi)
+{
+    char input[] = "if echo true&& false;then echo foo; else echo fada ; fi";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct linked_node *node = token_list->head;
+    
+    test_token(&node, "if", IF);
+    test_token(&node, "echo", WORD);
+    test_token(&node, "true", WORD);
+    test_token(&node, "&&", AND);
+    test_token(&node, "false", WORD);
+    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "then", THEN);
+    test_token(&node, "echo", WORD);
+    test_token(&node, "foo", WORD);
+    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "else", ELSE);
+    test_token(&node, "echo", WORD);
+    test_token(&node, "fada", WORD);
+    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "fi", FI);
+    cr_expect_eq(node, NULL);
+
+    deep_free_list(token_list, free_token);
+}
