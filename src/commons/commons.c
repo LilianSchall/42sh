@@ -36,7 +36,7 @@ char *my_strdup(char *str)
 
 int find_special_tokens(char *str, char **special_tokens)
 {
-    if (str == NULL)
+    if (str == NULL || special_tokens == NULL)
         return -1;
     
     for (size_t i = 0; special_tokens[i] != NULL; i++)

@@ -80,11 +80,12 @@ struct token *parse_quoted_word(char **word_begin_ptr,
             **input = '\'';
 
             // in quoted mode, every token is a word
+            *reading_quote = false;
             return new_token(symbol, WORD);
         }
         
         //else if we are not at the end and the next char is not a space
-        if (GETCHAR(input,1) != 0 && !isspace(GETCHAR(input, 1)))
+        if (!isspace(GETCHAR(input, 1)))
         {
             // we haven't finished reading our whole token, 
             // so we skip the the quote and continue reading
@@ -95,6 +96,11 @@ struct token *parse_quoted_word(char **word_begin_ptr,
                 skip_char(input,0);
             else
                 *reading_quote = false;
+        }
+        else
+        {
+            *reading_quote = false;
+            return create_token(word_begin_ptr, input, NULL);
         }
     } 
 

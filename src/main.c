@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     return options;
 #endif
     
-    char input[] = "if echo true&& false;then echo foo; else echo fada ; fi";
+    char input[] = "'echo' 'foo ;'caca";
     struct linked_list *token_list = build_token_list(input);
     for (struct linked_node *node = token_list->head; node; node = node->next)
     {

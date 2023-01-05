@@ -96,3 +96,33 @@ Test(lexer, if_cond_and_cond_then_echo_else_echo_fi)
 
     deep_free_list(token_list, free_token);
 }
+
+Test(lexer, test_echo_foo_semicolon_quoted)
+{
+    char input[] = "echo 'foo ;'";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct linked_node *node = token_list->head;
+    
+    test_token(&node, "echo", WORD);
+    test_token(&node, "foo ;", WORD);
+    cr_expect_eq(node, NULL);
+
+    deep_free_list(token_list, free_token);
+}
+
+Test(lexer, test_echo_foo_semicolon_quoted_followed)
+{
+    char input[] = "'echo' 'foo ;'baz";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct linked_node *node = token_list->head;
+    
+    test_token(&node, "echo", WORD);
+    test_token(&node, "foo ;baz", WORD);
+    cr_expect_eq(node, NULL);
+
+    deep_free_list(token_list, free_token);
+}
