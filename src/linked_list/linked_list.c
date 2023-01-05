@@ -1,6 +1,5 @@
 #include "linked_list.h"
 
-#include "log/log.h"
 
 struct linked_list *new_list(void)
 {

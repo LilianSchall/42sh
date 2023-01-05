@@ -1,8 +1,15 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#include "commons/commons.h" 
 #include "linked_list/linked_list.h"
 #include "token/token.h"
+
+#define GETCHAR(Stream, Nb) (*(*Stream + Nb))
 
 // this function builds the token_list based on the given input
 // returns NULL if input is NULL (wrong execution)
