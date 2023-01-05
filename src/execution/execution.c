@@ -1,5 +1,17 @@
 #include "execution.h"
 
+int execute_AST_cmd(struct AST *tree)
+{
+    char *cmd = tree->token.symbol;
+    if (!strcmp("echo", cmd))
+        return echo(tree);
+    int pid = fork();
+    if (!pid)
+    {
+        execl("/bin/sh", "42sh", "-c", cmd, NULL);
+    }
+}
+
 int execute_AST_if(struct AST *tree)
 {
     struct linked_node *child = tree->linked_list->head;
