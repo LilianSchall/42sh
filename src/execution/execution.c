@@ -1,11 +1,34 @@
 #include "execution.h"
 
+int execute_AST_if(struct AST *tree)
+{
+    struct linked_node *child = tree->linked_list->head;
+    struct AST *cond = child->data;
+    child = child->next;
+    if (child)
+    {
+        struct AST *t = child->data;
+        if (execute_AST(cond))
+        {
+            return execute_AST(t);
+        }
+        else
+        {
+            if (child->next)
+                return execute_AST(child->next->data);
+        }
+    }
+    else
+        return execute_AST(cond);
+    return 0;
+}
+
 int execute_AST(struct AST *tree)
 {
     if (!tree)
         return 0;
     int ret_val = 0;
-    for (struct linked_node *node = tree->linked_list;
+    for (struct linked_node *node = tree->linked_list->head;
             node && ret_val != 2; node = node->next)
     {
         struct AST *child = node->data;
