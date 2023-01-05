@@ -2,7 +2,7 @@
 
 #include "log/log.h"
 
-struct linked_list *list_create(void)
+struct linked_list *new_list(void)
 {
     struct linked_list *list = malloc(sizeof(struct linked_list));
 
@@ -130,12 +130,12 @@ static void __list_deep_free(struct linked_list *list, void (*free_fct)(void *))
     free(list);
 }
 
-void list_deep_free(struct linked_list *list, void (*free_fct)(void *))
+void deep_free_list(struct linked_list *list, void (*free_fct)(void *))
 {
     __list_deep_free(list, free_fct);
 }
 
-void list_free(struct linked_list *list)
+void free_list(struct linked_list *list)
 {
     __list_deep_free(list, NULL);
 }
