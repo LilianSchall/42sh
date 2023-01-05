@@ -6,21 +6,21 @@
 #include "token/token.h"
 #include "linked_list/linked_list.h"
 
-struct AST
-{
-  struct token *value;
-  enum AST_type type;
-  struct linked_list *linked_list;
-};
-
 enum AST_type
 {
   COMMAND,
   ARG,
   SEQUENCE,
   CONDITION, // if, elif, else clause
-  WHILE,
+  WHILE_,
 
+};
+
+struct AST
+{
+  struct token *value;
+  enum AST_type type;
+  struct linked_list *linked_list;
 };
 
 // create a tree with the right attributes and returns it.

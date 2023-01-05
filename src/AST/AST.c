@@ -25,8 +25,8 @@ void free_AST(void *data)
         return;
 
     // free all childs
-    list_deep_free(my_AST->linked_list, free_AST);
+    list_deep_free(tree->linked_list, free_AST);
 
-    free_token(token);
+    free_token(tree->value);
     free(tree);
 }
