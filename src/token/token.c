@@ -2,11 +2,24 @@
 
 struct token *new_token(char *symbol, enum token_type type)
 {
-    // TODO    
-    return NULL;
+    struct token *token = malloc(sizeof(struct token));
+
+    if (!token)
+        return NULL;
+
+    token->symbol = symbol;
+    token->type = type;
+
+    return token;
 }
 
-void *free_token(struct token *token)
+void free_token(void *data)
 {
-    // TODO
+    if (!data)
+        return;
+
+    struct token *token = data;
+
+    free(token->symbol);
+    free(token);
 }

@@ -1,6 +1,9 @@
 #ifndef IO_BACKEND_H
 #define IO_BACKEND_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 // function that returns the content of a filename
 char *get_file_content(char *filename);
 
