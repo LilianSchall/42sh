@@ -4,7 +4,7 @@ int execute_AST_cmd(struct AST *tree)
 {
     char *cmd = tree->value->symbol;
     if (!strcmp("echo", cmd))
-        return echo_fn(tree);
+        return 0; // put echo function
     int pid = fork();
     if (!pid)
     {
