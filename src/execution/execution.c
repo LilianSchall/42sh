@@ -1,18 +1,52 @@
 #include "execution.h"
 
+int not_builtin_fn(int argc, char **argv)
+{   
+    if (argc == 0)
+        return 0;
+
+    int ret_val = 0;
+    int pid = fork();
+
+    if (!pid)
+        execvp(argv[0], argv);
+
+    ret_val = 0;
+    wait(&ret_val);
+
+    return ret_val;
+}
+
 int execute_AST_cmd(struct AST *tree)
 {
     char *cmd = tree->value->symbol;
-    if (!strcmp("echo", cmd))
-        return 0; // put echo function
-    int pid = fork();
-    if (!pid)
+    int ret_val = 0;
+
+    struct linked_list *ll_word = get_linked_list_from_AST(tree);    
+    int argc = 0;
+    char **argv = new_argv(ll_word, &argc);
+    
+    if (!strcmp("echo", cmd)) // builtin command
     {
-        execl("/bin/sh", "42sh", "-c", cmd, NULL);
+        ret_val = echo_fn(argc, argv);
     }
-    int status = 0;
-    wait(&status);
-    return status;
+    else if (!strcmp("true", cmd)) // true
+    {
+        ret_val = true_fn();
+    }
+    else if (!strcmp("false", cmd)) // false
+    {
+        ret_val = false_fn();
+    }
+    else 
+    {
+        ret_val = not_builtin_fn(argc, argv); // not a builtin command
+    }
+
+    free_argv(argc, argv);
+    free_list(ll_word);
+
+    return ret_val;
 }
 
 int execute_AST_if(struct AST *tree)
@@ -37,7 +71,9 @@ int execute_AST(struct AST *tree)
 {
     if (!tree)
         return 0;
+
     int ret_val = 0;
+
     for (struct linked_node *node = tree->linked_list->head;
             node; node = node->next)
     {

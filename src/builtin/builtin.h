@@ -23,4 +23,10 @@ struct echo_option {
 // take argc & argv in parameter
 int echo_fn(int argc, char **argv);
 
+// return 0
+int true_fn(void);
+
+// return 1
+int false_fn(void);
+
 #endif /* !BUILTIN_H */

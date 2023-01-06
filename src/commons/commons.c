@@ -135,6 +135,7 @@ char *copy_string(char *src)
 
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
+// last elem of argv is NULL
 char **new_argv(struct linked_list *linked_list, int *argc)
 {
     *argc = (int) list_size(linked_list);
@@ -143,7 +144,7 @@ char **new_argv(struct linked_list *linked_list, int *argc)
 
     struct linked_node *ln = temp->head;
 
-    char **argv = malloc(sizeof(char *) * (*argc));
+    char **argv = malloc(sizeof(char *) * (*argc + 1));
 
     for(int i = 0; i < *argc; i++)
     {
@@ -151,6 +152,7 @@ char **new_argv(struct linked_list *linked_list, int *argc)
         ln = ln->next;
     }
 
+    argv[*argc] = NULL;
     return argv;
 }
 

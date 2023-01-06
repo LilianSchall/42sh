@@ -7,21 +7,17 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-int exec(void)
+int exec7(void)
 {
-    struct AST *ast_1 = new_AST(new_token(copy_string("hello"), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
-    struct AST *ast_2 = new_AST(new_token(copy_string("!"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
-
+    struct AST *ast_1 = new_AST(new_token(copy_string("README.md"), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
+    
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_1);
-    ll_ast = list_append(ll_ast, ast_2);
     
-    struct AST *ast = new_AST(new_token(copy_string("echo"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
-    
-
+    struct AST *ast = new_AST(new_token(copy_string("cat"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
     struct linked_list *ll_ast2 = new_list();
     ll_ast2 = list_append(ll_ast2, ast);
-    
+
     struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_ast2);
 
     execute_AST(ast_final);
@@ -31,15 +27,15 @@ int exec(void)
     return 0;
 }
 
-void redirect_stdout(void)
+void redirect_stdout7(void)
 {
     cr_redirect_stdout();
 }
 
-Test(exec_echo, basic_1, .init = redirect_stdout)
+Test(exec_echo, basic_cat, .init = redirect_stdout7)
 {
-    exec();
+    exec7();
     fflush(stdout);
 
-    cr_assert_stdout_eq_str("hello !\n");
+    cr_assert_stdout_eq_str("# 42sh");
 }

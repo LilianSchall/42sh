@@ -27,6 +27,7 @@ char *copy_string(char *src);
 
 // transform a linked list into a argc (char **)
 // argc is a pointer
+// last elem of argv is NULL
 char **new_argv(struct linked_list *linked_list, int *argc);
 
 // free argv
