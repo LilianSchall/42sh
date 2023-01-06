@@ -16,4 +16,7 @@ int find_special_tokens(char *str, char **special_tokens);
 // returns -1 if it hasn't found any
 int find_delims(char c , char *delims);
 
+// replace all occurence of 'occ' by 'c' in 'string'
+char *str_replace(char* string, char* occ, char* c);
+
 #endif /* !COMMONS_H */
