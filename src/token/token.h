@@ -43,7 +43,8 @@ enum token_type
     [OPEN_PARENTHESE] = "(", \
     [CLOSE_PARENTHESE] = ")", \
     [FOR] = "for", \
-    [DO] = "done", \
+    [DO] = "do", \
+    [DONE] = "done", \
     [WHILE] = "while", \
     [UNTIL] = "until", \
     [CASE] = "case", \
