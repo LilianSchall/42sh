@@ -63,6 +63,7 @@ int find_delims(char c, char *delims)
     return -1;
 }
 
+
 // check if the string start a the index pos by the string occ
 // exemple ("test ab", 2, "st") -> true
 int str_start(char *string, int pos, char *occ)

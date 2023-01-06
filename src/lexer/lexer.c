@@ -163,7 +163,6 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     // that is at the end no matter what
 
     struct token *token = create_token(word_begin_ptr, input, token_value);
-    
 
     if (*input > *word_begin_ptr + 1)
         offset_char(input, -1);

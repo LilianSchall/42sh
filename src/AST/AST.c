@@ -3,6 +3,7 @@
 struct AST *new_AST(struct token *value, enum AST_type type, 
         struct linked_list *linked_list)
 {
+
     if (value == NULL)
         return NULL;
 
