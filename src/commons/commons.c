@@ -125,3 +125,66 @@ char *str_replace(char* string, char* occ, char* c)
     }
     return string;
 }
+
+char *copy_string(char *src)
+{
+    int l = strlen(src);
+    char *dest = malloc(sizeof(char) * (l + 1));
+    return strcpy(dest, src);
+}
+
+// transform a linked list into a argc (char **)
+// argc is a pointer (it will be updated with the length of argv)
+char **new_argv(struct linked_list *linked_list, int *argc)
+{
+    *argc = (int) list_size(linked_list);
+
+    struct linked_list *temp = linked_list;
+
+    struct linked_node *ln = temp->head;
+
+    char **argv = malloc(sizeof(char *) * (*argc));
+
+    for(int i = 0; i < *argc; i++)
+    {
+        argv[i] = copy_string(ln->data);
+        ln = ln->next;
+    }
+
+    return argv;
+}
+
+// free argc (char **)
+void free_argv(int argc, char **argv)
+{
+    for(int i = 0; i < argc; i++)
+    {
+        if(argv[i])
+            free(argv[i]);
+    }
+    free(argv);
+}
+
+// return a linked list of all 'word' in our AST 
+// it only takes the left child
+// example of usage : get echo words
+struct linked_list *get_linked_list_from_AST(struct AST *AST)
+{
+    struct linked_list *ll_ast = new_list();
+
+    // add command name
+    ll_ast = list_append(ll_ast, AST->value->symbol);
+
+    struct linked_node *node = AST->linked_list->head;
+
+    struct AST *ast_temp;
+
+    while(node) // add all childs
+    {
+        ast_temp = node->data;
+        ll_ast = list_append(ll_ast, ast_temp->value->symbol);
+        node = node->next;
+    }
+    
+    return ll_ast;
+}
