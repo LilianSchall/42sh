@@ -167,14 +167,22 @@ void free_argv(int argc, char **argv)
 // return a linked list of all 'word' in our AST 
 // it only takes the left child
 // example of usage : get echo words
-struct linked_list *get_linked_list_from_AST(struct AST *new_AST)
+struct linked_list *get_linked_list_from_AST(struct AST *AST)
 {
     struct linked_list *ll_ast = new_list();
 
-    while(new_AST)
+    // add command name
+    ll_ast = list_append(ll_ast, AST->value->symbol);
+
+    struct linked_node *node = AST->linked_list->head;
+
+    struct AST *ast_temp;
+
+    while(node) // add all childs
     {
-        ll_ast = list_append(ll_ast, new_AST->value->symbol);
-        new_AST = list_head(new_AST->linked_list);
+        ast_temp = node->data;
+        ll_ast = list_append(ll_ast, ast_temp->value->symbol);
+        node = node->next;
     }
     
     return ll_ast;

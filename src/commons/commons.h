@@ -35,6 +35,6 @@ void free_argv(int argc, char **argv);
 // return a linked list of all 'word' in our AST 
 // it only takes the left child
 // example of usage : get echo words
-struct linked_list *get_linked_list_from_AST(struct AST *new_AST);
+struct linked_list *get_linked_list_from_AST(struct AST *AST);
 
 #endif /* !COMMONS_H */

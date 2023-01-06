@@ -19,32 +19,30 @@ void print_argv(int argc, char **argv)
 
 int main(void)
 {
-    struct AST *ast_word = new_AST(new_token(copy_string("test \\n test"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
+    
+
+    struct AST *ast_1 = new_AST(new_token(copy_string("-n"), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
+    struct AST *ast_2 = new_AST(new_token(copy_string("hello word!"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
 
     struct linked_list *ll_ast = new_list();
-    ll_ast = list_append(ll_ast, ast_word);
+    ll_ast = list_append(ll_ast, ast_1);
+    ll_ast = list_append(ll_ast, ast_2);
     
-    struct AST *ast = new_AST(new_token(copy_string("-en"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
+    struct AST *ast = new_AST(new_token(copy_string("echo"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
 
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast);
-    
-    struct AST *ast2 = new_AST(new_token(copy_string("echo"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast2);
-
-    struct linked_list *ll = get_linked_list_from_AST(ast2);
+    struct linked_list *ll_word = get_linked_list_from_AST(ast);
 
     int argc = 0;
 
-    char **argv = new_argv(ll, &argc);
+    char **argv = new_argv(ll_word, &argc);
     
     print_argv(argc, argv);
 
     printf("-- result --\n");
     echo_fn(argc, argv);
-
     free_argv(argc, argv);
-    free_list(ll);
-    free_AST(ast2);
+    free_list(ll_word);
+    free_AST(ast);
 
     return 0;
 }
