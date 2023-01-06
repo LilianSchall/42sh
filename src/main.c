@@ -6,6 +6,7 @@
 
 int main(int argc, char **argv)
 {
+#if 0
     char *filename = NULL;
     int options = parse_given_args(argc, argv, &filename);
 

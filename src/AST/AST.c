@@ -1,13 +1,33 @@
 #include "AST.h"
 
-struct AST *new_AST(struct token *value, struct AST *left_child,
-        struct AST *right_child)
+struct AST *new_AST(struct token *value, enum AST_type type, 
+        struct linked_list *linked_list)
 {
-    // TODO
-    return NULL;
+    if (value == NULL)
+        return NULL;
+
+    struct AST *my_AST = malloc(sizeof(struct AST));
+    
+    if (NULL == my_AST)
+        return NULL;
+
+    my_AST->value = value;
+    my_AST->type = type;
+    my_AST->linked_list = linked_list;
+
+    return my_AST;
 }
 
-void free_AST(struct AST *tree)
+void free_AST(void *data)
 {
-    // TODO
+    struct AST *tree = data;
+    if (tree == NULL)
+        return;
+
+    if(tree->linked_list)
+        deep_free_list(tree->linked_list, free_AST);
+
+    if(tree->value)
+        free_token(tree->value);
+    free(tree);
 }

@@ -63,3 +63,64 @@ int find_delims(char c, char *delims)
     return -1;
 }
 
+// check if the string start a the index pos by the string occ
+// exemple ("test ab", 2, "st") -> true
+int str_start(char *string, int pos, char *occ)
+{
+    int i = 0;
+    while(string[pos] != '\0' && occ[i] != '\0')
+    {
+        if(string[pos] != occ[i])
+            return 0;
+        i++;
+        pos++;
+    }
+
+    return occ[i] == '\0';
+}
+
+char *str_replace(char* string, char* occ, char* c) 
+{
+
+    int occ_len = strlen(occ);
+    int c_len = strlen(c);
+    int diff = c_len - occ_len; 
+    int i = 0;
+
+    int size_of_string = strlen(string);
+
+    while (i < size_of_string && string[i] != '\0') 
+    {
+        if (str_start(string, i, occ)) 
+        {
+            if(diff > 0)
+            {
+                size_of_string += diff;
+
+                string = realloc(string, sizeof(char) * (size_of_string + 1));
+
+                for(int j = size_of_string; j - diff >= i; j--) // move
+                    string[j] = string[j-diff];
+
+            }
+
+            else if(diff < 0)
+            {
+                int diff2 = -1 * diff;
+
+                for(int j = i ; j + diff2 <= size_of_string; j++)
+                    string[j] = string[j+diff2]; // move
+                
+                size_of_string -= diff2;
+                //string = realloc(string, sizeof(char) * (size_of_string + 1));
+            }
+            for(int j = 0; j < c_len; j++)
+                string[i+j] = c[j]; // replace
+
+            i += (diff > 0 ? diff : - diff) + 1;
+        }
+        else
+            i++;
+    }
+    return string;
+}
