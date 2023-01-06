@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <err.h>
+
 #include "AST/AST.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
