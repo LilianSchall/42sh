@@ -41,13 +41,18 @@ void offset_char(char **stream, int offset)
 // enclosed by the two pointers
 char *get_word(char **word_begin_ptr, char **input)
 {
-    int offset = *word_begin_ptr + 1 < *input  ? 0 : 1;
+    int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
     char tmp = GETCHAR(input, offset);
     GETCHAR(input, offset) = '\0';
     char *word = my_strdup(*word_begin_ptr);
     GETCHAR(input, offset) = tmp;
 
     return word;
+}
+
+bool my_isspace(char c)
+{
+    return c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == '\f';
 }
 
 struct token *parse_quoted_word(char **word_begin_ptr,
@@ -85,7 +90,7 @@ struct token *parse_quoted_word(char **word_begin_ptr,
         }
         
         //else if we are not at the end and the next char is not a space
-        if (!isspace(GETCHAR(input, 1)))
+        if (!my_isspace(GETCHAR(input, 1)))
         {
             // we haven't finished reading our whole token, 
             // so we skip the the quote and continue reading
@@ -115,7 +120,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
 
     if (!(*word_begin_ptr)) // if we are not currently parsing a new word
     {
-        if (isspace(GETCHAR(input, 0))) // we omit spaces
+        if (my_isspace(GETCHAR(input, 0))) // we omit spaces
             return NULL;
 
         // else we find the new begin of our word
@@ -124,7 +129,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     
     if (find_delims(GETCHAR(input, 0), delims) == -1)
         return NULL;
-    
+
     if (GETCHAR(input, 0) == 0)
         return create_token(word_begin_ptr, input, token_value); 
 
@@ -138,7 +143,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     }
     
     // else if two same delimitators are following each other 
-    if (!isspace(GETCHAR(input, 0)) && 
+    if (!my_isspace(GETCHAR(input, 0)) && 
             GETCHAR(input, 0) == GETCHAR(input, 1) &&
             *input == *word_begin_ptr)
         // then it is not a delimitator but a special token
@@ -161,8 +166,16 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
 
     // now we have a token
     // that is at the end no matter what
-
-    struct token *token = create_token(word_begin_ptr, input, token_value);
+    
+    struct token *token = NULL;
+    if (find_delims(GETCHAR(word_begin_ptr, 0), delims) == -1 && *input <= *word_begin_ptr + 1)
+    {
+        *input -= 1;
+        token = create_token(word_begin_ptr, input, token_value);
+        return token;
+    }
+    else
+        token = create_token(word_begin_ptr, input, token_value);
 
     if (*input > *word_begin_ptr + 1)
         offset_char(input, -1);
@@ -215,7 +228,5 @@ struct linked_list *build_token_list(char *input)
     if (word_begin_ptr)
         execute_parsing(token_list, &word_begin_ptr, &input, &reading_quote);
     
-
-
     return token_list;
 }

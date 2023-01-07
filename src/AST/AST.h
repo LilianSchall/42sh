@@ -12,8 +12,6 @@ enum AST_type
   ARG,
   SEQUENCE,
   CONDITION, // if, elif, else clause
-  WHILE_,
-
 };
 
 struct AST
