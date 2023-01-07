@@ -1,10 +1,10 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-#include "linked_list/linked_list.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "linked_list/linked_list.h"
 
 enum token_type
 {
@@ -35,36 +35,37 @@ enum token_type
     // TODO redirections token, ENV_VARIABLE ?, ...
 };
 
-#define CREATE_DICO(Name) char *Name[] = { \
-    [WORD] = "", \
-    [SEMICOLON] = ";", \
-    [NEWLINE] = "\n", \
-    [AND] = "&&", \
-    [OR] = "||", \
-    [PIPE] = "|", \
-    [OPEN_BRACE] = "{", \
-    [CLOSE_BRACE] = "}", \
-    [OPEN_PARENTHESE] = "(", \
-    [CLOSE_PARENTHESE] = ")", \
-    [FOR] = "for", \
-    [DO] = "do", \
-    [DONE] = "done", \
-    [WHILE] = "while", \
-    [UNTIL] = "until", \
-    [CASE] = "case", \
-    [ESAC] = "esac", \
-    [IF] = "if", \
-    [THEN] = "then", \
-    [ELIF] = "elif", \
-    [ELSE] = "else", \
-    [FI] = "fi", \
-    [DOUBLE_SEMICOLON] = ";;", \
-    [ERROR] = NULL, \
-}
+#define CREATE_DICO(Name)                                                      \
+    char *Name[] = {                                                           \
+        [WORD] = "",                                                           \
+        [SEMICOLON] = ";",                                                     \
+        [NEWLINE] = "\n",                                                      \
+        [AND] = "&&",                                                          \
+        [OR] = "||",                                                           \
+        [PIPE] = "|",                                                          \
+        [OPEN_BRACE] = "{",                                                    \
+        [CLOSE_BRACE] = "}",                                                   \
+        [OPEN_PARENTHESE] = "(",                                               \
+        [CLOSE_PARENTHESE] = ")",                                              \
+        [FOR] = "for",                                                         \
+        [DO] = "do",                                                           \
+        [DONE] = "done",                                                       \
+        [WHILE] = "while",                                                     \
+        [UNTIL] = "until",                                                     \
+        [CASE] = "case",                                                       \
+        [ESAC] = "esac",                                                       \
+        [IF] = "if",                                                           \
+        [THEN] = "then",                                                       \
+        [ELIF] = "elif",                                                       \
+        [ELSE] = "else",                                                       \
+        [FI] = "fi",                                                           \
+        [DOUBLE_SEMICOLON] = ";;",                                             \
+        [ERROR] = NULL,                                                        \
+    }
 
-#define CREATE_DELIMITATORS(Name) char Name[] = { \
-    '|', '&', ';', '<', '>', '(', ')', '$', '`', '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' \
-}
+#define CREATE_DELIMITATORS(Name)                                              \
+    char Name[] = { '|', '&',  ';',  '<',  '>', '(',  ')',  '$', '`',          \
+                    '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
 struct token
 {

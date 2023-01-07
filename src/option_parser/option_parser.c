@@ -4,7 +4,7 @@ int parse_given_args(int argc, char **argv, char **filename, char **input)
 {
     int options = 0;
     *filename = NULL;
-    
+
     // iterate over arguments
     for (int i = 1; i < argc; i++)
     {
@@ -14,14 +14,14 @@ int parse_given_args(int argc, char **argv, char **filename, char **input)
         // check pretty print mode
         else if (!strcmp(argv[i], "--pretty-print"))
             options = options | PRETTY_PRINT;
-        //check if file is specified
+        // check if file is specified
         else if (!strcmp(argv[i], "-c") && *input == NULL && *filename == NULL)
         {
             // if there is an argument after option
             // then we got a filename
             if (i++ < argc)
                 *input = argv[i];
-            else  // else we crash
+            else // else we crash
                 return -1;
             options = options | INPUT_READING;
         }

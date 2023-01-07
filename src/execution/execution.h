@@ -1,9 +1,9 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
-#include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"

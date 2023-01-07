@@ -33,7 +33,7 @@ void print_token_list(struct linked_list *list)
     {
         struct token *token = node->data;
 
-        printf("%lu. token: %s\n", i, token->symbol); 
+        printf("%lu. token: %s\n", i, token->symbol);
         i++;
     }
 }

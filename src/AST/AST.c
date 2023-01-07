@@ -1,10 +1,10 @@
 #include "AST.h"
 
-struct AST *new_AST(struct token *value, enum AST_type type, 
-        struct linked_list *linked_list)
+struct AST *new_AST(struct token *value, enum AST_type type,
+                    struct linked_list *linked_list)
 {
     struct AST *my_AST = malloc(sizeof(struct AST));
-    
+
     if (NULL == my_AST)
         return NULL;
 
@@ -21,10 +21,10 @@ void free_AST(void *data)
     if (tree == NULL)
         return;
 
-    if(tree->linked_list)
+    if (tree->linked_list)
         deep_free_list(tree->linked_list, free_AST);
 
-    if(tree->value)
+    if (tree->value)
         free_token(tree->value);
     free(tree);
 }

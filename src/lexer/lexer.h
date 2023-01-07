@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "commons/commons.h" 
+#include "commons/commons.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
 

@@ -1,7 +1,7 @@
 #include "execution.h"
 
 int not_builtin_fn(int argc, char **argv)
-{   
+{
     if (argc == 0)
         return 0;
 
@@ -22,10 +22,10 @@ int execute_AST_cmd(struct AST *tree)
     char *cmd = tree->value->symbol;
     int ret_val = 0;
 
-    struct linked_list *ll_word = get_linked_list_from_AST(tree);    
+    struct linked_list *ll_word = get_linked_list_from_AST(tree);
     int argc = 0;
     char **argv = new_argv(ll_word, &argc);
-    
+
     if (!strcmp("echo", cmd)) // builtin command
     {
         ret_val = echo_fn(argc, argv);
@@ -38,7 +38,7 @@ int execute_AST_cmd(struct AST *tree)
     {
         ret_val = false_fn(argc, argv);
     }
-    else 
+    else
     {
         ret_val = not_builtin_fn(argc, argv); // not a builtin command
     }
@@ -74,31 +74,30 @@ int execute_AST(struct AST *tree)
 
     int ret_val = 0;
 
-    for (struct linked_node *node = tree->linked_list->head;
-            node; node = node->next)
+    for (struct linked_node *node = tree->linked_list->head; node;
+         node = node->next)
     {
         struct AST *child = node->data;
         switch (child->type)
         {
-            case COMMAND:
-                ret_val = execute_AST_cmd(child);
-                break;
-            case SEQUENCE:
-                ret_val = execute_AST(child);
-                break;
-            case CONDITION:
+        case COMMAND:
+            ret_val = execute_AST_cmd(child);
+            break;
+        case SEQUENCE:
+            ret_val = execute_AST(child);
+            break;
+        case CONDITION: {
+            switch (child->value->type)
             {
-                switch (child->value->type)
-                {
-                    case IF:
-                        ret_val = execute_AST_if(child);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            case IF:
+                ret_val = execute_AST_if(child);
+                break;
             default:
                 break;
+            }
+        }
+        default:
+            break;
         }
     }
     return ret_val;

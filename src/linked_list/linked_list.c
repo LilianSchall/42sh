@@ -1,6 +1,5 @@
 #include "linked_list.h"
 
-
 struct linked_list *new_list(void)
 {
     struct linked_list *list = malloc(sizeof(struct linked_list));

@@ -12,7 +12,7 @@ int launch_interactive_mode(int options)
     {
         printf("42sh$ ");
         fflush(stdout);
-        
+
         // get content from stdin
         content = get_interactive_content();
 
@@ -52,12 +52,11 @@ int launch_shell(int options, char *file_script, char *input)
 int execute_shell_command(int options, char *input)
 {
     // get token_list based on given input
-    
+
     if (is_option_activated(options, VERBOSE))
         puts("parsing token_list");
 
     struct linked_list *token_list = build_token_list(input);
-    
 
     if (is_option_activated(options, VERBOSE))
         print_token_list(token_list);
@@ -67,9 +66,9 @@ int execute_shell_command(int options, char *input)
 
     // build AST based on token_list
     struct AST *tree = build_shell_AST(token_list);
- 
+
     if (is_option_activated(options, VERBOSE))
-        puts("executing AST");   
+        puts("executing AST");
 
     // execute tree
     int status_code = execute_AST(tree);
