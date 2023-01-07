@@ -93,6 +93,47 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
+int execute_AST_operator(struct AST *tree)
+{
+    char *op = tree->value->symbol;
+    int ret_val = 0;
+    int ret_val2 = 0;
+
+    struct linked_node *node = tree->linked_list->head;
+    struct AST *child = node->data;
+    struct AST *child2;
+
+    if (node->next)
+        child2 = node->next->data;
+
+    if (!strcmp("!", op)) // ! condition
+    {
+        ret_val = ! execute_AST(child);
+    }
+    else if (!strcmp("&&", op)) // && condition
+    {
+        ret_val = execute_AST(child);
+        ret_val2 = execute_AST(child2);
+
+        if(ret_val == 0 && ret_val2 == 0)
+            ret_val = 0;
+        else
+            ret_val = 1;
+    }
+    else if (!strcmp("||", op)) // || condition
+    {
+        ret_val = execute_AST(child);
+        ret_val2 = execute_AST(child2);
+
+        if(ret_val == 1 && ret_val2 == 1)
+            ret_val = 1;
+        else
+            ret_val = 0;
+    }
+
+
+    return ret_val;
+}
 
 int execute_AST(struct AST *tree)
 {
@@ -112,6 +153,9 @@ int execute_AST(struct AST *tree)
             break;
         case SEQUENCE:
             ret_val = execute_AST(child);
+            break;
+        case OPERATOR:
+            ret_val = execute_AST_operator(child);
             break;
         case CONDITION: {
             switch (child->value->type)
