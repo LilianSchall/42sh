@@ -57,6 +57,10 @@ int execute_shell_command(int options, char *input)
         puts("parsing token_list");
 
     struct linked_list *token_list = build_token_list(input);
+    
+
+    if (is_option_activated(options, VERBOSE))
+        print_token_list(token_list);
 
     if (is_option_activated(options, VERBOSE))
         puts("building AST");

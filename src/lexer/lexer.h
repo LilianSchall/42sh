@@ -11,6 +11,12 @@
 
 #define GETCHAR(Stream, Nb) (*(*Stream + Nb))
 
+struct lexer_states
+{
+    bool *reading_quote;
+    bool *reading_comm;
+};
+
 // this function builds the token_list based on the given input
 // returns NULL if input is NULL (wrong execution)
 // omits shell commands and shebangs

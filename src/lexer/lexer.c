@@ -1,16 +1,16 @@
 #include "lexer.h"
 
 static struct token *parse_quoted_word(char **word_begin_ptr, 
-        bool *reading_quote, char **input);
+        struct lexer_states states, char **input);
 static struct token *parse_unquoted_word(char **word_begin_ptr,
-        bool *reading_quote, char **input);
+        struct lexer_states states, char **input);
 static void skip_char(char **stream, int offset);
 static void offset_char(char **stream, int offset);
 static char *get_word(char **word_begin_ptr, char **input);
 static struct token *create_token(char **word_begin_ptr, char **input,
         char **token_value);
 static void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
-        char **input, bool *reading_quote);
+        char **input, struct lexer_states states);
 
 struct token *create_token(char **word_begin_ptr, char **input, 
         char **token_value)
@@ -56,12 +56,14 @@ bool my_isspace(char c)
 }
 
 struct token *parse_quoted_word(char **word_begin_ptr,
-        bool *reading_quote,char **input)
+        struct lexer_states states, char **input)
 {
+    static CREATE_DELIMITATORS(delims);
+
     if (!(*word_begin_ptr))
     {
         if (GETCHAR(input, 0) == '\'') // word is ''
-            *reading_quote = false;
+            *states.reading_quote = false;
         else 
             *word_begin_ptr = *input;
             // as we are quoted, every character including spaces are part of the word
@@ -85,12 +87,15 @@ struct token *parse_quoted_word(char **word_begin_ptr,
             **input = '\'';
 
             // in quoted mode, every token is a word
-            *reading_quote = false;
+            *states.reading_quote = false;
             return new_token(symbol, WORD);
         }
         
         //else if we are not at the end and the next char is not a space
-        if (!my_isspace(GETCHAR(input, 1)))
+        // and it isn't a delimitator
+        if (!my_isspace(GETCHAR(input, 1)) && 
+                (find_delims(GETCHAR(input, 1), delims) == -1 
+                 || GETCHAR(input, 1) == '\''))
         {
             // we haven't finished reading our whole token, 
             // so we skip the the quote and continue reading
@@ -100,11 +105,11 @@ struct token *parse_quoted_word(char **word_begin_ptr,
             if (GETCHAR(input, 1) == '\'')
                 skip_char(input,0);
             else
-                *reading_quote = false;
+                *states.reading_quote = false;
         }
         else
         {
-            *reading_quote = false;
+            *states.reading_quote = false;
             return create_token(word_begin_ptr, input, NULL);
         }
     } 
@@ -113,10 +118,16 @@ struct token *parse_quoted_word(char **word_begin_ptr,
 }
 
 struct token *parse_unquoted_word(char **word_begin_ptr, 
-        bool *reading_quote, char **input)
+        struct lexer_states states, char **input)
 {
     static CREATE_DICO(token_value);
     static CREATE_DELIMITATORS(delims);
+    
+    if (GETCHAR(input, 0) == '#' && *word_begin_ptr == NULL)
+    {
+        *states.reading_comm = true;
+        return NULL;
+    }
 
     if (!(*word_begin_ptr)) // if we are not currently parsing a new word
     {
@@ -160,7 +171,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     if (GETCHAR(input, 0) == '\'')
     {
         skip_char(input,0);
-        *reading_quote = true;
+        *states.reading_quote = true;
         return NULL;
     }
 
@@ -183,17 +194,31 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     return token;
 }
 
+struct token *parse_comment(char **input, struct lexer_states states)
+{
+    struct token *token = NULL;
+    if (GETCHAR(input, 0) == '\n')
+    {
+         *states.reading_comm = false;
+         token = new_token(strdup("\n"), NEWLINE);
+    }
+
+    *input += 1;
+    return token;
+}
+
 void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
-        char **input, bool *reading_quote)
+        char **input, struct lexer_states states)
 {
     struct token *current_token = NULL;
-
+    if (*states.reading_comm)
+        current_token = parse_comment(input, states);
     // we based our parsing on wheter we read a quoted word or not
-    if (*reading_quote)
-        current_token = parse_quoted_word(word_begin_ptr, reading_quote,
+    else if (*states.reading_quote)
+        current_token = parse_quoted_word(word_begin_ptr, states,
                 input);
     else
-        current_token = parse_unquoted_word(word_begin_ptr, reading_quote,
+        current_token = parse_unquoted_word(word_begin_ptr, states,
                 input);
 
     // if there is a new token
@@ -210,14 +235,19 @@ struct linked_list *build_token_list(char *input)
     if (strlen(input) == 0)
         return NULL;
 
+    bool reading_comm = false;
     bool reading_quote = false;
+
+    struct lexer_states states = {
+        .reading_quote = &reading_quote, .reading_comm = &reading_comm
+    };
 
     char *word_begin_ptr = NULL;
 
     struct linked_list *token_list = new_list();
     
     for (; *input != '\0'; input++)
-        execute_parsing(token_list, &word_begin_ptr, &input, &reading_quote);
+        execute_parsing(token_list, &word_begin_ptr, &input, states);
 
     if (reading_quote) // single_quote missmatch
     {
@@ -226,7 +256,7 @@ struct linked_list *build_token_list(char *input)
     }
 
     if (word_begin_ptr)
-        execute_parsing(token_list, &word_begin_ptr, &input, &reading_quote);
+        execute_parsing(token_list, &word_begin_ptr, &input, states);
     
     return token_list;
 }

@@ -1,6 +1,9 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include "linked_list/linked_list.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 
 enum token_type
@@ -60,7 +63,7 @@ enum token_type
 }
 
 #define CREATE_DELIMITATORS(Name) char Name[] = { \
-    '|', '&', ';', '<', '>', '(', ')', '$', '`', '\\', '\"', '\'', ' ', '\t', '\n', '\0' \
+    '|', '&', ';', '<', '>', '(', ')', '$', '`', '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' \
 }
 
 struct token
@@ -76,5 +79,7 @@ struct token *new_token(char *symbol, enum token_type type);
 // free a token and its attributes.
 // if the token is NULL, does nothing
 void free_token(void *data);
+
+void print_token_list(struct linked_list *list);
 
 #endif /* !TOKEN_H */
