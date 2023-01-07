@@ -3,7 +3,7 @@ project('42sh', 'c',
   default_options : [
     'warning_level=3',
     'c_std=c99',
-    'c_args=-D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wvla -Isrc -g',
+    'c_args=-D_POSIX_C_SOURCE=200809L -pedantic -Werror -Wall -Wextra -Wvla -Isrc -g',
   ])
 
 inc = include_directories('src')
