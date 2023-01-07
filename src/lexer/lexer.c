@@ -199,15 +199,13 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
 
 struct token *parse_comment(char **input, struct lexer_states states)
 {
-    struct token *token = NULL;
     if (GETCHAR(input, 0) == '\n')
     {
         *states.reading_comm = false;
-        token = new_token(strdup("\n"), NEWLINE);
+        return new_token(strdup("\n"), NEWLINE);
     }
 
-    *input += 1;
-    return token;
+    return NULL;
 }
 
 void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
@@ -228,6 +226,20 @@ void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
         // we add it to list
         token_list = list_append(token_list, current_token);
         *word_begin_ptr = NULL;
+    }
+}
+
+void clean_token_list(struct linked_list *token_list)
+{
+    if (token_list == NULL || token_list->head == NULL)
+        return;
+
+    struct token *token = list_head(token_list);
+    while (token->type == NEWLINE)
+    {
+        list_pop(token_list);
+        free_token(token);
+        token = list_head(token_list);
     }
 }
 
@@ -257,6 +269,8 @@ struct linked_list *build_token_list(char *input)
 
     if (word_begin_ptr)
         execute_parsing(token_list, &word_begin_ptr, &input, states);
+
+    clean_token_list(token_list);
 
     return token_list;
 }
