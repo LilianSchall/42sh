@@ -67,6 +67,74 @@ int execute_AST_if(struct AST *tree)
     return 0;
 }
 
+
+// exec a while or until command
+// if val_cond = 0 -> while
+// if val_cond = 1 -> until
+int execute_AST_while_until(struct AST *tree, int val_cond)
+{
+    int return_val = 0;
+    int while_cond = val_cond;
+
+    struct linked_node *child = tree->linked_list->head;
+    struct AST *cond = child->data;
+
+    child = child->next;
+    struct AST *bloc = child->data;
+
+    while (while_cond == val_cond)
+    {
+        while_cond = execute_AST(cond); // check condition
+
+        if (while_cond == val_cond)
+            return_val = execute_AST(bloc); // exec commands
+    }    
+
+    return return_val;
+}
+
+int execute_AST_operator(struct AST *tree)
+{
+    char *op = tree->value->symbol;
+    int ret_val = 0;
+    int ret_val2 = 0;
+
+    struct linked_node *node = tree->linked_list->head;
+    struct AST *child = node->data;
+    struct AST *child2;
+
+    if (node->next)
+        child2 = node->next->data;
+
+    if (!strcmp("!", op)) // ! condition
+    {
+        ret_val = ! execute_AST(child);
+    }
+    else if (!strcmp("&&", op)) // && condition
+    {
+        ret_val = execute_AST(child);
+        ret_val2 = execute_AST(child2);
+
+        if(ret_val == 0 && ret_val2 == 0)
+            ret_val = 0;
+        else
+            ret_val = 1;
+    }
+    else if (!strcmp("||", op)) // || condition
+    {
+        ret_val = execute_AST(child);
+        ret_val2 = execute_AST(child2);
+
+        if(ret_val == 1 && ret_val2 == 1)
+            ret_val = 1;
+        else
+            ret_val = 0;
+    }
+
+
+    return ret_val;
+}
+
 int execute_AST(struct AST *tree)
 {
     if (!tree)
@@ -86,11 +154,20 @@ int execute_AST(struct AST *tree)
         case SEQUENCE:
             ret_val = execute_AST(child);
             break;
+        case OPERATOR:
+            ret_val = execute_AST_operator(child);
+            break;
         case CONDITION: {
             switch (child->value->type)
             {
             case IF:
                 ret_val = execute_AST_if(child);
+                break;
+            case WHILE:
+                ret_val = execute_AST_while_until(child, 0); // while is true
+                break;
+            case UNTIL:
+                ret_val = execute_AST_while_until(child, 1); // until is true
                 break;
             default:
                 break;
