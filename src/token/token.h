@@ -24,6 +24,7 @@ enum token_type
     ESAC,
     IF,
     THEN,
+    ELIF,
     ELSE,
     FI,
     DOUBLE_SEMICOLON,
@@ -51,6 +52,7 @@ enum token_type
     [ESAC] = "esac", \
     [IF] = "if", \
     [THEN] = "then", \
+    [ELIF] = "elif", \
     [ELSE] = "else", \
     [FI] = "fi", \
     [DOUBLE_SEMICOLON] = ";;", \
