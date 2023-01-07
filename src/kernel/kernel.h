@@ -12,7 +12,7 @@
 // launches the shell with the defined options in launch_options.h
 // if launched in interactive mode, file_script = NULL
 // returns 1 if an error occurred, else 0
-int launch_shell(int options, char *file_script);
+int launch_shell(int options, char *file_script, char *input);
 
 // function that will call each individual functions from the other modules
 // in order to execute a shell command

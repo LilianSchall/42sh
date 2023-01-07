@@ -33,11 +33,17 @@ int launch_script_mode(int options, char *file_script)
     char *input = get_file_content(file_script);
 
     // execute input
-    return execute_shell_command(options, input);
+    int status_code = execute_shell_command(options, input);
+    free(input);
+
+    return status_code;
 }
 
-int launch_shell(int options, char *file_script)
+int launch_shell(int options, char *file_script, char *input)
 {
+    if (input)
+        return execute_shell_command(options, input);
+
     if (!file_script)
         return launch_interactive_mode(options);
     return launch_script_mode(options, file_script);
@@ -46,11 +52,21 @@ int launch_shell(int options, char *file_script)
 int execute_shell_command(int options, char *input)
 {
     // get token_list based on given input
+    
+    if (is_option_activated(options, VERBOSE))
+        puts("parsing token_list");
+
     struct linked_list *token_list = build_token_list(input);
+
+    if (is_option_activated(options, VERBOSE))
+        puts("building AST");
 
     // build AST based on token_list
     struct AST *tree = build_shell_AST(token_list);
-    
+ 
+    if (is_option_activated(options, VERBOSE))
+        puts("executing AST");   
+
     // execute tree
     int status_code = execute_AST(tree);
 
