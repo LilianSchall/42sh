@@ -49,7 +49,7 @@ Test(lexer, test_echo_foo_semicolon)
 
 Test(lexer, if_echo_true_then_echo_foo_fi)
 {
-    char input[] = "if echo true; then echo foo; fi";
+    char input[] = "if echo a\n then echo foo; fi";
 
     struct linked_list *token_list = build_token_list(input);
 
@@ -57,8 +57,8 @@ Test(lexer, if_echo_true_then_echo_foo_fi)
     
     test_token(&node, "if", IF);
     test_token(&node, "echo", WORD);
-    test_token(&node, "true", WORD);
-    test_token(&node, ";", SEMICOLON);
+    test_token(&node, "a", WORD);
+    test_token(&node, "\n", NEWLINE);
     test_token(&node, "then", THEN);
     test_token(&node, "echo", WORD);
     test_token(&node, "foo", WORD);

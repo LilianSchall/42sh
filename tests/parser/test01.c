@@ -50,3 +50,19 @@ Test(parser, parse_echo_foo)
     free_AST(tree);
     free_list(token_list);
 }
+
+Test(parser, parse_echo_foo_foo)
+{
+    char input[] = "echo foo foo";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct AST *tree = build_shell_AST(token_list);
+
+    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, ARG };
+
+    test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
+
+    free_AST(tree);
+    free_list(token_list);
+}
