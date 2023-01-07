@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // function that returns the content of a filename
 char *get_file_content(char *filename);
