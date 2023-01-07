@@ -52,5 +52,10 @@ int execute_shell_command(int options, char *input)
     struct AST *tree = build_shell_AST(token_list);
     
     // execute tree
-    return execute_AST(tree);
+    int status_code = execute_AST(tree);
+
+    free_list(token_list);
+    free_AST(tree);
+
+    return status_code;
 }
