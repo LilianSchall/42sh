@@ -10,6 +10,9 @@
 
 // #include "exec_echo.h"
 
+// execute the given COMMAND AST
+int execute_AST_cmd(struct AST *tree);
+
 // execute the given AST
 // returns the status code after executing the AST
 // returns 127 if a command is unknown

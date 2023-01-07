@@ -93,6 +93,21 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
+
+int execute_AST_redirection(struct AST *tree)
+{
+    char *redirection_type = tree->value->symbol;
+
+    int return_val = 0;
+
+    if (!strcmp(">", redirection_type))
+    {
+        return_val = exec_sup_redirection(tree);
+    }
+    
+    return return_val;
+}
+
 int execute_AST_operator(struct AST *tree)
 {
     char *op = tree->value->symbol;
@@ -148,6 +163,9 @@ int execute_AST(struct AST *tree)
         struct AST *child = node->data;
         switch (child->type)
         {
+        case REDIRECTION:
+            ret_val = execute_AST_redirection(child);
+            break;
         case COMMAND:
             ret_val = execute_AST_cmd(child);
             break;

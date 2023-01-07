@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+
 
 #include "AST/AST.h"
 #include "commons/commons.h"
@@ -28,5 +30,8 @@ int true_fn(int argc, char **argv);
 
 // return 1
 int false_fn(int argc, char **argv);
+
+// execute the '>' AST redirection
+int exec_sup_redirection(struct AST *tree);
 
 #endif /* !BUILTIN_H */
