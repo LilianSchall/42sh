@@ -177,6 +177,9 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
     // add command name
     ll_ast = list_append(ll_ast, AST->value->symbol);
 
+    if ( ! AST->linked_list)
+        return ll_ast;
+
     struct linked_node *node = AST->linked_list->head;
 
     struct AST *ast_temp;
