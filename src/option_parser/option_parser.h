@@ -12,7 +12,7 @@
 // if a filename for a script is given, store the filename into filename
 // else set it to NULL
 // if an error occurred, returns -1
-int parse_given_args(int argc, char **argv, char **filename);
+int parse_given_args(int argc, char **argv, char **filename, char **input);
 
 // this function checks bitwisely if a current mode is activated in options
 bool is_option_activated(int options, int mode);

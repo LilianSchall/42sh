@@ -2,7 +2,8 @@
 #define LAUNCH_OPTIONS_H
 
 #define SCRIPT_READING 0x1
-#define PRETTY_PRINT 0x2
-#define VERBOSE 0x4
+#define INPUT_READING 0x2
+#define PRETTY_PRINT 0x4
+#define VERBOSE 0x8
 
 #endif /* !LAUNCH_OPTIONS */
