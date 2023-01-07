@@ -27,4 +27,4 @@ $(TEST_SRC): %.o: %.c
 	$(CC) $(CFLAGS) -lcriterion $< -o $@
 
 clean:
-	$(RM) -f $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE)
+	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE)
