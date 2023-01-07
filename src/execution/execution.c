@@ -32,11 +32,11 @@ int execute_AST_cmd(struct AST *tree)
     }
     else if (!strcmp("true", cmd)) // true
     {
-        ret_val = true_fn();
+        ret_val = true_fn(argc, argv);
     }
     else if (!strcmp("false", cmd)) // false
     {
-        ret_val = false_fn();
+        ret_val = false_fn(argc, argv);
     }
     else 
     {
@@ -55,13 +55,13 @@ int execute_AST_if(struct AST *tree)
     struct AST *cond = child->data;
     child = child->next;
     struct AST *t = child->data;
-    if (execute_AST(cond))
+    if (execute_AST(cond) == 0) // cond is true, we execute the 'then'
     {
         return execute_AST(t);
     }
     else
     {
-        if (child->next)
+        if (child->next) // cond is false, we execute the 'else'
             return execute_AST(child->next->data);
     }
     return 0;
