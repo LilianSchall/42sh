@@ -8,6 +8,10 @@
 
 enum AST_type
 {
+    REDIRECTION,
+    OPERATOR, // ! && ||
+    ITER, // things to iter on a for loop
+    ASSIGNMENT,  // = 
     COMMAND,
     ARG,
     SEQUENCE,
