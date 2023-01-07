@@ -3,7 +3,6 @@ src = files(
   'option_parser/option_parser.c',
   'linked_list/linked_list.c',
   'kernel/kernel.c',
-  'expansion/expansion.c',
   'parser/parser.c',
   'execution/execution.c',
   'commons/commons.c',

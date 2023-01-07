@@ -12,7 +12,11 @@ TEST_OBJ = $(TEST_SRC:.c=.o)
 EXE = 42sh
 TEST_EXE = testsuite
 
-all: $(EXE)
+all: build
+
+build:
+	meson setup build
+	ninja -C build
 
 $(EXE): $(SRC_OBJ) $(MAIN_OBJ)
 	$(CC) -o $(EXE) $^
