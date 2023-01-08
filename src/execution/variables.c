@@ -1,5 +1,7 @@
 #include "variables.h"
 
+static struct linked_list *variables = NULL;
+
 struct var *new_var(char *name, char *value)
 {
     struct var *v = malloc(sizeof(struct var));
@@ -17,7 +19,16 @@ void free_var(struct var *var)
     free(var);
 }
 
-static struct linked_list *variables = NULL;
+void print_variables(void)
+{
+    if (!variables)
+        return;
+    for (struct linked_node *v = variables->head; v; v = v->next)
+    {
+        struct var *variable = v->data;
+        printf("%s: %s\n", variable->name, variable->value);
+    }
+}
 
 int assign_var(char *name, char *val)
 {
@@ -36,4 +47,19 @@ int assign_var(char *name, char *val)
     struct var *n_var = new_var(name, val);
     variables = list_append(variables, n_var);
     return 0;
+}
+
+char *get_var(char *name)
+{
+    if (!variables)
+        return NULL;
+    for (struct linked_node *v = variables->head; v; v = v->next)
+    {
+        struct var *variable = v->data;
+        if (!strcmp(variable->name, name))
+        {
+            return variable->value;
+        }
+    }
+    return NULL;
 }

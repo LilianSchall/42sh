@@ -163,6 +163,25 @@ int execute_AST_operator(struct AST *tree)
     return ret_val;
 }
 
+int execute_AST_assignment(struct AST *tree)
+{
+    int ret_val = 1;
+    struct linked_node *child = tree->linked_list->head;
+    struct AST *var_name_ast = child->data;
+    char *var_name = var_name_ast->value->symbol; // variable name is the token value of the ast
+    struct AST *var_value_ast = child->next->data; //taking second child(cant be NULL)
+    
+    if (var_value_ast->type == ARG)
+    {
+        ret_val = assign_var(var_name, var_value_ast->value->symbol);
+    }
+    else // the child is a sequence -> subshell and take stdout as value
+    {
+        //TODO in step 3 or 4
+    }
+    return ret_val;
+}
+
 int execute_AST(struct AST *tree)
 {
     if (!tree)
