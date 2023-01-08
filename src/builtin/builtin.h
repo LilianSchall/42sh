@@ -31,7 +31,7 @@ int true_fn(int argc, char **argv);
 // return 1
 int false_fn(int argc, char **argv);
 
-// execute the '>' AST redirection
-int exec_sup_redirection(struct AST *tree);
-
+// execute the '>' AST redirection if redirect_value = 0
+// execute the '>>' AST redirection if redirect_value = 1
+int exec_sup_redirection(struct AST *tree, int append);
 #endif /* !BUILTIN_H */

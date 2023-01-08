@@ -5,7 +5,7 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
     int file_fd;
     // open our file
     if (bool_edit)
-        file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_APPEND, 0755);
+        file_fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
     else
         file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
 
@@ -26,6 +26,8 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
     int return_val = 0;
     if (tree->type == COMMAND)
             execute_AST_cmd(tree);
+    if (tree->type == REDIRECTION)
+            execute_AST_redirection(tree);
 
     fflush(stdout);
     // end stuff
@@ -41,7 +43,7 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
 }
 
 
-int exec_sup_redirection(struct AST *tree)
+int exec_sup_redirection(struct AST *tree, int append)
 {
     int return_val = 0;
     char *filename;
@@ -53,7 +55,7 @@ int exec_sup_redirection(struct AST *tree)
     if (child2->type == ARG)
     {
         filename = child2->value->symbol;
-        return_val = redirection_stdout(child, filename, 0);
+        return_val = redirection_stdout(child, filename, append);
     }
 
     return return_val;

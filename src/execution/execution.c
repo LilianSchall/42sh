@@ -102,7 +102,11 @@ int execute_AST_redirection(struct AST *tree)
 
     if (!strcmp(">", redirection_type))
     {
-        return_val = exec_sup_redirection(tree);
+        return_val = exec_sup_redirection(tree, 0);
+    }
+    else if (!strcmp(">>", redirection_type))
+    {
+        return_val = exec_sup_redirection(tree, 1);
     }
     
     return return_val;

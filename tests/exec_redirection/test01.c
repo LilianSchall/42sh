@@ -2,6 +2,7 @@
 #include "builtin/builtin.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
+#include "io_backend/io_backend.h"
 
 #include <stdio.h>
 #include <criterion/criterion.h>
@@ -59,6 +60,10 @@ Test(exec_redirection, redirection_sup_1, .init = redirect_2)
 {
     exec_redirection_1();
     fflush(stdout);
+
+    char * result_2 = get_file_content("testRedirect.txt");
+
+    cr_assert_str_eq(result_2, "writting in file!\n");
 
     cr_assert_stdout_eq_str("in stdout!\n");
 }
