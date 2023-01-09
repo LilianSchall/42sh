@@ -40,7 +40,7 @@ int assign_var(char *name, char *val)
         if (!strcmp(variable->name, name))
         {
             free(variable->value);
-            variable->value = val;
+            variable->value = strdup(val);
             return 1;
         }
     }
@@ -62,4 +62,47 @@ char *get_var(char *name)
         }
     }
     return NULL;
+}
+
+void replace_var(char **str)
+{
+    if (!variables)
+        return;
+
+    // Iterate through each character in the string
+    char *p = *str;
+    while (*p)
+    {
+        if (*p == '$')
+        {
+            // Find the variable name
+            char *var_name = p + 1;
+            char *end = var_name;
+            while (*end && *end != ' ' && *end != '$')
+                end++;
+
+            // Find the variable value
+            struct linked_node *cur = variables->head;
+            struct var *v = cur->data;
+            while (cur && (strncmp(v->name, var_name, end - var_name) != 0))
+            {
+                cur = cur->next;
+				if (cur)
+                    v = cur->data;
+            }
+            if (cur) {
+                // Replace the variable with its value
+                int len = strlen(v->value);
+                memmove(p + len, p + (end - p), strlen(p) - (end - p) + 1);
+                memcpy(p, v->value, len);
+                p += len;
+            } else {
+                // No variable found, remove the $variable
+                memmove(p, p + (end - p), strlen(p) - (end - p) + 1);
+            }
+        } else {
+            // No variable, move to the next character
+            p++;
+        }
+    }
 }

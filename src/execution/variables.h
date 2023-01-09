@@ -14,5 +14,6 @@ struct var
 void print_variables(void);
 int assign_var (char *var, char *val);
 char *get_var(char *name);
+void replace_var(char **str);
 
 #endif // VARIABLES_H
