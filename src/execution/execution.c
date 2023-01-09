@@ -99,18 +99,31 @@ int execute_AST_redirection(struct AST *tree)
     char *redirection_type = tree->value->symbol;
 
     int return_val = 0;
+    char *filename;
+
+    struct linked_node *node = tree->linked_list->head;
+    struct AST *child = node->data; // command
+    struct AST *child2 = node->next->data; // redirection file
+
 
     if (!strcmp(">", redirection_type))
     {
-        return_val = exec_sup_redirection(tree, 0);
+        filename = child2->value->symbol;
+        return_val = redirection_stdout(child, filename, 0);
     }
     else if (!strcmp(">>", redirection_type))
     {
-        return_val = exec_sup_redirection(tree, 1);
+        filename = child2->value->symbol;
+        return_val = redirection_stdout(child, filename, 1);
     }
     else if (!strcmp(">&", redirection_type))
     {
-        return_val = exec_sup_and_redirection(tree);
+        filename = child2->value->symbol;
+        return_val = redirection_stderr_stdout(child, filename);
+    }
+    else if (!strcmp("<", redirection_type))
+    {
+        return_val = exec_inf_redirection(tree);
     }
     
     return return_val;

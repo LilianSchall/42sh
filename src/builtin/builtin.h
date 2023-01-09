@@ -12,6 +12,7 @@
 #include "execution/execution.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
+#include "io_backend/io_backend.h"
 
 // struct to stock echo option
 struct echo_option
@@ -31,12 +32,15 @@ int true_fn(int argc, char **argv);
 // return 1
 int false_fn(int argc, char **argv);
 
-// execute the '>' AST redirection if redirect_value = 0
-// execute the '>>' AST redirection if redirect_value = 1
-int exec_sup_redirection(struct AST *tree, int append);
-
-
-// do the >& redirection
+// do the < redirection
 // first do the stderr redirection then the stdout redirection
-int exec_sup_and_redirection(struct AST *tree);
+int exec_inf_redirection(struct AST *tree);
+
+
+// do the >& AST redirection
+int redirection_stderr_stdout(struct AST *tree, char *filename);
+
+// do the > AST redirection if bool_edit = 0
+// do the >> AST redirection if bool_edit = 1
+int redirection_stdout(struct AST *tree, char *filename, int bool_edit);
 #endif /* !BUILTIN_H */

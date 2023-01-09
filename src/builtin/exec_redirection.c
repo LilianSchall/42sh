@@ -1,5 +1,6 @@
 #include "builtin/builtin.h"
 
+// redirect stdout & stderr into file named filename
 int redirection_stderr_stdout(struct AST *tree, char *filename)
 {
     int file_fd;
@@ -28,9 +29,9 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
     // do stuff
     int return_val = 0;
     if (tree->type == COMMAND)
-            execute_AST_cmd(tree);
+            return_val = execute_AST_cmd(tree);
     if (tree->type == REDIRECTION)
-            execute_AST_redirection(tree);
+            return_val = execute_AST_redirection(tree);
 
     fflush(stderr);
     fflush(stdout);
@@ -48,8 +49,10 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
     return return_val;
 }
 
+// redirect stdout into file named filename
 int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
 {
+
     int file_fd;
     // open our file
     if (bool_edit)
@@ -73,9 +76,9 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
     // do stuff
     int return_val = 0;
     if (tree->type == COMMAND)
-            execute_AST_cmd(tree);
+            return_val = execute_AST_cmd(tree);
     if (tree->type == REDIRECTION)
-            execute_AST_redirection(tree);
+            return_val = execute_AST_redirection(tree);
 
     fflush(stdout);
     // end stuff
@@ -90,42 +93,37 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
     return return_val;
 }
 
-// do the > redirection if append = 0
-// do the >> redirection if append = 0
-int exec_sup_redirection(struct AST *tree, int append)
+// add the AST tree 'arg' into the child list of the first COMMAND AST found
+void add_arg_command_ast(struct AST *tree, struct AST *arg)
 {
-    int return_val = 0;
-    char *filename;
-
-    struct linked_node *node = tree->linked_list->head;
-    struct AST *child = node->data; // command
-    struct AST *child2 = node->next->data; // redirection file
-
-    if (child2->type == ARG)
+    if(tree->type == COMMAND)
     {
-        filename = child2->value->symbol;
-        return_val = redirection_stdout(child, filename, append);
+        tree->linked_list = list_append(tree->linked_list, arg);
+        return;
     }
-
-    return return_val;
+    
+    add_arg_command_ast(tree->linked_list->head->data, arg);
 }
 
-// do the >& redirection
-// first do the stderr redirection then the stdout redirection
-int exec_sup_and_redirection(struct AST *tree)
+// do the < redirection
+int exec_inf_redirection(struct AST *tree)
 {
     int return_val = 0;
-    char *filename;
 
     struct linked_node *node = tree->linked_list->head;
     struct AST *child = node->data; // command
     struct AST *child2 = node->next->data; // redirection file
 
-    if (child2->type == ARG)
-    {
-        filename = child2->value->symbol;
-        return_val = redirection_stderr_stdout(child, filename);
-    }
+    // move AST child2 into link_list of AST child
+    add_arg_command_ast(child, child2);
+
+    // remove it from the 'tree' children
+    node->next->data = NULL;
+
+    if (child->type == COMMAND)
+            return_val = execute_AST_cmd(child);
+    if (child->type == REDIRECTION)
+            return_val = execute_AST_redirection(child);
 
     return return_val;
 }

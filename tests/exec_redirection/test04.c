@@ -49,6 +49,9 @@ void redirect_sup(void)
 
 Test(exec_redirection, redirection_sup_sup, .init = redirect_sup)
 {
+
+    int file_fd = open("append.txt", O_CREAT | O_TRUNC | O_WRONLY, 0755);
+    close(file_fd);
     exec_redirection_4();
     fflush(stdout);
     exec_redirection_4();
