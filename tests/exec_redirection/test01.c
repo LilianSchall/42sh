@@ -19,7 +19,7 @@ int exec_redirection_1(void)
     struct AST *ast_echo = new_AST(new_token(copy_string("echo"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
     
 
-    struct AST *ast_file = new_AST(new_token(copy_string("testRedirect.txt"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
+    struct AST *ast_file = new_AST(new_token(copy_string("testRedirect1.txt"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
     
     struct linked_list *ll_ast2 = new_list();
     ll_ast2 = list_append(ll_ast2, ast_echo);
@@ -61,7 +61,7 @@ Test(exec_redirection, redirection_sup_1, .init = redirect_2)
     exec_redirection_1();
     fflush(stdout);
 
-    char * result_2 = get_file_content("testRedirect.txt");
+    char * result_2 = get_file_content("testRedirect1.txt");
 
     cr_assert_str_eq(result_2, "writting in file!\n");
 

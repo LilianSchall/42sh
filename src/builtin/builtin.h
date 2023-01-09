@@ -43,4 +43,16 @@ int redirection_stderr_stdout(struct AST *tree, char *filename);
 // do the > AST redirection if bool_edit = 0
 // do the >> AST redirection if bool_edit = 1
 int redirection_stdout(struct AST *tree, char *filename, int bool_edit);
+
+// do the > AST redirection if bool_edit = 0
+// do the >> AST redirection if bool_edit = 1
+int redirection_stderr(struct AST *tree, char *filename, int bool_edit);
+
+// do the > AST redirection if bool_edit = 0
+// do the >> AST redirection if bool_edit = 1
+int redirection_stdin(struct AST *tree, char *filename, int bool_edit);
+
+// redirect fd_from file descriptor into into fd_to file descriptor
+int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to);
+
 #endif /* !BUILTIN_H */
