@@ -12,11 +12,17 @@ struct var *new_var(char *name, char *value)
     return v;
 }
 
-void free_var(struct var *var)
+void free_var(void *v)
 {
+    struct var *var = v;
     free(var->name);
     free(var->value);
     free(var);
+}
+
+void free_variables(void)
+{
+    deep_free_list(variables, free_var);
 }
 
 void print_variables(void)
