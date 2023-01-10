@@ -5,6 +5,7 @@ src = files(
   'kernel/kernel.c',
   'parser/parser.c',
   'execution/execution.c',
+  'execution/variables.c',
   'commons/commons.c',
   'AST/AST.c',
   'lexer/lexer.c',

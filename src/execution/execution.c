@@ -93,6 +93,34 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
+int execute_AST_for(struct AST *tree)
+{
+    int ret_val = 0;
+    struct linked_node *child = tree->linked_list->head;
+    struct AST *ast_arg = child->data;
+    char *var_name = ast_arg->value->symbol;
+    child = child->next; // should not be NULL (check here if error occurs)
+    struct AST *ast_iter_seq = child->data;
+    child = child->next; // should not be NULL either
+    struct AST *ast_seq = child->data;
+    if (ast_iter_seq->type == ITER)
+    {
+        struct linked_node *iter_child = ast_iter_seq->linked_list->head;
+        while (iter_child)
+        {
+            struct AST *iter_arg = iter_child->data;
+            assign_var(var_name, iter_arg->value->symbol);
+            ret_val = execute_AST(ast_seq);
+            iter_child = iter_child->next;
+        }
+    }
+    else // the tree is a SEQUENCE, need to exec in a subshell
+    {
+        // TODO in step 3
+    }
+    return ret_val;
+}
+
 int execute_AST_operator(struct AST *tree)
 {
     char *op = tree->value->symbol;
@@ -141,7 +169,8 @@ int execute_AST_assignment(struct AST *tree)
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
     char *var_name = var_name_ast->value->symbol; // variable name is the token value of the ast
-    struct AST *var_value_ast = child->next->data; //taking second child(cant be NULL)
+    
+    struct AST *var_value_ast = child->next->data; // taking second child(cant be NULL)
     
     if (var_value_ast->type == ARG)
     {
@@ -188,10 +217,17 @@ int execute_AST(struct AST *tree)
             case UNTIL:
                 ret_val = execute_AST_while_until(child, 1); // until is true
                 break;
+            case FOR:
+                ret_val = execute_AST_for(child);
+                break;
             default:
                 break;
             }
         }
+            break;
+        case ASSIGNMENT:
+            ret_val = execute_AST_assignment(child);
+            break;
         default:
             break;
         }
