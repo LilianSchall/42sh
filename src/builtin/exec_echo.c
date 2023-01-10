@@ -77,7 +77,7 @@ int print_echo_words(int *pos, int argc, char **argv,
 
     if (echo_option->option_E || !echo_option->option_e)
     {
-        printf(word);
+        printf("%s", word);
     }
     else // apply -e
     {
