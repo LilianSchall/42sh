@@ -90,7 +90,7 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 // redirect stdout into file named filename
 int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
 {
-    if(access(filename, F_OK) == 0 && bool_edit == 0)
+    if(0) // need to check if set -C is activate
     {   // if file already exist, we can't overwrite it
         fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
         return 2;
@@ -138,7 +138,7 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
 // redirect stdin into file named filename
 int redirection_stdin(struct AST *tree, char *filename, int bool_edit)
 {
-    if(access(filename, F_OK) == 0 && bool_edit == 0)
+    if(0) // need to check if set -C is activate
     {   // if file already exist, we can't overwrite it
         fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
         return 2;
@@ -185,7 +185,7 @@ int redirection_stdin(struct AST *tree, char *filename, int bool_edit)
 
 int redirection_stderr(struct AST *tree, char *filename, int bool_edit)
 {
-    if(access(filename, F_OK) == 0 && bool_edit == 0)
+    if(0) // need to check if set -C is activate
     {   // if file already exist, we can't overwrite it
         fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
         return 2;

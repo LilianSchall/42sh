@@ -116,7 +116,7 @@ int execute_sup_and_red(struct AST *tree, char *filename, char *type)
 
 int execute_AST_redirection(struct AST *tree)
 {
-    char *redirection_type = tree->value->symbol;
+    char *redi_type = tree->value->symbol;
 
     int return_val = 0;
     char *filename;
@@ -130,38 +130,39 @@ int execute_AST_redirection(struct AST *tree)
         filename = child2->value->symbol;
 
 
-    if (!strcmp("0>", redirection_type))
+    if (!strcmp("0>", redi_type) || !strcmp("0>|", redi_type))
     {   // > redirect stin in file
         return_val = redirection_stdin(child, filename, 0); 
     }
-    else if (!strcmp("1>", redirection_type) || !strcmp(">", redirection_type))
+    else if (!strcmp("1>", redi_type) || !strcmp(">", redi_type)
+        || !strcmp("1>|", redi_type) || !strcmp(">|", redi_type))
     {   // > redirect stdout in file
         return_val = redirection_stdout(child, filename, 0); 
     }
-    else if (!strcmp("2>", redirection_type))
+    else if (!strcmp("2>", redi_type) || !strcmp("2>|", redi_type))
     {   // > redirect stderr in file
         return_val = redirection_stderr(child, filename, 0);
     }
-    else if (!strcmp("0>>", redirection_type))
+    else if (!strcmp("0>>", redi_type))
     {   // >> redirect stderr in file (append mode)
         return_val = redirection_stdin(child, filename, 1);
     }
-    else if ((!strcmp("1>>", redirection_type)) || 
-                (!strcmp(">>", redirection_type)))
+    else if ((!strcmp("1>>", redi_type)) || 
+                (!strcmp(">>", redi_type)))
     {   // >> redirect stdout in file (append mode)
         return_val = redirection_stdout(child, filename, 1);
     }
-    else if (!strcmp("2>>", redirection_type))
+    else if (!strcmp("2>>", redi_type))
     {   // >> redirect stderr in file (append mode)
         return_val = redirection_stderr(child, filename, 1);
     }
-    else if (!strcmp(">&", redirection_type) || 
-            !strcmp("1>&", redirection_type) ||
-            !strcmp("2>&", redirection_type))
+    else if (!strcmp(">&", redi_type) || 
+            !strcmp("1>&", redi_type) ||
+            !strcmp("2>&", redi_type))
     {   // {None;  1; 2}>& redirect stdout or stderr or file
-        return_val = execute_sup_and_red(child, filename, redirection_type);
+        return_val = execute_sup_and_red(child, filename, redi_type);
     }
-    else if (!strcmp("<", redirection_type))
+    else if (!strcmp("<", redi_type))
     {
         return_val = exec_inf_redirection(tree);
     }
