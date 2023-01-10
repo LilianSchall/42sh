@@ -8,58 +8,76 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-void redirect_sup_4(void)
+// cat < REAME.md > text08.txt
+
+void redirect_8(void)
 {
     cr_redirect_stdout();
+    cr_redirect_stderr();
 }
 
-
-Test(exec_redirection, redirection_inf_sup, .init = redirect_sup_4)
+Test(exec_redirection, redirection_8, .init = redirect_8)
 {
-    // cat < REAME.md > double.txt
-
     struct linked_list *ll_ast = new_list();
-    
+
     struct AST *ast_echo = new_AST(new_token(copy_string("cat"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
     
+    struct linked_list *ll_command = new_list();
+    ll_command = list_append(ll_command, ast_echo);
 
-    struct AST *ast_file = new_AST(new_token(copy_string("double.txt"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
-    
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast_echo);
-    ll_ast2 = list_append(ll_ast2, ast_file);
-    
-    struct AST *ast_redirect = new_AST(new_token(copy_string(">"), (enum token_type) WORD), (enum AST_type) REDIRECTION, ll_ast2);
+    struct AST *ast_seq_c = new_AST(new_token(copy_string(""), (enum token_type) COMMAND), 
+                (enum AST_type) SEQUENCE, ll_command);
 
-    
-    
-    struct AST *ast_file2 = new_AST(new_token(copy_string("README.md"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
-    
 
-    struct linked_list *ll_seq3 = new_list();
+    struct AST *ast_fd_from = new_AST(new_token(copy_string("1"), (enum token_type) IO_NUMBER), 
+    (enum AST_type) ARG, NULL);
 
-    ll_seq3 = list_append(ll_seq3, ast_redirect);
-    ll_seq3 = list_append(ll_seq3, ast_file2);
-
-    struct AST *ast_redirect2 = new_AST(new_token(copy_string("<"), (enum token_type) WORD), (enum AST_type) REDIRECTION, ll_seq3);
+    struct AST *ast_fd_to = new_AST(new_token(copy_string("test81.txt"), (enum token_type) WORD), 
+    (enum AST_type) ARG, NULL);
+    
+    struct linked_list *ll_redir = new_list();
+    ll_redir = list_append(ll_redir, ast_fd_from);
+    ll_redir = list_append(ll_redir, ast_seq_c);
+    ll_redir = list_append(ll_redir, ast_fd_to);
 
     
+    struct AST *ast_redirect = new_AST(new_token(copy_string(">"), (enum token_type) R_SUP), 
+    (enum AST_type) REDIRECTION, ll_redir);
 
-    struct linked_list *ll_seq2= new_list();
-    ll_seq2 = list_append(ll_seq2, ast_redirect2);
+
+    struct AST *ast_fd_from2 = new_AST(new_token(copy_string("0"), (enum token_type) IO_NUMBER), 
+    (enum AST_type) ARG, NULL);
+
+    struct AST *ast_fd_to2 = new_AST(new_token(copy_string("README.md"), (enum token_type) WORD), 
+    (enum AST_type) ARG, NULL);
+    
+    struct linked_list *ll_redir2 = new_list();
+    ll_redir2 = list_append(ll_redir2, ast_fd_from2);
+    ll_redir2 = list_append(ll_redir2, ast_redirect);
+    ll_redir2 = list_append(ll_redir2, ast_fd_to2);
+
+    struct AST *ast_redirect2 = new_AST(new_token(copy_string("<>>"), (enum token_type) R_INF), 
+    (enum AST_type) REDIRECTION, ll_redir2);
+
+    struct linked_list *ll_ast_2 = new_list();
+    ll_ast_2 = list_append(ll_ast_2, ast_redirect2);
+    
+   
+    struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) COMMAND), 
+    (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    struct AST *ast_seq = new_AST(new_token(copy_string(""), (enum token_type) COMMAND), (enum AST_type) SEQUENCE, ll_seq2);
 
-    execute_AST(ast_seq);
-    free_AST(ast_seq);
+    execute_AST(ast_final);
 
-    fflush(stdout);
+    free_AST(ast_final);
+
     cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("");
 
-    char * result_2 = get_file_content("double.txt");
+    char * result_1 = get_file_content("test81.txt");
 
-    cr_assert_str_eq(result_2, "# 42sh");
+    cr_assert_str_eq(result_1, "# 42sh");
 
-    free(result_2);
+    free(result_1);
 }

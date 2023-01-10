@@ -62,205 +62,81 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
         close(from_dup);
         return 2;
     }
-
-    // do stuff
+    // excute the SEQUENCE or REDIRECTION  AST
     int return_val = 0;
-    if (tree->type == COMMAND)
-            return_val = execute_AST_cmd(tree);
+    if (tree->type == SEQUENCE)
+            return_val = execute_AST(tree);
     if (tree->type == REDIRECTION)
             return_val = execute_AST_redirection(tree);
-
-    if(fd_to == 0)
-        fflush(stdin);
-    if(fd_to == 1)
-        fflush(stdout);
-    if(fd_to == 2)
-        fflush(stderr);
 
     // restore fd
     dup2(from_dup, fd_from);
-
     // close all file descriptor
     close(from_dup);
-
     return return_val;
 }
 
-
-// redirect stdout into file named filename
-int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
+// return the file descriptor
+// return the FD if tree as a token IO_NUMBER
+// return the FD of the file opened with the good option depend on the r_type 
+int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 {
-    if(0) // need to check if set -C is activate
-    {   // if file already exist, we can't overwrite it
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
-        return 2;
-    }
-    int file_fd;
-    // open our file
-    if (bool_edit)
-        file_fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
-    else
-        file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+    if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
+        return tree->value->symbol[0] - '0';
 
-    if (file_fd == -1)
-        return 2;
-    
-    // duplicate STDOUT file descriptor
-    int stdout_dup = dup(STDOUT_FILENO);
+    char *filename = tree->value->symbol; // get the filename 
 
-    // put file_fd into stdout
-    if (dup2(file_fd, STDOUT_FILENO) == -1)
+    if (r_type == R_SUP_SUP) // >>
+        return open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
+
+    if (r_type == R_SUP_PIPE)   //  >| 
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+
+    if (r_type == R_SUP_AND)  // >&
     {
-        close(file_fd);
+        if(1) // need to add set -C check
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
+                tree->value->symbol);
         return 2;
     }
-
-    // do stuff
-    int return_val = 0;
-    if (tree->type == COMMAND)
-            return_val = execute_AST_cmd(tree);
-    if (tree->type == REDIRECTION)
-            return_val = execute_AST_redirection(tree);
-
-    fflush(stdout);
-    // end stuff
-
-    // restore stdout
-    dup2(stdout_dup, STDOUT_FILENO);
-
-    // close all file descriptor
-    close(file_fd);
-    close(stdout_dup);
-
-    return return_val;
-}
-
-// redirect stdin into file named filename
-int redirection_stdin(struct AST *tree, char *filename, int bool_edit)
-{
-    if(0) // need to check if set -C is activate
-    {   // if file already exist, we can't overwrite it
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
-        return 2;
-    }
-    int file_fd;
-    // open our file
-    if (bool_edit)
-        file_fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
-    else
-        file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
-
-    if (file_fd == -1)
-        return 2;
-    
-    // duplicate stdin file descriptor
-    int stdin_dup = dup(STDIN_FILENO);
-
-    // put file_fd into stdin
-    if (dup2(file_fd, STDIN_FILENO) == -1)
+    if (r_type == R_SUP)  // >
     {
-        close(file_fd);
+        if(1) // need to add set -C check
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
+                tree->value->symbol);
         return 2;
     }
-
-    // do stuff
-    int return_val = 0;
-    if (tree->type == COMMAND)
-            return_val = execute_AST_cmd(tree);
-    if (tree->type == REDIRECTION)
-            return_val = execute_AST_redirection(tree);
-
-    fflush(stdin);
-    // end stuff
-
-    // restore stdin
-    dup2(stdin_dup, STDIN_FILENO);
-
-    // close all file descriptor
-    close(file_fd);
-    close(stdin_dup);
-
-    return return_val;
-}
-
-int redirection_stderr(struct AST *tree, char *filename, int bool_edit)
-{
-    if(0) // need to check if set -C is activate
-    {   // if file already exist, we can't overwrite it
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
-        return 2;
-    }
-    int file_fd;
-    // open our file
-    if (bool_edit)
-        file_fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
-    else
-        file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
-
-    if (file_fd == -1)
-        return 2;
-    
-    // duplicate STDERR file descriptor
-    int stderr_dup = dup(STDERR_FILENO);
-
-    // put file_fd into stderr
-    if (dup2(file_fd, STDERR_FILENO) == -1)
+    if (r_type == R_INF) // <
     {
-        close(file_fd);
+        if(!access(filename, F_OK)) // need to add set -C check
+            return open(filename, O_RDONLY);
+
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
+                tree->value->symbol);
         return 2;
     }
-
-    // do stuff
-    int return_val = 0;
-    if (tree->type == COMMAND)
-            return_val = execute_AST_cmd(tree);
-    if (tree->type == REDIRECTION)
-            return_val = execute_AST_redirection(tree);
-
-    fflush(stderr);
-    // end stuff
-
-    // restore stderr
-    dup2(stderr_dup, STDERR_FILENO);
-
-    // close all file descriptor
-    close(file_fd);
-    close(stderr_dup);
-
-    return return_val;
-}
-
-// add the AST tree 'arg' into the child list of the first COMMAND AST found
-void add_arg_command_ast(struct AST *tree, struct AST *arg)
-{
-    if(tree->type == COMMAND)
+    if (r_type == R_INF_AND) // <&
     {
-        tree->linked_list = list_append(tree->linked_list, arg);
-        return;
+        if(access(filename, F_OK)) // need to add set -C check
+            return open(filename, O_CREAT | O_RDONLY, 0755);
+
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
+                tree->value->symbol);
+        return 2;
     }
+    if (r_type == R_INF_SUP) // <>
+        return open(filename, O_CREAT | O_RDWR, 0755);
     
-    add_arg_command_ast(tree->linked_list->head->data, arg);
-}
+    return -1;
+}    
 
-// do the < redirection
-int exec_inf_redirection(struct AST *tree)
+// close the file descriptor if tree has NOT a token IO_NUMBER
+void close_fd(int fd, struct AST *tree)
 {
-    int return_val = 0;
-
-    struct linked_node *node = tree->linked_list->head;
-    struct AST *child = node->data; // command
-    struct AST *child2 = node->next->data; // redirection file
-
-    // move AST child2 into link_list of AST child
-    add_arg_command_ast(child, child2);
-
-    // remove it from the 'tree' children
-    node->next->data = NULL;
-
-    if (child->type == COMMAND)
-            return_val = execute_AST_cmd(child);
-    if (child->type == REDIRECTION)
-            return_val = execute_AST_redirection(child);
-
-    return return_val;
+    if(tree->value->type != IO_NUMBER)
+        close(fd);
 }
