@@ -37,7 +37,7 @@ enum token_type
     R_SUP_AND ,     // >&
     R_INF,          // <
     R_INF_AND,      // <&
-    R_INF_SUP       // <>
+    R_INF_SUP,       // <>
     R_PIPE,         // |
     ERROR,
     // TODO redirections token, ENV_VARIABLE ?, ...

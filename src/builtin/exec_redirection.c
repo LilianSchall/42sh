@@ -117,8 +117,10 @@ int redirection_stdout(struct AST *tree, char *filename, int bool_edit)
 
     // do stuff
     int return_val = 0;
-    if (tree->type == SEQUENCE)
-            return_val = execute_AST(tree);
+    if (tree->type == COMMAND)
+            return_val = execute_AST_cmd(tree);
+    if (tree->type == REDIRECTION)
+            return_val = execute_AST_redirection(tree);
 
     fflush(stdout);
     // end stuff
@@ -163,8 +165,10 @@ int redirection_stdin(struct AST *tree, char *filename, int bool_edit)
 
     // do stuff
     int return_val = 0;
-    if (tree->type == SEQUENCE)
-            return_val = execute_AST(tree);
+    if (tree->type == COMMAND)
+            return_val = execute_AST_cmd(tree);
+    if (tree->type == REDIRECTION)
+            return_val = execute_AST_redirection(tree);
 
     fflush(stdin);
     // end stuff
