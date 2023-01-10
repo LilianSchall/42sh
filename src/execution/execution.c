@@ -169,6 +169,7 @@ int execute_AST_assignment(struct AST *tree)
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
     char *var_name = var_name_ast->value->symbol; // variable name is the token value of the ast
+    
     struct AST *var_value_ast = child->next->data; // taking second child(cant be NULL)
     
     if (var_value_ast->type == ARG)
