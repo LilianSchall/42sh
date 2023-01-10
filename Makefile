@@ -14,6 +14,9 @@ TEST_EXE = testsuite
 
 all: build
 
+check: test
+	./testsuite
+
 build:
 	meson setup build
 	ninja -C build
