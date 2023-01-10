@@ -92,83 +92,35 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
-int execute_sup_and_red(struct AST *tree, char *filename, char *type)
-{
-    int return_val = 0;
-    int fd_from = 1;
-
-    if(type[0] == '>')
-        fd_from = 1;
-    else
-        fd_from = type[0] - '0';
-
-    if (!strcmp("1", filename) || !strcmp("2", filename) || !strcmp("0", filename))
-    {
-        return_val = redirection_fd_to_fd(tree, fd_from, filename[0] - '0');
-    }
-    else
-    {
-        return_val = redirection_stderr_stdout(tree, filename);
-    }
-    return return_val;
-}
-
 int execute_AST_redirection(struct AST *tree)
 {
-    char *redi_type = tree->value->symbol;
-
     int return_val = 0;
-    char *filename;
+    enum token_type r_type = tree->value->type;
+
+    struct linked_node *child_list = tree->linked_list->head;
+
+    struct AST *ast_from = child_list->data;
+    struct AST *ast_exec = child_list->next->data;
+    struct AST *ast_to =  child_list->next->next->data;
 
 
-    struct linked_node *node = tree->linked_list->head;
-    struct AST *child = node->data; // command
-    struct AST *child2 = node->next->data; // redirection file
-
-    if(child->value)
-        filename = child2->value->symbol;
+    int fd_from = get_fd_from_ast(ast_from, r_type);
+    if(fd_from == -1)
+        return 2;
 
 
-    if (!strcmp("0>", redi_type) || !strcmp("0>|", redi_type))
-    {   // > redirect stin in file
-        return_val = redirection_stdin(child, filename, 0); 
-    }
-    else if (!strcmp("1>", redi_type) || !strcmp(">", redi_type)
-        || !strcmp("1>|", redi_type) || !strcmp(">|", redi_type))
-    {   // > redirect stdout in file
-        return_val = redirection_stdout(child, filename, 0); 
-    }
-    else if (!strcmp("2>", redi_type) || !strcmp("2>|", redi_type))
-    {   // > redirect stderr in file
-        return_val = redirection_stderr(child, filename, 0);
-    }
-    else if (!strcmp("0>>", redi_type))
-    {   // >> redirect stderr in file (append mode)
-        return_val = redirection_stdin(child, filename, 1);
-    }
-    else if ((!strcmp("1>>", redi_type)) || 
-                (!strcmp(">>", redi_type)))
-    {   // >> redirect stdout in file (append mode)
-        return_val = redirection_stdout(child, filename, 1);
-    }
-    else if (!strcmp("2>>", redi_type))
-    {   // >> redirect stderr in file (append mode)
-        return_val = redirection_stderr(child, filename, 1);
-    }
-    else if (!strcmp(">&", redi_type) || 
-            !strcmp("1>&", redi_type) ||
-            !strcmp("2>&", redi_type))
-    {   // {None;  1; 2}>& redirect stdout or stderr or file
-        return_val = execute_sup_and_red(child, filename, redi_type);
-    }
-    else if (!strcmp("<", redi_type))
+    int fd_to = get_fd_from_ast(ast_to, r_type);
+    if(fd_to == -1)
     {
-        return_val = exec_inf_redirection(tree);
+        close_fd(fd_from, ast_from);
+        return 2;
     }
-    else
-    {
-        fprintf(stderr, "debug: redirection not found\n");
-    }
+
+    return_val = redirection_fd_to_fd(ast_exec, fd_from, fd_to);
+
+
+    close_fd(fd_from, ast_from);
+    close_fd(fd_to, ast_to);
     
     return return_val;
 }

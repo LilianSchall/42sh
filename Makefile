@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wextra -Wvla -Isrc -g
 
 SRC = $(wildcard src/*/*.c src/*/*/*.c)
-MAIN = tests/exec_redirection/test03.c #src/main.c 
+MAIN = src/main.c 
 MAIN_OBJ = $(MAIN:.c=.o)
 SRC_OBJ = $(SRC:.c=.o)
 
