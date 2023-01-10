@@ -93,7 +93,7 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
-int exetute_AST_for(struct AST *tree)
+int execute_AST_for(struct AST *tree)
 {
     int ret_val = 0;
     struct linked_node *child = tree->linked_list->head;
@@ -103,7 +103,7 @@ int exetute_AST_for(struct AST *tree)
     struct AST *ast_iter_seq = child->data;
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;
-    if (ast_iter_seq->type = ITER)
+    if (ast_iter_seq->type == ITER)
     {
         struct linked_node *iter_child = ast_iter_seq->linked_list->head;
         while (iter_child)
@@ -169,7 +169,7 @@ int execute_AST_assignment(struct AST *tree)
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
     char *var_name = var_name_ast->value->symbol; // variable name is the token value of the ast
-    struct AST *var_value_ast = child->next->data; //taking second child(cant be NULL)
+    struct AST *var_value_ast = child->next->data; // taking second child(cant be NULL)
     
     if (var_value_ast->type == ARG)
     {
@@ -223,6 +223,10 @@ int execute_AST(struct AST *tree)
                 break;
             }
         }
+            break;
+        case ASSIGNMENT:
+            ret_val = execute_AST_assignment(child);
+            break;
         default:
             break;
         }

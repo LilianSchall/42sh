@@ -13,7 +13,7 @@ struct var
 
 void print_variables(void);
 void free_variables(void);
-int assign_var (char *var, char *val);
+int assign_var(char *name, char *val);
 char *get_var(char *name);
 void replace_var(char **str);
 
