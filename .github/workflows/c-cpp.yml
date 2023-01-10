@@ -15,8 +15,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: install criterion
       run: sudo apt install -y libcriterion-dev
-    - name: configure
-      run: ./configure
     - name: make
       run: make
     - name: make check
