@@ -84,7 +84,7 @@ int print_echo_words(int *pos, int argc, char **argv,
         word = str_replace(word, "\\n", "\n");
         word = str_replace(word, "\\t", "\t");
         word = str_replace(word, "\\\\", "\\");
-        printf(word);
+        printf("%s", word);
     }
 
     // check if it is not a leaf
