@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wextra -Wvla -Isrc -g
 
 SRC = $(wildcard src/*/*.c src/*/*/*.c)
-MAIN = src/main.c 
+MAIN = tests/exec_redirection/test03.c #src/main.c 
 MAIN_OBJ = $(MAIN:.c=.o)
 SRC_OBJ = $(SRC:.c=.o)
 
@@ -13,6 +13,9 @@ EXE = 42sh
 TEST_EXE = testsuite
 
 all: build
+
+check: test
+	./testsuite
 
 build:
 	meson setup build
@@ -31,4 +34,4 @@ $(TEST_SRC): %.o: %.c
 	$(CC) $(CFLAGS) -lcriterion $< -o $@
 
 clean:
-	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE)
+	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE) *.txt
