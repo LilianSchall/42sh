@@ -84,6 +84,11 @@ enum token_type
     char Name[] = { '|', '&',  ';',  '<',  '>', '(',  ')',  '$', '`',          \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
+
+#define CREATE_REDIRECTIONS(Name) \
+    char *Name[] = { \
+        ">>", ">&", "<&", ">|", "<>" } \
+
 struct token
 {
     char *symbol;

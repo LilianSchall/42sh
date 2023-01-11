@@ -53,7 +53,7 @@ char *get_word(char **word_begin_ptr, char **input)
     return word;
 }
 
-bool my_isspace(char c)
+static bool my_isspace(char c)
 {
     return c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == '\f';
 }
@@ -120,11 +120,16 @@ struct token *parse_quoted_word(char **word_begin_ptr,
     return NULL;
 }
 
+static bool is_chevron(char c)
+{
+    return c == '>' || c == '<';
+}
 struct token *parse_unquoted_word(char **word_begin_ptr,
                                   struct lexer_states states, char **input)
 {
     static CREATE_DICO(token_value);
     static CREATE_DELIMITATORS(delims);
+    static CREATE_REDIRECTIONS(redirections);
 
     if (GETCHAR(input, 0) == '#' && *word_begin_ptr == NULL)
     {
@@ -155,10 +160,24 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
         return NULL;
     }
+    
+    char tmp[3];
+    tmp[0] = GETCHAR(input, 0);
+    tmp[1] = GETCHAR(input, 1);
+    tmp[2] = 0;
+    
+    if (isdigit(GETCHAR(input,0)) && is_chevron(GETCHAR(input, 1)))
+    {
+        // we found a io_number
+        struct token *token = create_token(word_begin_ptr, input, token_value); 
+        token->type = IO_NUMBER;
+        return token;
+    }
 
     // else if two same delimitators are following each other
-    if (!my_isspace(GETCHAR(input, 0)) && GETCHAR(input, 0) == GETCHAR(input, 1)
-        && *input == *word_begin_ptr)
+    if (!my_isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
+        && *input == *word_begin_ptr) ||
+        find_special_tokens(tmp, redirections) != -1))
     // then it is not a delimitator but a special token
     // so we wait to reach the end of this special token
     {
