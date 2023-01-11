@@ -14,7 +14,7 @@ int launch_interactive_mode(int options)
         fflush(stdout);
 
         // get content from stdin
-        content = get_interactive_content();
+        content = get_interactive_content(true);
 
         // execute given command
         last_status_code = status_code;
