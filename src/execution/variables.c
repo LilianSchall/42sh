@@ -93,20 +93,25 @@ void replace_var(char **str)
             while (cur && (strncmp(v->name, var_name, end - var_name) != 0))
             {
                 cur = cur->next;
-				if (cur)
+                if (cur)
                     v = cur->data;
             }
-            if (cur) {
+            if (cur)
+            {
                 // Replace the variable with its value
                 int len = strlen(v->value);
                 memmove(p + len, p + (end - p), strlen(p) - (end - p) + 1);
                 memcpy(p, v->value, len);
                 p += len;
-            } else {
+            }
+            else
+            {
                 // No variable found, remove the $variable
                 memmove(p, p + (end - p), strlen(p) - (end - p) + 1);
             }
-        } else {
+        }
+        else
+        {
             // No variable, move to the next character
             p++;
         }

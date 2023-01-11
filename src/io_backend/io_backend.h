@@ -1,10 +1,10 @@
 #ifndef IO_BACKEND_H
 #define IO_BACKEND_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 // function that returns the content of a filename
 char *get_file_content(char *filename);

@@ -19,7 +19,7 @@ int launch_interactive_mode(int options)
         // execute given command
         last_status_code = status_code;
         status_code = execute_shell_command(options, content);
-        
+
         if (last_status_code == -1)
             last_status_code = status_code; // first init of first command
 

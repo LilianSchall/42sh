@@ -87,7 +87,7 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
 
         if (while_cond == val_cond)
             return_val = execute_AST(bloc); // exec commands
-    }    
+    }
 
     return return_val;
 }
@@ -101,16 +101,14 @@ int execute_AST_redirection(struct AST *tree)
 
     struct AST *ast_from = child_list->data;
     struct AST *ast_exec = child_list->next->data;
-    struct AST *ast_to =  child_list->next->next->data;
-
+    struct AST *ast_to = child_list->next->next->data;
 
     int fd_from = get_fd_from_ast(ast_from, r_type);
-    if(fd_from == -1)
+    if (fd_from == -1)
         return 2;
 
-
     int fd_to = get_fd_from_ast(ast_to, r_type);
-    if(fd_to == -1)
+    if (fd_to == -1)
     {
         close_fd(fd_from, ast_from);
         return 2;
@@ -118,10 +116,9 @@ int execute_AST_redirection(struct AST *tree)
 
     return_val = redirection_fd_to_fd(ast_exec, fd_from, fd_to);
 
-
     close_fd(fd_from, ast_from);
     close_fd(fd_to, ast_to);
-    
+
     return return_val;
 }
 
@@ -168,14 +165,14 @@ int execute_AST_operator(struct AST *tree)
 
     if (!strcmp("!", op)) // ! condition
     {
-        ret_val = ! execute_AST(child);
+        ret_val = !execute_AST(child);
     }
     else if (!strcmp("&&", op)) // && condition
     {
         ret_val = execute_AST(child);
         ret_val2 = execute_AST(child2);
 
-        if(ret_val == 0 && ret_val2 == 0)
+        if (ret_val == 0 && ret_val2 == 0)
             ret_val = 0;
         else
             ret_val = 1;
@@ -185,12 +182,11 @@ int execute_AST_operator(struct AST *tree)
         ret_val = execute_AST(child);
         ret_val2 = execute_AST(child2);
 
-        if(ret_val == 1 && ret_val2 == 1)
+        if (ret_val == 1 && ret_val2 == 1)
             ret_val = 1;
         else
             ret_val = 0;
     }
-
 
     return ret_val;
 }
@@ -200,17 +196,20 @@ int execute_AST_assignment(struct AST *tree)
     int ret_val = 1;
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
-    char *var_name = var_name_ast->value->symbol; // variable name is the token value of the ast
-    
-    struct AST *var_value_ast = child->next->data; // taking second child(cant be NULL)
-    
+    char *var_name =
+        var_name_ast->value
+            ->symbol; // variable name is the token value of the ast
+
+    struct AST *var_value_ast =
+        child->next->data; // taking second child(cant be NULL)
+
     if (var_value_ast->type == ARG)
     {
         ret_val = assign_var(var_name, var_value_ast->value->symbol);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {
-        //TODO in step 3 or 4
+        // TODO in step 3 or 4
     }
     return ret_val;
 }
@@ -259,7 +258,7 @@ int execute_AST(struct AST *tree)
                 break;
             }
         }
-            break;
+        break;
         case ASSIGNMENT:
             ret_val = execute_AST_assignment(child);
             break;

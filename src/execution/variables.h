@@ -1,8 +1,9 @@
 #ifndef VARIABLES_H
 #define VARIABLES_H
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "linked_list/linked_list.h"
 
 struct var
