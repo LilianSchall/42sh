@@ -19,6 +19,9 @@ int launch_interactive_mode(int options)
         // execute given command
         last_status_code = status_code;
         status_code = execute_shell_command(options, content);
+        
+        if (last_status_code == -1)
+            last_status_code = status_code; // first init of first command
 
         // free and dereference processed content
         free(content);
@@ -44,7 +47,7 @@ int launch_shell(int options, char *file_script, char *input)
     if (input)
         return execute_shell_command(options, input);
 
-    if (!file_script)
+    if (!file_script && isatty(STDIN_FILENO))
         return launch_interactive_mode(options);
     return launch_script_mode(options, file_script);
 }
@@ -68,12 +71,16 @@ int execute_shell_command(int options, char *input)
     struct AST *tree = build_shell_AST(token_list);
 
     if (is_option_activated(options, VERBOSE))
+    {
+        puts("not parsed token:\n");
+        print_token_list(token_list);
         puts("executing AST");
+    }
 
     // execute tree
     int status_code = execute_AST(tree);
 
-    free_list(token_list);
+    deep_free_list(token_list, free_token);
     free_AST(tree);
 
     return status_code;
