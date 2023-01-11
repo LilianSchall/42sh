@@ -47,8 +47,12 @@ int launch_shell(int options, char *file_script, char *input)
     if (input)
         return execute_shell_command(options, input);
 
-    if (!file_script && isatty(STDIN_FILENO))
-        return launch_interactive_mode(options);
+    if (!file_script)
+    {
+        if (isatty(STDIN_FILENO))
+            return launch_interactive_mode(options);
+        return execute_shell_command(options, get_interactive_content(false));
+    }
     return launch_script_mode(options, file_script);
 }
 
