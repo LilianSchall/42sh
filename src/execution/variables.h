@@ -1,8 +1,9 @@
 #ifndef VARIABLES_H
 #define VARIABLES_H
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "linked_list/linked_list.h"
 
 struct var
@@ -19,4 +20,4 @@ int assign_var(char *name, char *val);
 char *get_var(char *name);
 void replace_var(char **str);
 
-#endif // VARIABLES_H
+#endif /* !VARIABLES_H */

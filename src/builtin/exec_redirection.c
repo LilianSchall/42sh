@@ -9,7 +9,7 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
 
     if (file_fd == -1)
         return 2;
-    
+
     // duplicate STDOUT file descriptor
     int stderr_dup = dup(STDERR_FILENO);
     int stdout_dup = dup(STDOUT_FILENO);
@@ -29,9 +29,9 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
     // do stuff
     int return_val = 0;
     if (tree->type == COMMAND)
-            return_val = execute_AST_cmd(tree);
+        return_val = execute_AST_cmd(tree);
     if (tree->type == REDIRECTION)
-            return_val = execute_AST_redirection(tree);
+        return_val = execute_AST_redirection(tree);
 
     fflush(stderr);
     fflush(stdout);
@@ -52,7 +52,6 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
 // redirect fd_from file descriptor into into fd_to file descriptor
 int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 {
-    
     // duplicate fd_from file descriptor
     int from_dup = dup(fd_from);
 
@@ -65,9 +64,9 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
     // excute the SEQUENCE or REDIRECTION  AST
     int return_val = 0;
     if (tree->type == SEQUENCE)
-            return_val = execute_AST(tree);
+        return_val = execute_AST(tree);
     if (tree->type == REDIRECTION)
-            return_val = execute_AST_redirection(tree);
+        return_val = execute_AST_redirection(tree);
 
     // restore fd
     dup2(from_dup, fd_from);
@@ -78,41 +77,42 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 
 // return the file descriptor
 // return the FD if tree as a token IO_NUMBER
-// return the FD of the file opened with the good option depend on the r_type 
+// return the FD of the file opened with the good option depend on the r_type
 int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 {
     if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
         return tree->value->symbol[0] - '0';
 
-    char *filename = tree->value->symbol; // get the filename 
+    char *filename = tree->value->symbol; // get the filename
 
     if (r_type == R_SUP_SUP) // >>
         return open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_PIPE || r_type == R_SUP)   //  >|   >
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+    if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
+        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_AND)  // >&
+    if (r_type == R_SUP_AND) // >&
     {
-        if(1) // need to add set -C check
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+        if (1) // need to add set -C check
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC,
+                        0755);
 
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
                 tree->value->symbol);
         return -1;
     }
     if (r_type == R_INF) // <
     {
-        if(!access(filename, F_OK)) // check if file exist
+        if (!access(filename, F_OK)) // check if file exist
             return open(filename, O_RDONLY | O_CLOEXEC);
 
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
                 tree->value->symbol);
         return -1;
     }
     if (r_type == R_INF_AND) // <&
     {
-        if(!access(filename, F_OK)) // check if file exist
+        if (!access(filename, F_OK)) // check if file exist
             return open(filename, O_CREAT | O_CLOEXEC | O_RDONLY, 0755);
 
         fprintf(stderr, "42sh: no such file or directory: %s\n", filename);
@@ -120,13 +120,13 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     }
     if (r_type == R_INF_SUP) // <>
         return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
-    
+
     return -1;
-}    
+}
 
 // close the file descriptor if tree has NOT a token IO_NUMBER
 void close_fd(int fd, struct AST *tree)
 {
-    if(tree->value->type != IO_NUMBER)
+    if (tree->value->type != IO_NUMBER)
         close(fd);
 }
