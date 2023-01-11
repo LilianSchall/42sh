@@ -9,6 +9,7 @@
 enum AST_type
 {
     REDIRECTION,
+    PIPE,
     OPERATOR, // ! && ||
     ITER, // things to iter on a for loop
     ASSIGNMENT, // =
