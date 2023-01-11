@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include "io_backend.h"
 #define MAX_LENGTH 1024
 char *get_file_content(char *filename)
