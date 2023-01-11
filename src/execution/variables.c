@@ -25,10 +25,14 @@ void free_variables(void)
     deep_free_list(variables, free_var);
 }
 
+void init_variables(void)
+{
+    variables = new_list();
+    assign_var("IFS", " \t\n");
+}
+
 void print_variables(void)
 {
-    if (!variables)
-        return;
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -38,8 +42,6 @@ void print_variables(void)
 
 int assign_var(char *name, char *val)
 {
-    if (!variables)
-        variables = new_list();
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -57,8 +59,6 @@ int assign_var(char *name, char *val)
 
 char *get_var(char *name)
 {
-    if (!variables)
-        return NULL;
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -70,11 +70,8 @@ char *get_var(char *name)
     return NULL;
 }
 
-void replace_var(char **str)
+void expand_var(char **str)
 {
-    if (!variables)
-        return;
-
     // Iterate through each character in the string
     char *p = *str;
     while (*p)
