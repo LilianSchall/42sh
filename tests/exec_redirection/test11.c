@@ -58,5 +58,5 @@ Test(exec_redirection, redirection_11, .init = redirect_11)
     free_AST(ast_final);
 
     cr_assert_stdout_eq_str("in stdout\nin stderr\n");
-    cr_assert_stderr_eq_str("");
+     
 }

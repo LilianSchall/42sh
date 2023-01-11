@@ -87,49 +87,39 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     char *filename = tree->value->symbol; // get the filename 
 
     if (r_type == R_SUP_SUP) // >>
-        return open(filename, O_CREAT | O_WRONLY | O_APPEND, 0755);
+        return open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_PIPE)   //  >| 
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+    if (r_type == R_SUP_PIPE || r_type == R_SUP)   //  >|   >
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
     if (r_type == R_SUP_AND)  // >&
     {
         if(1) // need to add set -C check
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
+            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
         fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
                 tree->value->symbol);
-        return 2;
-    }
-    if (r_type == R_SUP)  // >
-    {
-        if(1) // need to add set -C check
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
-
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-                tree->value->symbol);
-        return 2;
+        return -1;
     }
     if (r_type == R_INF) // <
     {
-        if(!access(filename, F_OK)) // need to add set -C check
-            return open(filename, O_RDONLY);
+        if(!access(filename, F_OK)) // check if file exist
+            return open(filename, O_RDONLY | O_CLOEXEC);
 
         fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
                 tree->value->symbol);
-        return 2;
+        return -1;
     }
     if (r_type == R_INF_AND) // <&
     {
-        if(access(filename, F_OK)) // need to add set -C check
-            return open(filename, O_CREAT | O_RDONLY, 0755);
+        if(!access(filename, F_OK)) // check if file exist
+            return open(filename, O_CREAT | O_CLOEXEC | O_RDONLY, 0755);
 
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", 
-                tree->value->symbol);
-        return 2;
+        fprintf(stderr, "42sh: no such file or directory: %s\n", filename);
+        return -1;
     }
     if (r_type == R_INF_SUP) // <>
-        return open(filename, O_CREAT | O_RDWR, 0755);
+        return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     
     return -1;
 }    

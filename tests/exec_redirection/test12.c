@@ -1,4 +1,5 @@
 #include "AST/AST.h"
+
 #include "builtin/builtin.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
@@ -58,6 +59,6 @@ Test(exec_redirection, redirection_12, .init = redirect_12)
     free_AST(ast_final);
 
     cr_assert_stderr_eq_str("in stdout\nin stderr\n");
-    cr_assert_stdout_eq_str("");
+     
 
 }

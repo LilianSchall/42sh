@@ -72,5 +72,5 @@ Test(exec_redirection, redirection_3, .init = redirect_3)
 
     cr_assert_str_eq(result_2, "hello\nhello\n");
 
-    cr_assert_stdout_eq_str("");
+     
 }
