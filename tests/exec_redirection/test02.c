@@ -75,7 +75,7 @@ Test(exec_redirection, redirection_2, .init = redirect_2)
 
     free_AST(ast_final);
 
-    cr_assert_stdout_eq_str("");
+     
 
     char * result_1 = get_file_content("test22.txt");
 

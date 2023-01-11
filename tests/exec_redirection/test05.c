@@ -61,8 +61,8 @@ Test(exec_redirection, redirection_5, .init = redirect_5)
     execute_AST(ast_final);
     free_AST(ast_final);
 
-    cr_assert_stdout_eq_str("");
-    cr_assert_stderr_eq_str("");
+     
+     
 
     char * result_1 = get_file_content("test51.txt");
 

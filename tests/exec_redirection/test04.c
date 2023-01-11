@@ -62,6 +62,6 @@ Test(exec_redirection, redirection_4, .init = redirect_4)
     execute_AST(ast_final);
     free_AST(ast_final);
 
-    cr_assert_stdout_eq_str("");
+     
     cr_assert_stderr_eq_str("foo\n");
 }

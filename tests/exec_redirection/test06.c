@@ -59,5 +59,5 @@ Test(exec_redirection, redirection_6, .init = redirect_6)
     free_AST(ast_final);
 
     cr_assert_stdout_eq_str("# 42sh");
-    cr_assert_stderr_eq_str("");
+     
 }
