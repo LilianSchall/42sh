@@ -67,6 +67,9 @@ int execute_shell_command(int options, char *input)
 
     // build AST based on token_list
     struct AST *tree = build_shell_AST(token_list);
+    
+    if (is_option_activated(options, VERBOSE))
+        pretty_printer(tree);
 
     if (!tree)
     {
