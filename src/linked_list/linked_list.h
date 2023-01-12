@@ -19,6 +19,7 @@ struct linked_list *new_list(void);
 void *list_head(struct linked_list *list);
 size_t list_size(struct linked_list *list);
 
+struct linked_list *list_insert(struct linked_list *list, void *data, int index);
 struct linked_list *list_append(struct linked_list *list, void *data);
 struct linked_list *list_pop(struct linked_list *list);
 struct linked_list *list_pop_non_safe(struct linked_list *list);

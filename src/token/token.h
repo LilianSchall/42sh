@@ -92,7 +92,7 @@ enum token_type
 
 #define CREATE_REDIRECTIONS(Name) \
     char *Name[] = { \
-        ">>", ">&", "<&", ">|", "<>" }
+        ">>", ">&", "<&", ">|", "<>", NULL }
 
 #define CREATE_REDIRECT_SCOUT(Name) \
     enum token_type Name[] = { \

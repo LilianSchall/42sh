@@ -61,6 +61,9 @@ int execute_shell_command(int options, char *input)
     // get token_list based on given input
 
     struct linked_list *token_list = build_token_list(input);
+    
+    if (is_option_activated(options, VERBOSE))
+        print_token_list(token_list);
 
     // build AST based on token_list
     struct AST *tree = build_shell_AST(token_list);

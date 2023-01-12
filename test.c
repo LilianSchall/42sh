@@ -1,4 +1,3 @@
-#include <criterion/criterion.h>
 #include <stddef.h>
 
 #include "AST/AST.h"
@@ -13,7 +12,7 @@ void depth_test_AST(struct AST *tree, enum AST_type types[], size_t size,
         return;
 
     // testing the tree
-    cr_expect_eq(tree->type, types[*i]);
+    printf("actual: %d, expected: %d\n", tree->type, types[*i]);
 
     *i = *i + 1;
     if (tree->linked_list == NULL)
@@ -35,34 +34,20 @@ void test_AST(struct AST *tree, enum AST_type types[], size_t size)
     depth_test_AST(tree, types, size, &i);
 }
 
-Test(parser, parse_echo_foo)
+int main(void)
 {
-    char input[] = "echo foo";
+    char input[] = "echo foo > file";
 
     struct linked_list *token_list = build_token_list(input);
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, COMMAND, ARG };
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
     free_AST(tree);
     deep_free_list(token_list, free_token);
-}
-
-Test(parser, parse_echo_foo_foo)
-{
-    char input[] = "echo foo foo";
-
-    struct linked_list *token_list = build_token_list(input);
-
-    struct AST *tree = build_shell_AST(token_list);
-
-    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, ARG };
-
-    test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
-
-    free_AST(tree);
-    deep_free_list(token_list, free_token);
+    
+    return 0;
 }

@@ -12,16 +12,13 @@ struct AST *element_rule(struct linked_list *token_list, bool trigger_warn)
         return tree;
     }
 
-    if (token->type != WORD)
+    if (token->type == WORD)
     {
-        if (trigger_warn)
-            warnx("%s: element missmatch", token->symbol);
-        goto element_end;
+        tree = new_AST(token, ARG, NULL);
+        list_pop(token_list);
+        return tree;
     }
-
-    tree = new_AST(token, ARG, NULL);
-    list_pop(token_list);
-
-element_end:
+    else
+        return redirection_rule(token_list, trigger_warn);
     return tree;
 }
