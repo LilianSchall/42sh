@@ -12,12 +12,13 @@ struct var
     char *value;
 };
 
-void print_variables(void);
 void free_variables(void);
 
-int assign_var(char *name, char *val);
+void init_variables(void);
+void print_variables(void);
+int assign_var (char *var, char *val);
 
 char *get_var(char *name);
-void replace_var(char **str);
+void expand_var(char **str);
 
 #endif /* !VARIABLES_H */
