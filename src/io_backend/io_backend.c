@@ -18,28 +18,27 @@ char *get_file_content(char *filename)
 
 char *get_interactive_content(bool getline_mode)
 {
-    char buffer[MAX_LENGTH];
-    char *line = NULL;
-    size_t capacity = MAX_LENGTH;
     size_t size = 0;
-    char *return_str = calloc(capacity, 1);
-    if (getline_mode == true)
+    char *line = NULL;
+    if (getline_mode)
     {
         getline(&line, &size, stdin);
         return line;
     }
-    else
+
+    char buffer[MAX_LENGTH];
+    size_t capacity = MAX_LENGTH;
+    char *return_str = calloc(capacity, 1);
+
+    while (fgets(buffer, MAX_LENGTH, stdin) != NULL)
     {
-        while (fgets(buffer, MAX_LENGTH, stdin) != NULL)
+        size_t len = strlen(buffer);
+        if (size + len + 1 >= capacity)
         {
-            size_t len = strlen(buffer);
-            if (size + len + 1 >= capacity)
-            {
-                return_str = realloc(return_str, capacity + MAX_LENGTH);
-                capacity += MAX_LENGTH;
-            }
-            strcat(return_str, buffer);
+            return_str = realloc(return_str, capacity + MAX_LENGTH);
+            capacity += MAX_LENGTH;
         }
+        strcat(return_str, buffer);
     }
     return return_str;
 }
