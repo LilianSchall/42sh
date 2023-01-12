@@ -54,7 +54,11 @@ int launch_shell(int options, char *file_script, char *input)
         if (isatty(STDIN_FILENO))
             status_code = launch_interactive_mode(options);
         else
-            status_code = execute_shell_command(options, get_interactive_content(false));
+        {
+            char *content = get_interactive_content(false);
+            status_code = execute_shell_command(options, content);
+            free(content);
+        }
     }
     else
         status_code = launch_script_mode(options, file_script);
