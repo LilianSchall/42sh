@@ -37,9 +37,11 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
     fflush(stdout);
     // end stuff
 
+
     // restore stdout
     dup2(stderr_dup, STDERR_FILENO);
     dup2(stdout_dup, STDOUT_FILENO);
+
 
     // close all file descriptor
     close(file_fd);
@@ -67,11 +69,13 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
         return_val = execute_AST(tree);
     if (tree->type == REDIRECTION)
         return_val = execute_AST_redirection(tree);
-
+    if (tree->type == PIPE)
+        return_val = execute_AST_pipe(tree);
     // restore fd
     dup2(from_dup, fd_from);
     // close all file descriptor
     close(from_dup);
+
     return return_val;
 }
 
@@ -93,15 +97,9 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 
     if (r_type == R_SUP_AND) // >&
     {
-        if (1) // need to add set -C check
-            return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC,
-                        0755);
-
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-                tree->value->symbol);
-        return -1;
+        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
     }
-    if (r_type == R_INF) // <
+    if (r_type == R_INF || r_type == R_INF_AND) // < or <&
     {
         if (!access(filename, F_OK)) // check if file exist
             return open(filename, O_RDONLY | O_CLOEXEC);
@@ -110,14 +108,7 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
                 tree->value->symbol);
         return -1;
     }
-    if (r_type == R_INF_AND) // <&
-    {
-        if (!access(filename, F_OK)) // check if file exist
-            return open(filename, O_CREAT | O_CLOEXEC | O_RDONLY, 0755);
 
-        fprintf(stderr, "42sh: no such file or directory: %s\n", filename);
-        return -1;
-    }
     if (r_type == R_INF_SUP) // <>
         return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
 

@@ -230,6 +230,9 @@ int execute_AST(struct AST *tree)
         case REDIRECTION:
             ret_val = execute_AST_redirection(child);
             break;
+        case PIPE:
+            ret_val = execute_AST_pipe(child);
+            break;
         case COMMAND:
             ret_val = execute_AST_cmd(child);
             break;
