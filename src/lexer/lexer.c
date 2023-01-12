@@ -146,6 +146,20 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         *word_begin_ptr = *input;
     }
 
+    // if we found a io_number then we parse it as it is
+    if (isdigit(GETCHAR(input, 0)) && is_chevron(GETCHAR(input, 1)))
+    {
+        // we found a io_number
+        struct token *token = NULL;
+        char *offset_input = *input + 1;
+        if (*word_begin_ptr + 1 < *input)
+            token = create_token(word_begin_ptr, &offset_input, token_value); 
+        else
+            token = create_token(word_begin_ptr, input, token_value);
+        token->type = IO_NUMBER;
+        return token;
+    }
+
     if (find_delims(GETCHAR(input, 0), delims) == -1)
         return NULL;
 
@@ -166,14 +180,6 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     tmp[1] = GETCHAR(input, 1);
     tmp[2] = 0;
     
-    if (isdigit(GETCHAR(input,0)) && is_chevron(GETCHAR(input, 1)))
-    {
-        // we found a io_number
-        struct token *token = create_token(word_begin_ptr, input, token_value); 
-        token->type = IO_NUMBER;
-        return token;
-    }
-
     // else if two same delimitators are following each other
     if (!my_isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
         && *input == *word_begin_ptr) ||
