@@ -25,4 +25,3 @@ Test(parser, parse_if_true_then_baba_else_boo)
     free_AST(tree);
     deep_free_list(token_list, free_token);
 }
-

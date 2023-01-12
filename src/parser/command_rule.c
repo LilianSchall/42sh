@@ -27,6 +27,7 @@ static struct AST *handle_redirection(struct linked_list *token_list,
         if (last_redirect_tree != NULL)
             list_insert(last_redirect_tree->linked_list, child, 1);
         last_redirect_tree = child;
+        token = list_head(token_list);
     }
 
     if (redirect_tree)
@@ -53,6 +54,9 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL)
     {
         struct AST *shell_com_tree = shell_command_rule(token_list, trigger_warn);
+
+        // purge newline token
+        purge_newline_token(token_list);
 
         return handle_redirection(token_list, shell_com_tree, trigger_warn);
     }

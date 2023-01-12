@@ -41,3 +41,19 @@ Test(parser, parse_echo_foo_echo_foo)
     free_AST(tree);
     deep_free_list(token_list, free_token);
 }
+
+Test(parser, echo_foo_newline_echo_foo_newline_echo_fada)
+{
+    char input[] = "echo foo;\n echo foo;\necho fada fato";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct AST *tree = build_shell_AST(token_list);
+
+    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, COMMAND, ARG, COMMAND, ARG, ARG};
+
+    test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
+
+    free_AST(tree);
+    deep_free_list(token_list, free_token);
+}

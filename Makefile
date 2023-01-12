@@ -25,7 +25,7 @@ $(EXE): $(SRC_OBJ) $(MAIN_OBJ)
 	$(CC) -o $(EXE) $^
 
 debug: $(SRC_OBJ) $(MAIN_OBJ)
-	$(CC) -o $(EXE) $^
+	$(CC) -o $(EXE) -fsanitize=address $^
 
 test: $(SRC_OBJ) $(TEST_OBJ)
 	$(CC) -o $(TEST_EXE) -lcriterion $^

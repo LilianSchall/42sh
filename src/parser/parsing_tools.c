@@ -33,3 +33,17 @@ struct AST *combine_token_AST(struct AST *tree, struct token *token)
     tree->value = token;
     return tree;
 }
+
+void purge_newline_token(struct linked_list *token_list)
+{
+    // swipe up any \n token clean
+
+    struct token *token = list_head(token_list);
+
+    while (token != NULL && token->type == NEWLINE)
+    {
+        list_pop(token_list);
+        free_token(token);
+        token = list_head(token_list);
+    }
+}

@@ -26,3 +26,18 @@ Test(parser, echo_foo_sup_file)
     deep_free_list(token_list, free_token);
 }
 
+Test(parser, if_true_then_echo_foo_fi_sup_file)
+{
+    char input[] = "if true\nthen\necho foo;\nfi\n> file";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct AST *tree = build_shell_AST(token_list);
+
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, SEQUENCE, COMMAND, ARG, ARG};
+
+    test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
+
+    free_AST(tree);
+    deep_free_list(token_list, free_token);
+}
