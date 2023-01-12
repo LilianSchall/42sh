@@ -214,60 +214,74 @@ int execute_AST_assignment(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST(struct AST *tree)
+int execute_AST_condition(struct AST *tree)
 {
-    if (!tree)
-        return 0;
+    int ret_val = 0;
+    switch (tree->value->type)
+    {
+    case IF:
+        ret_val = execute_AST_if(tree);
+        break;
+    case WHILE:
+        ret_val = execute_AST_while_until(tree, 0); // while is true
+        break;
+    case UNTIL:
+        ret_val = execute_AST_while_until(tree, 1); // until is true
+        break;
+    case FOR:
+        ret_val = execute_AST_for(tree);
+        break;
+    default:
+        break;
+    }
+    return ret_val;
+}
 
+int execute_AST_sequence(struct AST *tree)
+{
     int ret_val = 0;
 
     for (struct linked_node *node = tree->linked_list->head; node;
          node = node->next)
     {
         struct AST *child = node->data;
-        switch (child->type)
-        {
-        case REDIRECTION:
-            ret_val = execute_AST_redirection(child);
-            break;
-        case PIPE:
-            ret_val = execute_AST_pipe(child);
-            break;
-        case COMMAND:
-            ret_val = execute_AST_cmd(child);
-            break;
-        case SEQUENCE:
-            ret_val = execute_AST(child);
-            break;
-        case OPERATOR:
-            ret_val = execute_AST_operator(child);
-            break;
-        case CONDITION: {
-            switch (child->value->type)
-            {
-            case IF:
-                ret_val = execute_AST_if(child);
-                break;
-            case WHILE:
-                ret_val = execute_AST_while_until(child, 0); // while is true
-                break;
-            case UNTIL:
-                ret_val = execute_AST_while_until(child, 1); // until is true
-                break;
-            case FOR:
-                ret_val = execute_AST_for(child);
-                break;
-            default:
-                break;
-            }
-        }
+        ret_val = execute_AST(child);
+    }
+    return ret_val;
+}
+
+int execute_AST(struct AST *tree)
+{
+    if (!tree)
+        return 0;
+    
+    int ret_val = 0;
+
+    switch (tree->type)
+    {
+    case SEQUENCE:
+        ret_val = execute_AST_sequence(tree);
         break;
-        case ASSIGNMENT:
-            ret_val = execute_AST_assignment(child);
-            break;
-        default:
-            break;
-        }
+    case REDIRECTION:
+        ret_val = execute_AST_redirection(tree);
+        break;
+    case PIPE:
+        ret_val = execute_AST_pipe(tree);
+        break;
+    case COMMAND:
+        ret_val = execute_AST_cmd(tree);
+        break;
+    case OPERATOR:
+        ret_val = execute_AST_operator(tree);
+        break;
+    case CONDITION:
+        ret_val = execute_AST_condition(tree);
+        break;
+    case ASSIGNMENT:
+        ret_val = execute_AST_assignment(tree);
+        break;
+    default:
+        break;
     }
     return ret_val;
 }
