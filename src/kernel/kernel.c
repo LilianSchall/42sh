@@ -8,17 +8,21 @@ int launch_interactive_mode(int options)
     char *content = NULL;
     int status_code = 0;
     int last_status_code = 0;
+
     do
     {
         printf("42sh$ ");
         fflush(stdout);
 
         // get content from stdin
-        content = get_interactive_content();
+        content = get_interactive_content(true);
 
         // execute given command
         last_status_code = status_code;
         status_code = execute_shell_command(options, content);
+
+        if (last_status_code == -1)
+            last_status_code = status_code; // first init of first command
 
         // free and dereference processed content
         free(content);
@@ -41,12 +45,24 @@ int launch_script_mode(int options, char *file_script)
 
 int launch_shell(int options, char *file_script, char *input)
 {
-    if (input)
-        return execute_shell_command(options, input);
+    int status_code = 0;
+    init_variables();
 
-    if (!file_script)
-        return launch_interactive_mode(options);
-    return launch_script_mode(options, file_script);
+    if (input)
+        status_code = execute_shell_command(options, input);
+    else if (!file_script)
+    {
+        if (isatty(STDIN_FILENO))
+            status_code = launch_interactive_mode(options);
+        else
+            status_code = execute_shell_command(options, get_interactive_content(false));
+    }
+    else
+        status_code = launch_script_mode(options, file_script);
+
+    free_variables();
+
+    return status_code;
 }
 
 int execute_shell_command(int options, char *input)
@@ -68,12 +84,16 @@ int execute_shell_command(int options, char *input)
     struct AST *tree = build_shell_AST(token_list);
 
     if (is_option_activated(options, VERBOSE))
+    {
+        puts("not parsed token:\n");
+        print_token_list(token_list);
         puts("executing AST");
+    }
 
     // execute tree
     int status_code = execute_AST(tree);
 
-    free_list(token_list);
+    deep_free_list(token_list, free_token);
     free_AST(tree);
 
     return status_code;

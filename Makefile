@@ -14,6 +14,9 @@ TEST_EXE = testsuite
 
 all: build
 
+check: test
+	./testsuite
+
 build:
 	meson setup build
 	ninja -C build
@@ -31,4 +34,4 @@ $(TEST_SRC): %.o: %.c
 	$(CC) $(CFLAGS) -lcriterion $< -o $@
 
 clean:
-	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE)
+	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE) *.txt

@@ -13,7 +13,6 @@ enum token_type
     NEWLINE,
     AND,
     OR,
-    PIPE,
     OPEN_BRACE,
     CLOSE_BRACE,
     OPEN_PARENTHESE,
@@ -31,8 +30,18 @@ enum token_type
     ELSE,
     FI,
     DOUBLE_SEMICOLON,
+    IO_NUMBER, // FD to redirect
+    R_SUP, // >
+    R_SUP_PIPE, // >|
+    R_SUP_SUP, // >>
+    R_SUP_AND, // >&
+    R_INF, // <
+    R_INF_AND, // <&
+    R_INF_SUP, // <>
+    R_PIPE, // |
     ERROR,
     // TODO redirections token, ENV_VARIABLE ?, ...
+
 };
 
 #define CREATE_DICO(Name)                                                      \
@@ -42,7 +51,6 @@ enum token_type
         [NEWLINE] = "\n",                                                      \
         [AND] = "&&",                                                          \
         [OR] = "||",                                                           \
-        [PIPE] = "|",                                                          \
         [OPEN_BRACE] = "{",                                                    \
         [CLOSE_BRACE] = "}",                                                   \
         [OPEN_PARENTHESE] = "(",                                               \
@@ -60,6 +68,15 @@ enum token_type
         [ELSE] = "else",                                                       \
         [FI] = "fi",                                                           \
         [DOUBLE_SEMICOLON] = ";;",                                             \
+        [IO_NUMBER] = "",                                                      \
+        [R_SUP] = ">",                                                         \
+        [R_SUP_PIPE] = ">|",                                                   \
+        [R_SUP_SUP] = ">>",                                                    \
+        [R_SUP_AND] = ">&",                                                    \
+        [R_INF] = "<",                                                         \
+        [R_INF_AND] = "<&",                                                    \
+        [R_INF_SUP] = "<>",                                                    \
+        [R_PIPE] = "|",                                                        \
         [ERROR] = NULL,                                                        \
     }
 
