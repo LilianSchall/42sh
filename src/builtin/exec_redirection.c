@@ -27,11 +27,7 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
         return 2;
     }
     // do stuff
-    int return_val = 0;
-    if (tree->type == COMMAND)
-        return_val = execute_AST_cmd(tree);
-    if (tree->type == REDIRECTION)
-        return_val = execute_AST_redirection(tree);
+    int return_val = execute_AST(tree);
 
     fflush(stderr);
     fflush(stdout);
@@ -64,13 +60,7 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
         return 2;
     }
     // excute the SEQUENCE or REDIRECTION  AST
-    int return_val = 0;
-    if (tree->type == SEQUENCE)
-        return_val = execute_AST(tree);
-    if (tree->type == REDIRECTION)
-        return_val = execute_AST_redirection(tree);
-    if (tree->type == PIPE)
-        return_val = execute_AST_pipe(tree);
+    int return_val = execute_AST(tree);
     // restore fd
     dup2(from_dup, fd_from);
     // close all file descriptor
