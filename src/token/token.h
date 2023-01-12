@@ -18,6 +18,7 @@ enum token_type
     OPEN_PARENTHESE,
     CLOSE_PARENTHESE,
     FOR,
+    IN,
     DO,
     DONE,
     WHILE,
@@ -39,9 +40,9 @@ enum token_type
     R_INF_AND, // <&
     R_INF_SUP, // <>
     R_PIPE, // |
+    NEG,    // !
+    VARASSIGNMENT, // test=3
     ERROR,
-    // TODO redirections token, ENV_VARIABLE ?, ...
-
 };
 
 #define CREATE_DICO(Name)                                                      \
@@ -56,6 +57,7 @@ enum token_type
         [OPEN_PARENTHESE] = "(",                                               \
         [CLOSE_PARENTHESE] = ")",                                              \
         [FOR] = "for",                                                         \
+        [IN] = "in",                                                           \
         [DO] = "do",                                                           \
         [DONE] = "done",                                                       \
         [WHILE] = "while",                                                     \
@@ -77,11 +79,13 @@ enum token_type
         [R_INF_AND] = "<&",                                                    \
         [R_INF_SUP] = "<>",                                                    \
         [R_PIPE] = "|",                                                        \
+        [NEG] = "!",                                                            \
+        [VARASSIGNMENT] = "",                                                      \
         [ERROR] = NULL,                                                        \
     }
 
 #define CREATE_DELIMITATORS(Name)                                              \
-    char Name[] = { '|', '&',  ';',  '<',  '>', '(',  ')',  '$', '`',          \
+    char Name[] = { '!', '|', '&',  ';',  '<',  '>', '(',  ')',  '$', '`',          \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
 
