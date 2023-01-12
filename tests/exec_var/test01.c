@@ -2,7 +2,6 @@
 #include "builtin/builtin.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
-#include "execution/variables.h"
 
 #include <stdio.h>
 #include <criterion/criterion.h>
@@ -26,14 +25,11 @@ int exec_var(void)
 
     struct AST *ast_seq = new_AST(NULL, (enum AST_type) SEQUENCE, ll_ast_seq);
 
-    init_variables();
-
     execute_AST(ast_seq);
 
-    cr_expect_str_eq(get_var("test"), "prout");
+    cr_expect_str_eq(getenv("test"), "prout");
     
     free_AST(ast_seq);
-    free_variables();
     
     return 0;
 }

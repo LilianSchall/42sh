@@ -1,13 +1,13 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
+#include <err.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"
-#include "variables.h"
 
 // #include "exec_echo.h"
 

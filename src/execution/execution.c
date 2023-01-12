@@ -1,4 +1,4 @@
-#include "execution/execution.h"
+#include "execution.h"
 
 int not_builtin_fn(int argc, char **argv)
 {
@@ -8,13 +8,17 @@ int not_builtin_fn(int argc, char **argv)
     int ret_val = 0;
     int pid = fork();
 
-    if (!pid)
-        execvp(argv[0], argv);
-
-    ret_val = 0;
+    if (!pid) // child goes in
+    {
+        int status_code = execvp(argv[0], argv);
+        if (status_code == -1)
+        {
+            errx(127, "command not found: %s", argv[0]);
+        }
+    }
     wait(&ret_val);
-
-    return ret_val;
+    
+    return WEXITSTATUS(ret_val);
 }
 
 int execute_AST_cmd(struct AST *tree)
@@ -138,7 +142,7 @@ int execute_AST_for(struct AST *tree)
         while (iter_child)
         {
             struct AST *iter_arg = iter_child->data;
-            assign_var(var_name, iter_arg->value->symbol);
+            setenv(var_name, iter_arg->value->symbol, 1);
             ret_val = execute_AST(ast_seq);
             iter_child = iter_child->next;
         }
@@ -196,16 +200,15 @@ int execute_AST_assignment(struct AST *tree)
     int ret_val = 1;
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
-    char *var_name =
-        var_name_ast->value
-            ->symbol; // variable name is the token value of the ast
+    // variable name is the token value of the ast
+    char *var_name = var_name_ast->value->symbol;
 
-    struct AST *var_value_ast =
-        child->next->data; // taking second child(cant be NULL)
+    // taking second child(cant be NULL)
+    struct AST *var_value_ast = child->next->data;
 
     if (var_value_ast->type == ARG)
     {
-        ret_val = assign_var(var_name, var_value_ast->value->symbol);
+        ret_val = setenv(var_name, var_value_ast->value->symbol, 1);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {

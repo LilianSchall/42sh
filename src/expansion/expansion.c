@@ -1,5 +1,6 @@
-#include "variables.h"
+#include "expansion.h"
 
+#if 0
 static struct linked_list *variables = NULL;
 
 struct var *new_var(char *name, char *value)
@@ -40,8 +41,10 @@ void print_variables(void)
     }
 }
 
+
 int assign_var(char *name, char *val)
 {
+    setenv(name, val, 1);
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -59,6 +62,7 @@ int assign_var(char *name, char *val)
 
 char *get_var(char *name)
 {
+    return getenv(name);
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -69,6 +73,7 @@ char *get_var(char *name)
     }
     return NULL;
 }
+#endif
 
 void expand_var(char **str)
 {
@@ -83,7 +88,7 @@ void expand_var(char **str)
             char *end = var_name;
             while (*end && *end != ' ' && *end != '$')
                 end++;
-
+#if 0
             // Find the variable value
             struct linked_node *cur = variables->head;
             struct var *v = cur->data;
@@ -93,12 +98,17 @@ void expand_var(char **str)
                 if (cur)
                     v = cur->data;
             }
-            if (cur)
+#endif
+            char *tmp = strndup(var_name, end - var_name); 
+            char *var = getenv(tmp);
+            free(tmp);
+
+            if (var)
             {
                 // Replace the variable with its value
-                int len = strlen(v->value);
+                int len = strlen(var);
                 memmove(p + len, p + (end - p), strlen(p) - (end - p) + 1);
-                memcpy(p, v->value, len);
+                memcpy(p, var, len);
                 p += len;
             }
             else
