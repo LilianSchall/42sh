@@ -1,5 +1,6 @@
 #include "variables.h"
 
+#if 0
 static struct linked_list *variables = NULL;
 
 struct var *new_var(char *name, char *value)
@@ -39,6 +40,8 @@ void print_variables(void)
         printf("%s: %s\n", variable->name, variable->value);
     }
 }
+
+#endif
 
 int assign_var(char *name, char *val)
 {

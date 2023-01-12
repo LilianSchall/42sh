@@ -200,16 +200,15 @@ int execute_AST_assignment(struct AST *tree)
     int ret_val = 1;
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
-    char *var_name =
-        var_name_ast->value
-            ->symbol; // variable name is the token value of the ast
+    // variable name is the token value of the ast
+    char *var_name = var_name_ast->value->symbol;
 
-    struct AST *var_value_ast =
-        child->next->data; // taking second child(cant be NULL)
+    // taking second child(cant be NULL)
+    struct AST *var_value_ast = child->next->data;
 
     if (var_value_ast->type == ARG)
     {
-        ret_val = assign_var(var_name, var_value_ast->value->symbol);
+        ret_val = setenv(var_name, var_value_ast->value->symbol, 1);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {
