@@ -1,6 +1,7 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
+#include <err.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>

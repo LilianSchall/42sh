@@ -1,4 +1,4 @@
-#include "execution/execution.h"
+#include "execution.h"
 
 int not_builtin_fn(int argc, char **argv)
 {
@@ -8,13 +8,17 @@ int not_builtin_fn(int argc, char **argv)
     int ret_val = 0;
     int pid = fork();
 
-    if (!pid)
-        execvp(argv[0], argv);
-
-    ret_val = 0;
+    if (!pid) // child goes in
+    {
+        int status_code = execvp(argv[0], argv);
+        if (status_code == -1)
+        {
+            errx(127, "command not found: %s", argv[0]);
+        }
+    }
     wait(&ret_val);
-
-    return ret_val;
+    
+    return WEXITSTATUS(ret_val);
 }
 
 int execute_AST_cmd(struct AST *tree)
