@@ -60,25 +60,16 @@ int execute_shell_command(int options, char *input)
 {
     // get token_list based on given input
 
-    if (is_option_activated(options, VERBOSE))
-        puts("parsing token_list");
-
     struct linked_list *token_list = build_token_list(input);
-
-    if (is_option_activated(options, VERBOSE))
-        print_token_list(token_list);
-
-    if (is_option_activated(options, VERBOSE))
-        puts("building AST");
 
     // build AST based on token_list
     struct AST *tree = build_shell_AST(token_list);
 
-    if (is_option_activated(options, VERBOSE))
+    if (!tree)
     {
-        puts("not parsed token:\n");
-        print_token_list(token_list);
-        puts("executing AST");
+        deep_free_list(token_list, free_token);
+        // this exit code is used for grammar error and command line argument
+        return 2;
     }
 
     // execute tree

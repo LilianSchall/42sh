@@ -37,3 +37,18 @@ void print_token_list(struct linked_list *list)
         i++;
     }
 }
+
+bool is_redirect(struct token *token)
+{
+    CREATE_REDIRECT_SCOUT(types);
+
+    size_t len = sizeof(types) / sizeof(enum token_type);
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (types[i] == token->type)
+            return true;
+    }
+
+    return false;
+}
