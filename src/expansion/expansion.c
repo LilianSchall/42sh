@@ -1,4 +1,4 @@
-#include "variables.h"
+#include "expansion.h"
 
 #if 0
 static struct linked_list *variables = NULL;
@@ -41,12 +41,10 @@ void print_variables(void)
     }
 }
 
-#endif
 
 int assign_var(char *name, char *val)
 {
     setenv(name, val, 1);
-#if 0
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -59,14 +57,12 @@ int assign_var(char *name, char *val)
     }
     struct var *n_var = new_var(name, val);
     variables = list_append(variables, n_var);
-#endif
     return 0;
 }
 
 char *get_var(char *name)
 {
     return getenv(name);
-#if 0
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -76,8 +72,8 @@ char *get_var(char *name)
         }
     }
     return NULL;
-#endif
 }
+#endif
 
 void expand_var(char **str)
 {

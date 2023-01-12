@@ -142,7 +142,7 @@ int execute_AST_for(struct AST *tree)
         while (iter_child)
         {
             struct AST *iter_arg = iter_child->data;
-            assign_var(var_name, iter_arg->value->symbol);
+            setenv(var_name, iter_arg->value->symbol, 1);
             ret_val = execute_AST(ast_seq);
             iter_child = iter_child->next;
         }

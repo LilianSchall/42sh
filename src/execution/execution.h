@@ -8,7 +8,6 @@
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"
-#include "variables.h"
 
 // #include "exec_echo.h"
 

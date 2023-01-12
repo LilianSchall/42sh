@@ -25,14 +25,11 @@ int exec_var(void)
 
     struct AST *ast_seq = new_AST(NULL, (enum AST_type) SEQUENCE, ll_ast_seq);
 
-    init_variables();
-
     execute_AST(ast_seq);
 
     cr_expect_str_eq(getenv("test"), "prout");
     
     free_AST(ast_seq);
-    free_variables();
     
     return 0;
 }

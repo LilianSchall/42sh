@@ -46,7 +46,6 @@ int launch_script_mode(int options, char *file_script)
 int launch_shell(int options, char *file_script, char *input)
 {
     int status_code = 0;
-    init_variables();
 
     if (input)
         status_code = execute_shell_command(options, input);
@@ -59,8 +58,6 @@ int launch_shell(int options, char *file_script, char *input)
     }
     else
         status_code = launch_script_mode(options, file_script);
-
-    free_variables();
 
     return status_code;
 }
