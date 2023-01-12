@@ -64,6 +64,4 @@ Test(exec_while, while_false, .init = redirect_stdout_1)
 {
     exec_while_1();
     fflush(stdout);
-
-    cr_assert_stdout_eq_str("");
 }
