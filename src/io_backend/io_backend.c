@@ -18,16 +18,18 @@ char *get_file_content(char *filename)
 
 char *get_interactive_content(bool getline_mode)
 {
-    char buffer[MAX_LENGTH];
-    char *line = NULL;
-    size_t capacity = MAX_LENGTH;
     size_t size = 0;
-    char *return_str = calloc(capacity, 1);
-    if (getline_mode == true)
+    char *line = NULL;
+    if (getline_mode)
     {
         getline(&line, &size, stdin);
         return line;
     }
+
+    char buffer[MAX_LENGTH];
+    size_t capacity = MAX_LENGTH;
+    char *return_str = calloc(capacity, 1);
+
     else
     {
         while (fgets(buffer, MAX_LENGTH, stdin) != NULL)
