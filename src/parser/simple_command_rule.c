@@ -34,7 +34,6 @@ struct AST *simple_command_rule(struct linked_list *token_list,
                                 bool trigger_warn)
 {
     struct AST *tree = NULL;
-    struct AST *command_tree = NULL;
     struct token *token = list_head(token_list);
     
     struct AST *redirect_tree = NULL;
