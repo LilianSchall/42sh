@@ -141,7 +141,6 @@ char **new_argv(struct AST *tree, int *argc)
 
     struct linked_list *temp = tree->linked_list;
 
-    struct linked_node *ln = temp->head;
 
     char **argv = malloc(sizeof(char *) * (*argc + 1));
 
@@ -158,6 +157,11 @@ char **new_argv(struct AST *tree, int *argc)
     }
     else
         argv[0] = copy_string(tree->value->symbol);
+
+    if(!temp)
+        return argv;
+
+    struct linked_node *ln = temp->head;
 
     for (; i < *argc; i++)
     {

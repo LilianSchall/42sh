@@ -113,7 +113,10 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
 
-    free(filename);
+    if (tree->value->is_expandable)
+    {
+        free(filename);
+    }
     return ret_val;
 }
 
