@@ -49,7 +49,8 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         return NULL;
     }
 
-    if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token))
+    if (token->type == WORD || token->type == IO_NUMBER 
+            || is_redirect(token) || token->type == VARASSIGNMENT)
     {
         list_append(tree->linked_list, 
                 simple_command_rule(token_list, trigger_warn));
