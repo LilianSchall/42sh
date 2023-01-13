@@ -18,7 +18,7 @@ int get_echo_option(int *pos, int argc, char **argv,
                     struct echo_option *echo_option)
 {
     // get the word
-    if (*pos >= argc)
+    if (*pos <= argc)
         return 0;
 
     char *word = argv[*pos];
@@ -69,7 +69,8 @@ int get_echo_option(int *pos, int argc, char **argv,
 int print_echo_words(int *pos, int argc, char **argv,
                      struct echo_option *echo_option)
 {
-    if (*pos >= argc)
+
+    if (*pos <= argc)
         return 0;
 
     // get the word of the node

@@ -77,32 +77,44 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
         return tree->value->symbol[0] - '0';
 
-    char *filename = tree->value->symbol; // get the filename
+    char *filename = NULL;
+    if (tree->value->is_expandable)
+    {
+        filename = expand_var(tree->value->symbol);
+    }
+    else
+    {
+        filename = tree->value->symbol; // get the filename
+    }
+
+    int ret_val = 0;
 
     if (r_type == R_SUP_SUP) // >>
-        return open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
+        ret_val = open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
+        
+    else if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
+        ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
-        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+    else if (r_type == R_SUP_AND) // >&
+        ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_AND) // >&
-    {
-        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
-    }
-    if (r_type == R_INF || r_type == R_INF_AND) // < or <&
+    else if (r_type == R_INF || r_type == R_INF_AND) // < or <&
     {
         if (!access(filename, F_OK)) // check if file exist
-            return open(filename, O_RDONLY | O_CLOEXEC);
-
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
+            ret_val = open(filename, O_RDONLY | O_CLOEXEC);
+        else
+        {
+            fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
                 tree->value->symbol);
-        return -1;
+            ret_val = -1;
+        }
     }
 
-    if (r_type == R_INF_SUP) // <>
-        return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
+    else if (r_type == R_INF_SUP) // <>
+        ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
 
-    return -1;
+    free(filename);
+    return ret_val;
 }
 
 // close the file descriptor if tree has NOT a token IO_NUMBER
