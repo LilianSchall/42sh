@@ -137,7 +137,7 @@ char *copy_string(char *src)
 char **new_argv(struct AST *tree, int *argc)
 {
     *argc = (int)list_size(tree->linked_list) + 1;
-    int argc_tmp = *argc;
+    //int argc_tmp = *argc;
 
     struct linked_list *temp = tree->linked_list;
 
@@ -153,13 +153,13 @@ char **new_argv(struct AST *tree, int *argc)
         if (!*(argv[0]))
         {
             i--;
-            argc_tmp--;
+            (*argc)--;
         }
     }
     else
         argv[0] = copy_string(tree->value->symbol);
 
-    for (; i < argc_tmp; i++)
+    for (; i < *argc; i++)
     {
         struct AST *child = ln->data;
         if (child->value->is_expandable)
@@ -170,7 +170,7 @@ char **new_argv(struct AST *tree, int *argc)
             else
             {
                 i--;
-                argc_tmp--;
+                (*argc)--;
             }
         }
         else
