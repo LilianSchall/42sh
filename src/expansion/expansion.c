@@ -1,5 +1,6 @@
-#include "variables.h"
+#include "expansion.h"
 
+#if 0
 static struct linked_list *variables = NULL;
 
 struct var *new_var(char *name, char *value)
@@ -25,10 +26,14 @@ void free_variables(void)
     deep_free_list(variables, free_var);
 }
 
+void init_variables(void)
+{
+    variables = new_list();
+    assign_var("IFS", " \t\n");
+}
+
 void print_variables(void)
 {
-    if (!variables)
-        return;
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -36,10 +41,10 @@ void print_variables(void)
     }
 }
 
+
 int assign_var(char *name, char *val)
 {
-    if (!variables)
-        variables = new_list();
+    setenv(name, val, 1);
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -57,8 +62,7 @@ int assign_var(char *name, char *val)
 
 char *get_var(char *name)
 {
-    if (!variables)
-        return NULL;
+    return getenv(name);
     for (struct linked_node *v = variables->head; v; v = v->next)
     {
         struct var *variable = v->data;
@@ -69,12 +73,10 @@ char *get_var(char *name)
     }
     return NULL;
 }
+#endif
 
-void replace_var(char **str)
+void expand_var(char **str)
 {
-    if (!variables)
-        return;
-
     // Iterate through each character in the string
     char *p = *str;
     while (*p)
@@ -86,7 +88,7 @@ void replace_var(char **str)
             char *end = var_name;
             while (*end && *end != ' ' && *end != '$')
                 end++;
-
+#if 0
             // Find the variable value
             struct linked_node *cur = variables->head;
             struct var *v = cur->data;
@@ -96,12 +98,17 @@ void replace_var(char **str)
                 if (cur)
                     v = cur->data;
             }
-            if (cur)
+#endif
+            char *tmp = strndup(var_name, end - var_name); 
+            char *var = getenv(tmp);
+            free(tmp);
+
+            if (var)
             {
                 // Replace the variable with its value
-                int len = strlen(v->value);
+                int len = strlen(var);
                 memmove(p + len, p + (end - p), strlen(p) - (end - p) + 1);
-                memcpy(p, v->value, len);
+                memcpy(p, var, len);
                 p += len;
             }
             else

@@ -1,6 +1,10 @@
-#ifndef EXPANSION_H
-#define EXPANSION_H
+#ifndef VARIABLES_H
+#define VARIABLES_H
 
-// TODO
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#endif /* !EXPANSION_H */
+void expand_var(char **str);
+
+#endif /* !VARIABLES_H */

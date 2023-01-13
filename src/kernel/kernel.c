@@ -8,6 +8,7 @@ int launch_interactive_mode(int options)
     char *content = NULL;
     int status_code = 0;
     int last_status_code = 0;
+
     do
     {
         printf("42sh$ ");
@@ -44,16 +45,25 @@ int launch_script_mode(int options, char *file_script)
 
 int launch_shell(int options, char *file_script, char *input)
 {
-    if (input)
-        return execute_shell_command(options, input);
+    int status_code = 0;
 
-    if (!file_script)
+    if (input)
+        status_code = execute_shell_command(options, input);
+    else if (!file_script)
     {
         if (isatty(STDIN_FILENO))
-            return launch_interactive_mode(options);
-        return execute_shell_command(options, get_interactive_content(false));
+            status_code = launch_interactive_mode(options);
+        else
+        {
+            char *content = get_interactive_content(false);
+            status_code = execute_shell_command(options, content);
+            free(content);
+        }
     }
-    return launch_script_mode(options, file_script);
+    else
+        status_code = launch_script_mode(options, file_script);
+
+    return status_code;
 }
 
 int execute_shell_command(int options, char *input)
