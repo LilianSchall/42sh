@@ -39,4 +39,9 @@ void free_argv(int argc, char **argv);
 // example of usage : get echo words
 struct linked_list *get_linked_list_from_AST(struct AST *AST);
 
+// check if the string is a number
+// if yes, it returns its value
+// if not, it returns -1
+int my_itoa(char *string);
+
 #endif /* !COMMONS_H */

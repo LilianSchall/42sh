@@ -47,3 +47,25 @@ void purge_newline_token(struct linked_list *token_list)
         token = list_head(token_list);
     }
 }
+
+void blend_sequence_AST(struct AST *tree, struct AST *child)
+{
+    if (tree->type != SEQUENCE)
+        return;
+
+    if (child->type != SEQUENCE)
+    {
+        list_append(tree->linked_list, child);
+        return;
+    }
+
+    struct AST *new = list_head(child->linked_list);
+
+    while (new)
+    {
+        list_pop(child->linked_list);
+        blend_sequence_AST(tree, new);
+        new = list_head(child->linked_list);
+    }
+    free_AST(child);
+}

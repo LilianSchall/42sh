@@ -22,5 +22,6 @@ struct token *consume_token(struct linked_list *token_list,
 struct AST *combine_token_AST(struct AST *tree, struct token *token);
 
 void purge_newline_token(struct linked_list *token_list);
+void blend_sequence_AST(struct AST *tree, struct AST *child);
 
 #endif /* !PARSING_TOOLS_H */

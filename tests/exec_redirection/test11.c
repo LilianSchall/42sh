@@ -32,7 +32,7 @@ Test(exec_redirection, redirection_11, .init = redirect_11)
     struct AST *ast_fd_from = new_AST(new_token(copy_string("2"), (enum token_type) IO_NUMBER, false), 
     (enum AST_type) ARG, NULL);
 
-    struct AST *ast_fd_to = new_AST(new_token(copy_string("1"), (enum token_type) IO_NUMBER, false), 
+    struct AST *ast_fd_to = new_AST(new_token(copy_string("1"), (enum token_type) WORD, false), 
     (enum AST_type) ARG, NULL);
     
     struct linked_list *ll_redir = new_list();

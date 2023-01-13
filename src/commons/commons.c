@@ -222,3 +222,18 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
 
     return ll_ast;
 }
+
+int my_itoa(char *string)
+{
+    int val = 0;
+    int i = 0;
+    while(string[i] != '\0')
+    {
+        if(string[i] < '0' || string[i] > '9')
+            return -1;
+        
+        val = val * 10 + string[i] - '0';
+        i++;
+    }
+    return val;
+}

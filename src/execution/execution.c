@@ -241,6 +241,9 @@ int execute_AST_sequence(struct AST *tree)
 {
     int ret_val = 0;
 
+    if (tree->linked_list == NULL)
+        return 0;
+
     for (struct linked_node *node = tree->linked_list->head; node;
          node = node->next)
     {

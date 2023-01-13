@@ -41,7 +41,7 @@ static struct AST *handle_redirection(struct linked_list *token_list,
 struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = list_head(token_list);
-
+    struct AST *tree = new_AST(NULL, SEQUENCE, new_list());
     if (token == NULL)
     {
         if (trigger_warn)
@@ -50,7 +50,10 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     }
 
     if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token))
-        return simple_command_rule(token_list, trigger_warn);
+    {
+        list_append(tree->linked_list, 
+                simple_command_rule(token_list, trigger_warn));
+    }
     else if (token->type == IF || token->type == WHILE || 
             token->type == UNTIL || token->type == FOR)
     {
@@ -59,10 +62,16 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         // purge newline token
         purge_newline_token(token_list);
 
-        return handle_redirection(token_list, shell_com_tree, trigger_warn);
+        list_append(tree->linked_list, 
+                handle_redirection(token_list, shell_com_tree, trigger_warn));
     }
-    // else
-    if (trigger_warn)
-        warnx("No match for token: %s at command_rule", token->symbol);
-    return NULL;
+    else
+    {
+        if (trigger_warn)
+            warnx("No match for token: %s at command_rule", token->symbol);
+        free_AST(tree);
+        return NULL;
+    }
+
+    return tree;
 }

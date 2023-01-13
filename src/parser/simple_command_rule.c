@@ -57,10 +57,13 @@ struct AST *simple_command_rule(struct linked_list *token_list,
         token = list_head(token_list);
     }
 
-    if (token->type != WORD)
+    if (!token || token->type != WORD)
     {
         if (redirect_tree) // then simple_command will be prefix {prefix}
+        {
+            list_insert(last_redirect_tree->linked_list, new_AST(NULL, SEQUENCE, NULL), 1);
             return redirect_tree;
+        }
 
         if (trigger_warn)
             warnx("%s: simple_command missmatch", token->symbol);
