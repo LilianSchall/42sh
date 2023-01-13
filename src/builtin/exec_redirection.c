@@ -51,16 +51,28 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
 int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 {
     // duplicate fd_from file descriptor
+
     int from_dup = dup(fd_from);
 
-    // put file_fd into fd_to
-    if (dup2(fd_to, fd_from) == -1)
+    if(fd_to != -2)
     {
-        close(from_dup);
-        return 2;
+        // put file_fd into fd_to
+        if (dup2(fd_to, fd_from) == -1)
+        {
+            close(from_dup);
+            return 2;
+        }
     }
+    // we are in case : >&-
+    // we need to close fd_from
+    else
+    {
+        close(fd_from);
+    }
+
     // excute the SEQUENCE or REDIRECTION  AST
     int return_val = execute_AST(tree);
+
     // restore fd
     dup2(from_dup, fd_from);
     // close all file descriptor
@@ -85,11 +97,10 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
         return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
 
-    if (r_type == R_SUP_AND) // >&
-    {
-        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
-    }
-    if (r_type == R_INF || r_type == R_INF_AND) // < or <&
+    if (r_type == R_INF_SUP) // <>
+        return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
+
+    if (r_type == R_INF) // < 
     {
         if (!access(filename, F_OK)) // check if file exist
             return open(filename, O_RDONLY | O_CLOEXEC);
@@ -99,8 +110,29 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
         return -1;
     }
 
-    if (r_type == R_INF_SUP) // <>
-        return open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
+    if(!strcmp(filename, "-"))
+        return -2;
+
+    // check if the filename is a number -> IO_NUMBER
+    int val= my_itoa(filename);
+    if (val != -1)
+        return val;
+
+    if (r_type == R_SUP_AND) // >&
+    {
+        return open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+    }
+
+    if (r_type == R_INF_AND) // <&
+    {
+
+        if (!access(filename, F_OK)) // check if file exist
+            return open(filename, O_RDONLY | O_CLOEXEC);
+
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
+                tree->value->symbol);
+        return -1;
+    }
 
     return -1;
 }
