@@ -21,9 +21,12 @@ struct token *create_token(char **word_begin_ptr, char **input,
     char *symbol = get_word(word_begin_ptr, input);
 
     int index = find_special_tokens(symbol, token_value);
-
+    enum token_type type = index == -1 ?
+        strstr(symbol, "=") ? VARASSIGNMENT
+        : WORD
+        : index;
     // here index serves as an enum
-    return new_token(symbol, index == -1 ? WORD : index);
+    return new_token(symbol, type);
 }
 
 // this function skips a char by replacing it by -1
@@ -163,6 +166,11 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     if (find_delims(GETCHAR(input, 0), delims) == -1)
         return NULL;
 
+    // this rule is quite bizarre but I will explain it
+    // it is used to make the $ stick to the variable name
+    if (GETCHAR(input,0) == '$' && *input == *word_begin_ptr)
+        return NULL;
+
     if (GETCHAR(input, 0) == 0)
         return create_token(word_begin_ptr, input, token_value);
 
@@ -181,7 +189,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     tmp[2] = 0;
     
     // else if two same delimitators are following each other
-    if (!my_isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
+    if (!isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
         && *input == *word_begin_ptr) ||
         find_special_tokens(tmp, redirections) != -1))
     // then it is not a delimitator but a special token

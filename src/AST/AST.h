@@ -35,4 +35,7 @@ struct AST *new_AST(struct token *value, enum AST_type type,
 // if tree is NULL, does nothing
 void free_AST(void *data);
 
+// pretty_print an AST
+void pretty_printer(struct AST* tree);
+
 #endif /* !AST_H */

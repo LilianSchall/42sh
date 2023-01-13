@@ -26,6 +26,7 @@ void free_token(void *data)
 
 void print_token_list(struct linked_list *list)
 {
+    static CREATE_DICO(dico);
     struct linked_node *node = NULL;
     size_t i = 0;
 
@@ -33,7 +34,31 @@ void print_token_list(struct linked_list *list)
     {
         struct token *token = node->data;
 
-        printf("%lu. token: %s\n", i, token->symbol);
+        printf("%lu. token: %s ", i, token->symbol);
+        printf("token type: ");
+        if (token->type == WORD)
+            printf("word\n");
+        else if (token->type == IO_NUMBER)
+            printf("io_number\n");
+        else if (token->type == NEWLINE)
+            printf("newline\n");
+        else
+            printf("%s\n", dico[token->type]);
         i++;
     }
+}
+
+bool is_redirect(struct token *token)
+{
+    CREATE_REDIRECT_SCOUT(types);
+
+    size_t len = sizeof(types) / sizeof(enum token_type);
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (types[i] == token->type)
+            return true;
+    }
+
+    return false;
 }

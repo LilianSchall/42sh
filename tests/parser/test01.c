@@ -48,7 +48,7 @@ Test(parser, parse_echo_foo)
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
     free_AST(tree);
-    free_list(token_list);
+    deep_free_list(token_list, free_token);
 }
 
 Test(parser, parse_echo_foo_foo)
@@ -64,5 +64,5 @@ Test(parser, parse_echo_foo_foo)
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
     free_AST(tree);
-    free_list(token_list);
+    deep_free_list(token_list, free_token);
 }
