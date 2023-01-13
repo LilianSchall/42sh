@@ -189,7 +189,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     tmp[2] = 0;
     
     // else if two same delimitators are following each other
-    if (!my_isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
+    if (!isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
         && *input == *word_begin_ptr) ||
         find_special_tokens(tmp, redirections) != -1))
     // then it is not a delimitator but a special token

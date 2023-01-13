@@ -19,6 +19,7 @@ src = files(
 	'parser/if_rule.c',
 	'parser/shell_command_rule.c',
 	'parser/until_rule.c',
+    'parser/for_rule.c',
 	'parser/pipeline_rule.c',
 	'execution/execution.c',
 	'execution/variables.c',

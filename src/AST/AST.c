@@ -84,7 +84,21 @@ static void __pretty_printer(struct AST *tree)
             __pretty_printer(node->data);
         }       
     }
-
+    else if (tree->type == ITER)
+    {
+        printf("iter: ");
+        if (!tree->linked_list)
+            goto print_end;
+        for (struct linked_node *node = tree->linked_list->head; node;
+                node = node->next)
+        {
+            __pretty_printer(node->data);
+        }
+    }
+    else if (tree->type == ARG)
+    {
+        printf("arg: %s", tree->value->symbol);
+    }
 print_end:
     printf("}");
 }
@@ -93,7 +107,10 @@ print_end:
 void pretty_printer(struct AST *tree)
 {
     if (!tree)
+    {
+        puts("Tree is null.");
         return;
+    }
 
     __pretty_printer(tree);
     printf("\n");
