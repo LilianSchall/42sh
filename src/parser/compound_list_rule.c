@@ -10,13 +10,19 @@ struct AST *compound_list_rule(struct linked_list *token_list,
     while ((newline_token = consume_token(token_list, NEWLINE, info)) != NULL)
         free_token(newline_token);
 
-    struct AST *tree = new_AST(NULL, SEQUENCE, new_list());
+    struct AST *tree = NULL;
     struct AST *command = and_or_rule(token_list, trigger_warn);
 
     if (!command)
         return NULL;
-
-    list_append(tree->linked_list, command);
+    
+    if (command->type == SEQUENCE)
+        tree = command;
+    else
+    {
+        tree = new_AST(NULL, SEQUENCE, new_list());
+        list_append(tree->linked_list, command);
+    }
 
     while (true)
     {
@@ -32,16 +38,14 @@ struct AST *compound_list_rule(struct linked_list *token_list,
                 break;
         }
         free_token(tmp);
-        info.sym = "\\n";
-        while ((tmp = consume_token(token_list, NEWLINE, info)) != NULL)
-            free_token(tmp);
+        purge_newline_token(token_list);
 
         command = and_or_rule(token_list, false);
 
         if (!command)
             break;
 
-        list_append(tree->linked_list, command);
+        blend_sequence_AST(tree, command);
     }
 
     info.sym = ";";
@@ -50,9 +54,7 @@ struct AST *compound_list_rule(struct linked_list *token_list,
     if (tmp)
         free_token(tmp);
 
-    info.sym = "\\n";
-    while ((tmp = consume_token(token_list, NEWLINE, info)) != NULL)
-        free_token(tmp);
+    purge_newline_token(token_list);
 
     return tree;
 }

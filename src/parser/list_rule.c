@@ -3,13 +3,17 @@
 struct AST *list_rule(struct linked_list *token_list)
 {
     struct AST *child = and_or_rule(token_list, true);
-
+    struct AST *tree = NULL;
     if (child == NULL)
         return NULL;
-
-    struct AST *tree = new_AST(NULL, SEQUENCE, new_list());
-
-    list_append(tree->linked_list, child);
+    
+    if (child->type != SEQUENCE)
+    {
+        tree = new_AST(NULL, SEQUENCE, new_list());
+        list_append(tree->linked_list, child);
+    }
+    else
+        tree = child;
 
     struct token *token = list_head(token_list);
     while (token != NULL && token->type == SEMICOLON)
@@ -26,7 +30,8 @@ struct AST *list_rule(struct linked_list *token_list)
         if (child == NULL)
             break;
 
-        list_append(tree->linked_list, child);
+        blend_sequence_AST(tree, child);
+
         token = list_head(token_list);
     }
 
