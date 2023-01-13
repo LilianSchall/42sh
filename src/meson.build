@@ -22,7 +22,7 @@ src = files(
     'parser/for_rule.c',
 	'parser/pipeline_rule.c',
 	'execution/execution.c',
-	'execution/variables.c',
+	'expansion/expansion.c',
 	'commons/commons.c',
 	'AST/AST.c',
 	'lexer/lexer.c',
