@@ -20,7 +20,11 @@ static void stick_correctly_child(struct AST **tree,
    }
    else
    {
-        // the child is a word
+        if (*tree == NULL)
+        {
+            *tree = new_AST(NULL, SEQUENCE, new_list());
+        }
+        // the child is a word or an assignment
         // so it is an argument
         list_append((*tree)->linked_list, child);
    }
@@ -42,13 +46,14 @@ struct AST *simple_command_rule(struct linked_list *token_list,
         return tree;
     }
     // parsing the possible prefix
-    while (token != NULL && (token->type == IO_NUMBER || is_redirect(token)))
+    while (token != NULL && (token->type == IO_NUMBER 
+                || is_redirect(token) || token->type == VARASSIGNMENT))
     {
         struct AST *child = prefix_rule(token_list, trigger_warn);
 
         if (child == NULL)
         {
-            free(redirect_tree);
+            free_AST(redirect_tree);
         }
         
         stick_correctly_child(&tree, &redirect_tree, 
@@ -64,12 +69,17 @@ struct AST *simple_command_rule(struct linked_list *token_list,
             list_insert(last_redirect_tree->linked_list, new_AST(NULL, SEQUENCE, NULL), 1);
             return redirect_tree;
         }
-
+        else if (tree)
+        {
+            // then simple command will only be an assignment
+            return tree;
+        }
         if (trigger_warn)
             warnx("%s: simple_command missmatch", token->symbol);
         goto simple_command_end;
     }
-
+    
+    free_AST(tree); // we are erasing all assignment child
     tree = new_AST(token, COMMAND, NULL);
     list_pop(token_list);
 
@@ -97,11 +107,15 @@ struct AST *simple_command_rule(struct linked_list *token_list,
         token = list_head(token_list);
     }
 
+    // as we have command, we should remove every child
+    // that are assignments
+    // remove_AST(tree, ASSIGNMENT);
     if (redirect_tree)
     {
         // it means we have a redirection
         // so we insert the tree into the last redirection
         list_insert(last_redirect_tree->linked_list, tree, 1);
+        
         return redirect_tree;
     }
 

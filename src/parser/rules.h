@@ -31,5 +31,7 @@ struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn);
 struct AST *rule_while_rule(struct linked_list *token_list, bool trigger_warn);
 struct AST *rule_until_rule(struct linked_list *token_list, bool trigger_warn);
 struct AST *rule_for_rule(struct linked_list *token_list, bool trigger_warn);
+struct AST *assignment_word_rule(struct linked_list *token_list,
+        bool trigger_warn);
 
 #endif /* !RULES_H */

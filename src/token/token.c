@@ -43,6 +43,8 @@ void print_token_list(struct linked_list *list)
             printf("io_number");
         else if (token->type == NEWLINE)
             printf("newline");
+        else if (token->type == VARASSIGNMENT)
+            printf("varassignment");
         else
             printf("%s", dico[token->type]);
         i++;
