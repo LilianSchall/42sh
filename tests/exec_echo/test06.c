@@ -9,18 +9,18 @@
 
 int exec6(void)
 {
-    struct AST *ast_1 = new_AST(new_token(copy_string("README.md"), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
-    struct AST *ast_2 = new_AST(new_token(copy_string("-e"), (enum token_type) WORD), (enum AST_type) ARG, NULL);
+    struct AST *ast_1 = new_AST(new_token(copy_string("README.md"), (enum token_type) WORD, false), (enum AST_type) ARG, NULL);   
+    struct AST *ast_2 = new_AST(new_token(copy_string("-e"), (enum token_type) WORD, false), (enum AST_type) ARG, NULL);
 
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_1);
     ll_ast = list_append(ll_ast, ast_2);
     
-    struct AST *ast = new_AST(new_token(copy_string("cat"), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
+    struct AST *ast = new_AST(new_token(copy_string("cat"), (enum token_type) WORD, false), (enum AST_type) COMMAND, ll_ast);
     struct linked_list *ll_ast2 = new_list();
     ll_ast2 = list_append(ll_ast2, ast);
 
-    struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_ast2);
+    struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) WORD, false), (enum AST_type) SEQUENCE, ll_ast2);
 
     execute_AST(ast_final);
 
