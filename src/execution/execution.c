@@ -23,22 +23,21 @@ int not_builtin_fn(int argc, char **argv)
 
 int execute_AST_cmd(struct AST *tree)
 {
-    char *cmd = tree->value->symbol;
     int ret_val = 0;
 
     struct linked_list *ll_word = get_linked_list_from_AST(tree);
     int argc = 0;
     char **argv = new_argv(ll_word, &argc);
 
-    if (!strcmp("echo", cmd)) // builtin command
+    if (!strcmp("echo", argv[0])) // builtin command
     {
         ret_val = echo_fn(argc, argv);
     }
-    else if (!strcmp("true", cmd)) // true
+    else if (!strcmp("true", argv[0])) // true
     {
         ret_val = true_fn(argc, argv);
     }
-    else if (!strcmp("false", cmd)) // false
+    else if (!strcmp("false", argv[0])) // false
     {
         ret_val = false_fn(argc, argv);
     }
