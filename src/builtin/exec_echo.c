@@ -104,6 +104,13 @@ int print_echo_words(int *pos, int argc, char **argv,
 // take argc & argv in parameter
 int echo_fn(int argc, char **argv)
 {
+
+    if(fcntl(1, F_GETFD) == -1)
+    {
+        fprintf(stderr, "42sh: file descriptor is closed\n");
+        return 1;
+    }
+
     // get the first child of the 'echo' AST
     //  struct AST *new_AST = tree->linked_list->head->data;
 
