@@ -102,11 +102,12 @@ struct token
 {
     char *symbol;
     enum token_type type;
+    bool is_expandable;
 };
 
 // create a token with the right attributes and returns it.
 // returns null if symbol is NULL (wrong execution).
-struct token *new_token(char *symbol, enum token_type type);
+struct token *new_token(char *symbol, enum token_type type, bool is_expandable);
 
 // free a token and its attributes.
 // if the token is NULL, does nothing

@@ -10,13 +10,13 @@ static void skip_char(char **stream, int offset);
 static void offset_char(char **stream, int offset);
 static char *get_word(char **word_begin_ptr, char **input);
 static struct token *create_token(char **word_begin_ptr, char **input,
-                                  char **token_value);
+                                  char **token_value, bool is_expandable);
 static void execute_parsing(struct linked_list *token_list,
                             char **word_begin_ptr, char **input,
                             struct lexer_states states);
 
 struct token *create_token(char **word_begin_ptr, char **input,
-                           char **token_value)
+                           char **token_value, bool is_expandable)
 {
     char *symbol = get_word(word_begin_ptr, input);
 
@@ -26,7 +26,7 @@ struct token *create_token(char **word_begin_ptr, char **input,
         : WORD
         : index;
     // here index serves as an enum
-    return new_token(symbol, type);
+    return new_token(symbol, type, is_expandable);
 }
 
 // this function skips a char by replacing it by -1
@@ -94,7 +94,7 @@ struct token *parse_quoted_word(char **word_begin_ptr,
 
             // in quoted mode, every token is a word
             *states.reading_quote = false;
-            return new_token(symbol, WORD);
+            return new_token(symbol, WORD, false);
         }
 
         // else if we are not at the end and the next char is not a space
@@ -116,7 +116,7 @@ struct token *parse_quoted_word(char **word_begin_ptr,
         else
         {
             *states.reading_quote = false;
-            return create_token(word_begin_ptr, input, NULL);
+            return create_token(word_begin_ptr, input, NULL, false);
         }
     }
 
@@ -156,9 +156,9 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         struct token *token = NULL;
         char *offset_input = *input + 1;
         if (*word_begin_ptr + 1 < *input)
-            token = create_token(word_begin_ptr, &offset_input, token_value); 
+            token = create_token(word_begin_ptr, &offset_input, token_value, true); 
         else
-            token = create_token(word_begin_ptr, input, token_value);
+            token = create_token(word_begin_ptr, input, token_value, true);
         token->type = IO_NUMBER;
         return token;
     }
@@ -172,7 +172,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         return NULL;
 
     if (GETCHAR(input, 0) == 0)
-        return create_token(word_begin_ptr, input, token_value);
+        return create_token(word_begin_ptr, input, token_value, true);
 
     // the current char is a delimitator
     // if it is an escape char
@@ -218,11 +218,11 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         && *input <= *word_begin_ptr + 1)
     {
         *input -= 1;
-        token = create_token(word_begin_ptr, input, token_value);
+        token = create_token(word_begin_ptr, input, token_value, true);
         return token;
     }
     else
-        token = create_token(word_begin_ptr, input, token_value);
+        token = create_token(word_begin_ptr, input, token_value, true);
 
     if (*input > *word_begin_ptr + 1)
         offset_char(input, -1);
@@ -235,7 +235,7 @@ struct token *parse_comment(char **input, struct lexer_states states)
     if (GETCHAR(input, 0) == '\n')
     {
         *states.reading_comm = false;
-        return new_token(strdup("\n"), NEWLINE);
+        return new_token(strdup("\n"), NEWLINE, false);
     }
 
     return NULL;

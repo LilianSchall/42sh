@@ -43,7 +43,7 @@ static struct AST *parsing_semicolon(struct linked_list *token_list)
 create_iter:
     tree = new_AST(NULL, ITER, new_list());
 
-    list_append(tree->linked_list, new_AST(new_token(strdup("$@"), WORD), ARG, NULL));
+    list_append(tree->linked_list, new_AST(new_token(strdup("$@"), WORD, true), ARG, NULL));
 
     return tree;
 }
