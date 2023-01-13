@@ -4,9 +4,9 @@ static struct token *get_standard_io_number(enum token_type type)
 {
     if (type == R_SUP || type == R_SUP_SUP || type == R_SUP_AND ||
             type == R_SUP_PIPE)
-        return new_token(strdup("1"), IO_NUMBER);
+        return new_token(strdup("1"), IO_NUMBER, false);
     // else
-    return new_token(strdup("0"), IO_NUMBER);
+    return new_token(strdup("0"), IO_NUMBER, false);
 }
 
 struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
