@@ -5,6 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void expand_var(char **str);
+char *expand_var(const char *str);
 
 #endif /* !VARIABLES_H */

@@ -75,31 +75,20 @@ char *get_var(char *name)
 }
 #endif
 
-void expand_var(char **str)
+char* expand_var(const char *str)
 {
-    // Iterate through each character in the string
-    char *p = *str;
-    while (*p)
+    char *result = malloc(strlen(str) + 1);
+    char *p = result;
+    while (*str)
     {
-        if (*p == '$')
+        if (*str == '$')
         {
             // Find the variable name
-            char *var_name = p + 1;
-            char *end = var_name;
+            const char *var_name = str + 1;
+            const char *end = var_name;
             while (*end && *end != ' ' && *end != '$')
                 end++;
-#if 0
-            // Find the variable value
-            struct linked_node *cur = variables->head;
-            struct var *v = cur->data;
-            while (cur && (strncmp(v->name, var_name, end - var_name) != 0))
-            {
-                cur = cur->next;
-                if (cur)
-                    v = cur->data;
-            }
-#endif
-            char *tmp = strndup(var_name, end - var_name); 
+            char *tmp = strndup(var_name, end - var_name);
             char *var = getenv(tmp);
             free(tmp);
 
@@ -107,20 +96,27 @@ void expand_var(char **str)
             {
                 // Replace the variable with its value
                 int len = strlen(var);
-                memmove(p + len, p + (end - p), strlen(p) - (end - p) + 1);
+                int cur_len = p - result;
+                result = realloc(result, cur_len + len + strlen(end) + 1);
+                p = result + cur_len;
                 memcpy(p, var, len);
                 p += len;
+                str = end;
             }
             else
             {
                 // No variable found, remove the $variable
-                memmove(p, p + (end - p), strlen(p) - (end - p) + 1);
+                str = end;
             }
         }
         else
         {
             // No variable, move to the next character
+            *p = *str;
             p++;
+            str++;
         }
     }
+    *p = '\0';
+    return result;
 }
