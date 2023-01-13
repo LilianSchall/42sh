@@ -87,7 +87,7 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 {
     if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
-        return tree->value->symbol[0] - '0';
+        return my_itoa(tree->value->symbol);
 
     char *filename = tree->value->symbol; // get the filename
 
