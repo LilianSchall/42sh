@@ -25,9 +25,8 @@ int execute_AST_cmd(struct AST *tree)
 {
     int ret_val = 0;
 
-    struct linked_list *ll_word = get_linked_list_from_AST(tree);
     int argc = 0;
-    char **argv = new_argv(ll_word, &argc);
+    char **argv = new_argv(tree, &argc);
 
     if (!strcmp("echo", argv[0])) // builtin command
     {
@@ -47,7 +46,6 @@ int execute_AST_cmd(struct AST *tree)
     }
 
     free_argv(argc, argv);
-    free_list(ll_word);
 
     return ret_val;
 }

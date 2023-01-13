@@ -38,16 +38,17 @@ void print_token_list(struct linked_list *list)
         printf("%lu. token: %s ", i, token->symbol);
         printf("token type: ");
         if (token->type == WORD)
-            printf("word\n");
+            printf("word");
         else if (token->type == IO_NUMBER)
-            printf("io_number\n");
+            printf("io_number");
         else if (token->type == NEWLINE)
-            printf("newline\n");
+            printf("newline");
         else if (token->type == VARASSIGNMENT)
-            printf("varassignment\n");
+            printf("varassignment");
         else
-            printf("%s\n", dico[token->type]);
+            printf("%s", dico[token->type]);
         i++;
+        printf(" is_expandable: %d\n", token->is_expandable); 
     }
 }
 

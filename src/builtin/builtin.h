@@ -11,6 +11,7 @@
 #include "AST/AST.h"
 #include "commons/commons.h"
 #include "execution/execution.h"
+#include "expansion/expansion.h"
 #include "io_backend/io_backend.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"

@@ -134,23 +134,55 @@ char *copy_string(char *src)
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL
-char **new_argv(struct linked_list *linked_list, int *argc)
+char **new_argv(struct AST *tree, int *argc)
 {
-    *argc = (int)list_size(linked_list);
+    *argc = (int)list_size(tree->linked_list) + 1;
+    //int argc_tmp = *argc;
 
-    struct linked_list *temp = linked_list;
+    struct linked_list *temp = tree->linked_list;
 
-    struct linked_node *ln = temp->head;
 
     char **argv = malloc(sizeof(char *) * (*argc + 1));
 
-    for (int i = 0; i < *argc; i++)
+    int i = 1;
+
+    if (tree->value->is_expandable)
     {
-        argv[i] = copy_string(ln->data);
+        argv[0] = expand_var(tree->value->symbol); 
+        if (!*(argv[0]))
+        {
+            i--;
+            (*argc)--;
+        }
+    }
+    else
+        argv[0] = copy_string(tree->value->symbol);
+
+    if(!temp)
+        return argv;
+
+    struct linked_node *ln = temp->head;
+
+    for (; i < *argc; i++)
+    {
+        struct AST *child = ln->data;
+        if (child->value->is_expandable)
+        {
+            char *tmp = expand_var(child->value->symbol);
+            if (*tmp)
+                argv[i] = tmp;
+            else
+            {
+                i--;
+                (*argc)--;
+            }
+        }
+        else
+            argv[i] = copy_string(child->value->symbol);
         ln = ln->next;
     }
 
-    argv[*argc] = NULL;
+    argv[i] = NULL;
     return argv;
 }
 
@@ -159,8 +191,7 @@ void free_argv(int argc, char **argv)
 {
     for (int i = 0; i < argc; i++)
     {
-        if (argv[i])
-            free(argv[i]);
+        free(argv[i]);
     }
     free(argv);
 }

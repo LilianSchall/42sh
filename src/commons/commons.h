@@ -6,6 +6,7 @@
 
 #include "AST/AST.h"
 #include "linked_list/linked_list.h"
+#include "expansion/expansion.h"
 
 // this function duplicates the string str into a newly allocated
 // string. It will delete every byte that represent -1 by nospace
@@ -28,7 +29,7 @@ char *copy_string(char *src);
 // transform a linked list into a argc (char **)
 // argc is a pointer
 // last elem of argv is NULL
-char **new_argv(struct linked_list *linked_list, int *argc);
+char **new_argv(struct AST *tree, int *argc);
 
 // free argv
 void free_argv(int argc, char **argv);
