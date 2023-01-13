@@ -185,12 +185,9 @@ char **new_argv(struct AST *tree, int *argc)
 // free argc (char **)
 void free_argv(int argc, char **argv)
 {
-    char *s;
     for (int i = 0; i < argc; i++)
     {
-        s = argv[i];
-        if (!s)
-            free(s);
+        free(argv[i]);
     }
     free(argv);
 }

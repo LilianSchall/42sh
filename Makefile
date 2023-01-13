@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wextra -Wvla -Isrc -g
+CFLAGS = -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wextra -Wvla -Isrc -fsanitize=address -g
 
 SRC = $(wildcard src/*/*.c src/*/*/*.c)
 MAIN = src/main.c
