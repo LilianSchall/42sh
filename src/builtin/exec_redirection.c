@@ -107,8 +107,6 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     else if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
         ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
-    else if (r_type == R_SUP_AND) // >&
-        ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     else if (r_type == R_INF) // < 
@@ -124,27 +122,30 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     }
     else
     {
+        int val= my_itoa(filename);
         if(!strcmp(filename, "-"))
             ret_val = -2;
 
         // check if the filename is a number -> IO_NUMBER
-        int val= my_itoa(filename);
-        if (val != -1)
+        else if (val != -1)
             ret_val = val;
-        else if (r_type == R_SUP_AND) // >&
-        {
-            ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
-        }
-        else if (r_type == R_INF_AND) // <&
-        {
 
-            if (!access(filename, F_OK)) // check if file exist
-                ret_val = open(filename, O_RDONLY | O_CLOEXEC);
-            else
+        else {
+            if (r_type == R_SUP_AND) // >&
             {
-                fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-                    tree->value->symbol);
-                ret_val = -1;
+                ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+            }
+            else if (r_type == R_INF_AND) // <&
+            {
+
+                if (!access(filename, F_OK)) // check if file exist
+                    ret_val = open(filename, O_RDONLY | O_CLOEXEC);
+                else
+                {
+                    fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
+                        tree->value->symbol);
+                    ret_val = -1;
+                }
             }
         }
     }
