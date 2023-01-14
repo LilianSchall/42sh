@@ -155,8 +155,7 @@ int execute_AST_operator(struct AST *tree)
 {
     char *op = tree->value->symbol;
     int ret_val = 0;
-    int ret_val2 = 0;
-
+    
     struct linked_node *node = tree->linked_list->head;
     struct AST *child = node->data;
     struct AST *child2;
@@ -171,22 +170,20 @@ int execute_AST_operator(struct AST *tree)
     else if (!strcmp("&&", op)) // && condition
     {
         ret_val = execute_AST(child);
-        ret_val2 = execute_AST(child2);
 
-        if (ret_val == 0 && ret_val2 == 0)
-            ret_val = 0;
-        else
-            ret_val = 1;
+        if(ret_val == 1)
+            return 1;
+
+        return execute_AST(child2);
+
     }
     else if (!strcmp("||", op)) // || condition
     {
         ret_val = execute_AST(child);
-        ret_val2 = execute_AST(child2);
+        if(ret_val == 0)
+            return 0;
 
-        if (ret_val == 1 && ret_val2 == 1)
-            ret_val = 1;
-        else
-            ret_val = 0;
+        return execute_AST(child2);
     }
 
     return ret_val;
