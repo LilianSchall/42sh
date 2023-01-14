@@ -1,5 +1,7 @@
 #include "garbage_collector.h"
 
+struct garbage_list *garbage_collector = NULL;
+
 static struct garbage_list *new_item(void *ptr, struct garbage_list *next)
 {
     struct garbage_list *item = malloc(sizeof(struct garbage_list));
@@ -52,6 +54,9 @@ static void *mem_alloc(size_t nmemb, size_t size, bool is_calloc)
 
 void *mem_malloc(size_t size)
 {
+    if (garbage_collector == NULL)
+        return malloc(size);
+
     if (size == 0)
         return NULL;
 
@@ -66,6 +71,9 @@ void *mem_calloc(size_t nmemb, size_t size)
     if (nmemb * size == 0)
         return NULL;
 
+    if (garbage_collector == NULL)
+        return calloc(nmemb, size);
+
     void *ptr = mem_alloc(nmemb, size, true);
     
     return ptr;
@@ -73,6 +81,9 @@ void *mem_calloc(size_t nmemb, size_t size)
 
 void *mem_realloc(void *ptr, size_t size)
 {
+    if (garbage_collector == NULL)
+        return realloc(ptr, size);
+
     if (size == 0)
     {
         mem_free(ptr);
@@ -97,6 +108,12 @@ void *mem_realloc(void *ptr, size_t size)
 
 void mem_free(void *ptr)
 {
+    if (garbage_collector == NULL)
+    {
+        free(ptr);
+        return;
+    }
+
     if (ptr == NULL)
         return;
 
@@ -104,7 +121,6 @@ void mem_free(void *ptr)
 
     if (parent == NULL)
     {
-        warnx("given ptr is not in the garbage_collector register, freeing anyway.");
         free(ptr);
         return;
     }

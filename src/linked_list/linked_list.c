@@ -2,7 +2,7 @@
 
 struct linked_list *new_list(void)
 {
-    struct linked_list *list = malloc(sizeof(struct linked_list));
+    struct linked_list *list = mem_malloc(sizeof(struct linked_list));
 
     if (list == NULL)
         return NULL;
@@ -43,7 +43,7 @@ size_t list_size(struct linked_list *list)
 
 static struct linked_node *new_node(void *data, struct linked_node *next)
 {
-    struct linked_node *node = malloc(sizeof(struct linked_node));
+    struct linked_node *node = mem_malloc(sizeof(struct linked_node));
 
     if (node == NULL)
         return NULL;
@@ -119,7 +119,7 @@ static void free_node(struct linked_node *node, void (*free_fct)(void *))
     {
         free_fct(node->data);
     }
-    free(node);
+    mem_free(node);
 }
 
 struct linked_list *list_pop(struct linked_list *list)
@@ -163,7 +163,7 @@ static void __list_deep_free(struct linked_list *list, void (*free_fct)(void *))
         head = next;
     }
 
-    free(list);
+    mem_free(list);
 }
 
 void deep_free_list(struct linked_list *list, void (*free_fct)(void *))

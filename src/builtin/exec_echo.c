@@ -3,7 +3,7 @@
 // create our echo_option struct and init all options
 struct echo_option *new_echo_option(void)
 {
-    struct echo_option *echo_option = malloc(sizeof(struct echo_option));
+    struct echo_option *echo_option = mem_malloc(sizeof(struct echo_option));
 
     // setup the different
     echo_option->option_n = 0;
@@ -137,7 +137,7 @@ int echo_fn(int argc, char **argv)
 
     fflush(stdout);
 
-    free(echo_option);
+    mem_free(echo_option);
 
     return return_value;
 }

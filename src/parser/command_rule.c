@@ -46,19 +46,32 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     {
         if (trigger_warn)
             warnx("Missing token at command_rule");
+        free_AST(tree);
         return NULL;
     }
 
     if (token->type == WORD || token->type == IO_NUMBER 
             || is_redirect(token) || token->type == VARASSIGNMENT)
     {
-        list_append(tree->linked_list, 
-                simple_command_rule(token_list, trigger_warn));
+        struct AST *command_tree = simple_command_rule(token_list, trigger_warn);
+        
+        if (!command_tree)
+        {
+            free_AST(tree);
+            return NULL;
+        }
+        list_append(tree->linked_list, command_tree);
     }
     else if (token->type == IF || token->type == WHILE || 
             token->type == UNTIL || token->type == FOR)
     {
         struct AST *shell_com_tree = shell_command_rule(token_list, trigger_warn);
+        
+        if (!shell_com_tree)
+        {
+            free_AST(tree);
+            return NULL;
+        }
 
         // purge newline token
         purge_newline_token(token_list);

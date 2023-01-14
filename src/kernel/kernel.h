@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "execution/execution.h"
+#include "garbage_collector/garbage_collector.h"
 #include "io_backend/io_backend.h"
 #include "launch_options.h"
 #include "lexer/lexer.h"

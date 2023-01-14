@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "garbage_collector/garbage_collector.h"
+
 // function that returns the content of a filename
 char *get_file_content(char *filename);
 

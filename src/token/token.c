@@ -2,7 +2,7 @@
 
 struct token *new_token(char *symbol, enum token_type type, bool is_expandable)
 {
-    struct token *token = malloc(sizeof(struct token));
+    struct token *token = mem_malloc(sizeof(struct token));
 
     if (!token)
         return NULL;
@@ -21,8 +21,8 @@ void free_token(void *data)
 
     struct token *token = data;
 
-    free(token->symbol);
-    free(token);
+    mem_free(token->symbol);
+    mem_free(token);
 }
 
 void print_token_list(struct linked_list *list)

@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+#include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
 #include "token/token.h"
 

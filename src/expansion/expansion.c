@@ -77,7 +77,7 @@ char *get_var(char *name)
 
 char* expand_var(const char *str)
 {
-    char *result = malloc(strlen(str) + 1);
+    char *result = mem_malloc(strlen(str) + 1);
     char *p = result;
     while (*str)
     {
@@ -90,14 +90,14 @@ char* expand_var(const char *str)
                 end++;
             char *tmp = strndup(var_name, end - var_name);
             char *var = getenv(tmp);
-            free(tmp);
+            mem_free(tmp);
 
             if (var)
             {
                 // Replace the variable with its value
                 int len = strlen(var);
                 int cur_len = p - result;
-                result = realloc(result, cur_len + len + strlen(end) + 1);
+                result = mem_realloc(result, cur_len + len + strlen(end) + 1);
                 p = result + cur_len;
                 memcpy(p, var, len);
                 p += len;
