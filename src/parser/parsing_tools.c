@@ -69,3 +69,15 @@ void blend_sequence_AST(struct AST *tree, struct AST *child)
     }
     free_AST(child);
 }
+
+struct AST *root_sequence_if_needed(struct AST *tree)
+{
+    if (!tree || tree->type == SEQUENCE)
+        return tree;
+
+    struct AST *seq = new_AST(NULL, SEQUENCE, new_list());
+
+    list_append(seq->linked_list, tree);
+
+    return seq;
+}

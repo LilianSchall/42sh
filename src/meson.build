@@ -26,6 +26,7 @@ src = files(
 	'expansion/expansion.c',
 	'commons/commons.c',
 	'AST/AST.c',
+    'AST/pretty_printer.c',
 	'lexer/lexer.c',
 	'builtin/exec_pipe.c',
 	'builtin/exec_bool.c',
