@@ -14,6 +14,7 @@
 struct lexer_states
 {
     bool *reading_quote;
+    bool *reading_double_quote;
     bool *reading_comm;
 };
 
