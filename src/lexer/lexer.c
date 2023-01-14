@@ -6,6 +6,8 @@ static struct token *parse_quoted_word(char **word_begin_ptr,
 static struct token *parse_unquoted_word(char **word_begin_ptr,
                                          struct lexer_states states,
                                          char **input);
+struct token *parse_double_quoted_word(char **word_begin_ptr,
+        struct lexer_states states, char **input);
 static void skip_char(char **stream, int offset);
 static void offset_char(char **stream, int offset);
 static char *get_word(char **word_begin_ptr, char **input);
@@ -127,6 +129,75 @@ static bool is_chevron(char c)
 {
     return c == '>' || c == '<';
 }
+
+struct token *parse_double_quoted_word(char **word_begin_ptr,
+        struct lexer_states states, char **input)
+{
+    static CREATE_DELIMITATORS(delims);
+
+    if (!(*word_begin_ptr))
+    {
+        if (GETCHAR(input, 0) == '\"') // word is ''
+            *states.reading_double_quote = false;
+        else
+            *word_begin_ptr = *input;
+        // as we are double_quoted, every character including spaces are part of the
+        // word so our start of the word is here
+
+        // we return NULL because we haven't parse any token at all right now
+        return NULL;
+    }
+    // the current char is a delimitator
+    // if it is an escape char
+    if (GETCHAR(input, 0) == '\\')
+    {
+        // we escape it
+        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
+        return NULL;
+    }
+
+    // else we are currently reading a word
+    // we stop reading a word if we encounter a single quote    
+    if (GETCHAR(input, 0) == '"') // we found the matching quote
+    {
+        if (!GETCHAR(input, 1)) // if we are at the end of the input
+        {
+            // we parse the last token
+            **input = '\0';
+
+            char *symbol = my_strdup(*word_begin_ptr);
+            **input = '"';
+
+            // in quoted mode, every token is a word
+            *states.reading_double_quote = false;
+            return new_token(symbol, WORD, true);
+        }
+
+        // else if we are not at the end and the next char is not a space
+        //  and it isn't a delimitator
+        if (!my_isspace(GETCHAR(input, 1))
+            && (find_delims(GETCHAR(input, 1), delims) == -1
+                || GETCHAR(input, 1) == '"'))
+        {
+            // we haven't finished reading our whole token,
+            // so we skip the the quote and continue reading
+            skip_char(input, 1);
+
+            // we skip the next quote too if there is any and stay in quote mode
+            if (GETCHAR(input, 1) == '"')
+                skip_char(input, 0);
+            else
+                *states.reading_double_quote = false;
+        }
+        else
+        {
+            *states.reading_double_quote = false;
+            return create_token(word_begin_ptr, input, NULL, true);
+        }
+    }
+    return NULL;
+}
+
 struct token *parse_unquoted_word(char **word_begin_ptr,
                                   struct lexer_states states, char **input)
 {
@@ -209,6 +280,15 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         *states.reading_quote = true;
         return NULL;
     }
+    // same thing for double quote, we skip the double quote and enter
+    // double_quoted mode
+    // at the end the whole word will be regenerated
+    else if (GETCHAR(input, 0) == '"')
+    {
+        skip_char(input, 0);
+        *states.reading_double_quote = true;
+        return NULL;
+    }
 
     // now we have a token
     // that is at the end no matter what
@@ -250,6 +330,9 @@ void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
     // we based our parsing on wheter we read a quoted word or not
     else if (*states.reading_quote)
         current_token = parse_quoted_word(word_begin_ptr, states, input);
+    else if (*states.reading_double_quote)
+        current_token = parse_double_quoted_word(word_begin_ptr,
+                states, input);
     else
         current_token = parse_unquoted_word(word_begin_ptr, states, input);
 
@@ -283,8 +366,10 @@ struct linked_list *build_token_list(char *input)
 
     bool reading_comm = false;
     bool reading_quote = false;
+    bool reading_double_quote = false;
 
     struct lexer_states states = { .reading_quote = &reading_quote,
+                                .reading_double_quote = &reading_double_quote,
                                    .reading_comm = &reading_comm };
 
     char *word_begin_ptr = NULL;
@@ -294,7 +379,7 @@ struct linked_list *build_token_list(char *input)
     for (; *input != '\0'; input++)
         execute_parsing(token_list, &word_begin_ptr, &input, states);
 
-    if (reading_quote) // single_quote missmatch
+    if (reading_quote || reading_double_quote) // quote missmatch
     {
         deep_free_list(token_list, free_token);
         return NULL;

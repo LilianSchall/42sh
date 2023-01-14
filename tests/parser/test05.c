@@ -10,15 +10,31 @@ extern void depth_test_AST(struct AST *tree, enum AST_type types[], size_t size,
         size_t *i);
 extern void test_AST(struct AST *tree, enum AST_type types[], size_t size);
 
-Test(parser, for_i_in_1_2_3_do_echo_foo_done)
+Test(parser, while_echo_foo_semicolon_do_echo_prout_echo_file_done)
 {
-    char input[] = "for i in 1 2 3\n\n\n\n do echo foo; done";
+    char input[] = "while 'echo' \"foo\" do echo prout\necho 'file';done";
 
     struct linked_list *token_list = build_token_list(input);
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, CONDITION, ARG, ITER, ARG, ARG, ARG, SEQUENCE, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, CONDITION, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG, COMMAND, ARG};
+
+    test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
+
+    free_AST(tree);
+    deep_free_list(token_list, free_token);
+}
+
+Test(parser, while_true_do_echo_foo_done_sup_file)
+{
+    char input[] = "while true\ndo\necho foo; done\n> file";
+
+    struct linked_list *token_list = build_token_list(input);
+
+    struct AST *tree = build_shell_AST(token_list);
+
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, SEQUENCE, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
