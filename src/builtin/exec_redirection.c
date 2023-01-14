@@ -81,6 +81,23 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
     return return_val;
 }
 
+// check if file exist
+// if yes, it opens it in read and return FD
+// else, return -1 and print error message
+int check_if_file_exist(char *filename)
+{
+    int ret_val;
+    if (!access(filename, F_OK)) // check if file exist
+        ret_val = open(filename, O_RDONLY | O_CLOEXEC);
+    else
+    {
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
+            filename);
+        ret_val = -1;
+    }    
+    return ret_val;
+}
+
 // return the file descriptor
 // return the FD if tree as a token IO_NUMBER
 // return the FD of the file opened with the good option depend on the r_type
@@ -90,14 +107,12 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
         return my_itoa(tree->value->symbol);
 
     char *filename = NULL;
+
+    // check if filename is a string to expand
     if (tree->value->is_expandable)
-    {
         filename = expand_var(tree->value->symbol);
-    }
     else
-    {
         filename = tree->value->symbol; // get the filename
-    }
 
     int ret_val = 0;
 
@@ -110,19 +125,12 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     else if (r_type == R_INF) // < 
-    {
-        if (!access(filename, F_OK)) // check if file exist
-            ret_val = open(filename, O_RDONLY | O_CLOEXEC);
-        else
-        {
-            fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-                tree->value->symbol);
-            ret_val = -1;
-        }
-    }
+        ret_val = check_if_file_exist(filename);
+        
     else
     {
         int val= my_itoa(filename);
+        // check if it as FD to close 
         if(!strcmp(filename, "-"))
             ret_val = -2;
 
@@ -130,23 +138,12 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
         else if (val != -1)
             ret_val = val;
 
-        else {
+        else 
+        {
             if (r_type == R_SUP_AND) // >&
-            {
                 ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
-            }
             else if (r_type == R_INF_AND) // <&
-            {
-
-                if (!access(filename, F_OK)) // check if file exist
-                    ret_val = open(filename, O_RDONLY | O_CLOEXEC);
-                else
-                {
-                    fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-                        tree->value->symbol);
-                    ret_val = -1;
-                }
-            }
+                ret_val = check_if_file_exist(filename);
         }
     }
     if (tree->value->is_expandable)
