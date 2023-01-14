@@ -1,5 +1,6 @@
 src = files( 
 	'main.c',
+    'garbage_collector/garbage_collector.c',
 	'option_parser/option_parser.c',
 	'linked_list/linked_list.c',
 	'kernel/kernel.c',
