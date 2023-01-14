@@ -5,8 +5,6 @@ int execute_AST_pipe(struct AST *tree)
     // création de la pipe
     int fd[2];
 
-    int pid;
-
     int save2 = dup(STDIN_FILENO);
     int save = dup(STDOUT_FILENO);
 
@@ -18,25 +16,19 @@ int execute_AST_pipe(struct AST *tree)
     while (child_list->next != NULL)
     {
         pipe(fd);
-        if ((pid = fork()) == 0)
-        {
-            // redirige stdout vers l'entrée de la pipe
-            int save = dup(STDOUT_FILENO);
-            dup2(fd[1], STDOUT_FILENO);
-            close(fd[0]);
-            close(fd[1]);
-            execute_AST(child); // execute la commande
-            dup2(save, STDOUT_FILENO);
-            exit(0);
-        }
-        else
-        {
-            wait(NULL);
-            // redirige stdin vers la sortie de la pipe
-            dup2(fd[0], STDIN_FILENO);
-            close(fd[0]);
-            close(fd[1]);
-        }
+
+        // redirige stdout vers l'entrée de la pipe
+        dup2(fd[1], STDOUT_FILENO);
+
+        // execute la commande
+        execute_AST(child); 
+
+        dup2(save, STDOUT_FILENO);
+        // redirige stdin vers la sortie de la pipe
+        
+        dup2(fd[0], STDIN_FILENO);
+        close(fd[0]);
+        close(fd[1]);
 
         // on récupère l'enfant suivant
         child_list = child_list->next;
@@ -46,12 +38,11 @@ int execute_AST_pipe(struct AST *tree)
     // execute la dernière commande (sera écrite dans stdout)
     int result = execute_AST(child);
 
-    close(fd[0]);
-    close(fd[1]);
-
+    // on retablie les FD
     dup2(save2, STDIN_FILENO);
-
     dup2(save, STDOUT_FILENO);
+
+
     return result;
 }
 
