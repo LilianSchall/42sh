@@ -46,7 +46,7 @@ char *expand_var(const char *str)
                 // Replace the variable with its value
                 int len = strlen(var);
                 int cur_len = p - result;
-                result = realloc(result, cur_len + len + strlen(end) + 1);
+                result = mem_realloc(result, cur_len + len + strlen(end) + 1);
                 p = result + cur_len;
                 memcpy(p, var, len);
                 p += len;

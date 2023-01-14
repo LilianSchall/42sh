@@ -86,8 +86,8 @@ struct AST *simple_command_rule(struct linked_list *token_list,
 
     token = list_head(token_list);
     while (token != NULL
-           && (token->type == WORD || token->type == IO_NUMBER
-               || is_redirect(token)))
+           && (token->type == WORD || token->type == VARASSIGNMENT
+               || token->type == IO_NUMBER || is_redirect(token)))
     {
         struct AST *child = element_rule(token_list, trigger_warn);
 
