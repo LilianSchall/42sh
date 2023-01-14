@@ -38,7 +38,7 @@ int launch_script_mode(int options, char *file_script)
 
     // execute input
     int status_code = execute_shell_command(options, input);
-    free(input);
+    mem_free(input);
 
     return status_code;
 }
