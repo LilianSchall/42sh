@@ -1,7 +1,5 @@
 #include "builtin/builtin.h"
 
-
-
 int execute_AST_pipe(struct AST *tree)
 {
     // création de la pipe
@@ -45,7 +43,6 @@ int execute_AST_pipe(struct AST *tree)
     
     // execute la dernière commande (sera écrite dans stdout)
     int result = execute_AST(child);
-
 
     close(fd[0]);
     close(fd[1]);

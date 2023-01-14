@@ -3,7 +3,7 @@
 struct AST *new_AST(struct token *value, enum AST_type type,
                     struct linked_list *linked_list)
 {
-    struct AST *my_AST = malloc(sizeof(struct AST));
+    struct AST *my_AST = mem_malloc(sizeof(struct AST));
 
     if (NULL == my_AST)
         return NULL;
@@ -26,7 +26,7 @@ void free_AST(void *data)
 
     if (tree->value)
         free_token(tree->value);
-    free(tree);
+    mem_free(tree);
 }
 
 void remove_AST(struct AST *tree, enum AST_type type)
@@ -36,7 +36,7 @@ void remove_AST(struct AST *tree, enum AST_type type)
     struct linked_list *children = tree->linked_list;
     struct linked_node *head = children->head;
 
-    struct linked_list *tmp_interface = malloc(sizeof(struct linked_list));
+    struct linked_list *tmp_interface = mem_malloc(sizeof(struct linked_list));
 
     tmp_interface->head = head;
     children->head = NULL;

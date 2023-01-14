@@ -19,7 +19,7 @@ char *my_strdup(char *str)
 {
     size_t len = my_strlen(str);
 
-    char *new_str = calloc(len + 1, 1);
+    char *new_str = mem_calloc(len + 1, 1);
 
     if (!new_str)
         return NULL;
@@ -96,7 +96,7 @@ char *str_replace(char *string, char *occ, char *c)
             {
                 size_of_string += diff;
 
-                string = realloc(string, sizeof(char) * (size_of_string + 1));
+                string = mem_realloc(string, sizeof(char) * (size_of_string + 1));
 
                 for (int j = size_of_string; j - diff >= i; j--) // move
                     string[j] = string[j - diff];
@@ -127,7 +127,7 @@ char *str_replace(char *string, char *occ, char *c)
 char *copy_string(char *src)
 {
     int l = strlen(src);
-    char *dest = malloc(sizeof(char) * (l + 1));
+    char *dest = mem_malloc(sizeof(char) * (l + 1));
     return strcpy(dest, src);
 }
 
@@ -142,7 +142,7 @@ char **new_argv(struct AST *tree, int *argc)
     struct linked_list *temp = tree->linked_list;
 
 
-    char **argv = malloc(sizeof(char *) * (*argc + 1));
+    char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
 
     int i = 1;
 
@@ -191,9 +191,9 @@ void free_argv(int argc, char **argv)
 {
     for (int i = 0; i < argc; i++)
     {
-        free(argv[i]);
+        mem_free(argv[i]);
     }
-    free(argv);
+    mem_free(argv);
 }
 
 // return a linked list of all 'word' in our AST

@@ -8,6 +8,7 @@
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"
+#include "garbage_collector/garbage_collector.h"
 
 // #include "exec_echo.h"
 

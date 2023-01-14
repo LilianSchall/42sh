@@ -25,7 +25,7 @@ int launch_interactive_mode(int options)
             last_status_code = status_code; // first init of first command
 
         // free and dereference processed content
-        free(content);
+        mem_free(content);
         content = NULL;
     } while (status_code != -1);
     return last_status_code;
@@ -47,6 +47,8 @@ int launch_shell(int options, char *file_script, char *input)
 {
     int status_code = 0;
 
+    new_garbage_collector();
+
     if (input)
         status_code = execute_shell_command(options, input);
     else if (!file_script)
@@ -57,11 +59,13 @@ int launch_shell(int options, char *file_script, char *input)
         {
             char *content = get_interactive_content(false);
             status_code = execute_shell_command(options, content);
-            free(content);
+            mem_free(content);
         }
     }
     else
         status_code = launch_script_mode(options, file_script);
+
+    free_garbage_collector();
 
     return status_code;
 }

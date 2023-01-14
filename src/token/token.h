@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
 
 enum token_type

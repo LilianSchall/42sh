@@ -11,7 +11,6 @@ struct garbage_list
     struct garbage_list *next;
 };
 
-static struct garbage_list *garbage_collector = NULL;
 
 void new_garbage_collector(void);
 void *mem_malloc(size_t size);

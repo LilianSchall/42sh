@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "AST/AST.h"
+#include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
 #include "expansion/expansion.h"
 

@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#include "garbage_collector/garbage_collector.h"
+
 struct linked_node
 {
     void *data;
