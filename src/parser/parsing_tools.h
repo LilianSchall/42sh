@@ -23,5 +23,5 @@ struct AST *combine_token_AST(struct AST *tree, struct token *token);
 
 void purge_newline_token(struct linked_list *token_list);
 void blend_sequence_AST(struct AST *tree, struct AST *child);
-
+struct AST *root_sequence_if_needed(struct AST *tree);
 #endif /* !PARSING_TOOLS_H */
