@@ -96,7 +96,8 @@ char *str_replace(char *string, char *occ, char *c)
             {
                 size_of_string += diff;
 
-                string = mem_realloc(string, sizeof(char) * (size_of_string + 1));
+                string =
+                    mem_realloc(string, sizeof(char) * (size_of_string + 1));
 
                 for (int j = size_of_string; j - diff >= i; j--) // move
                     string[j] = string[j - diff];
@@ -137,10 +138,9 @@ char *copy_string(char *src)
 char **new_argv(struct AST *tree, int *argc)
 {
     *argc = (int)list_size(tree->linked_list) + 1;
-    //int argc_tmp = *argc;
+    // int argc_tmp = *argc;
 
     struct linked_list *temp = tree->linked_list;
-
 
     char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
 
@@ -148,7 +148,7 @@ char **new_argv(struct AST *tree, int *argc)
 
     if (tree->value->is_expandable)
     {
-        argv[0] = expand_var(tree->value->symbol); 
+        argv[0] = expand_var(tree->value->symbol);
         if (!*(argv[0]))
         {
             i--;
@@ -158,7 +158,7 @@ char **new_argv(struct AST *tree, int *argc)
     else
         argv[0] = copy_string(tree->value->symbol);
 
-    if(!temp)
+    if (!temp)
     {
         argv[1] = NULL;
         return argv;
@@ -230,13 +230,14 @@ int my_itoa(char *string)
 {
     int val = 0;
     int i = 0;
-    while(string[i] != '\0')
+    while (string[i] != '\0')
     {
-        if(string[i] < '0' || string[i] > '9')
+        if (string[i] < '0' || string[i] > '9')
             return -1;
-        
+
         val = val * 10 + string[i] - '0';
         i++;
     }
     return val;
 }
+

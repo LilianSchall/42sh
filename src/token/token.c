@@ -48,7 +48,7 @@ void print_token_list(struct linked_list *list)
         else
             printf("%s", dico[token->type]);
         i++;
-        printf(" is_expandable: %d\n", token->is_expandable); 
+        printf(" is_expandable: %d\n", token->is_expandable);
     }
 }
 
@@ -66,3 +66,4 @@ bool is_redirect(struct token *token)
 
     return false;
 }
+

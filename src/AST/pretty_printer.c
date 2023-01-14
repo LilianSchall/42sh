@@ -13,7 +13,7 @@ static void print_redirection(struct AST *tree)
     struct AST *to = node->data;
 
     printf("redirect %s to %s: ", io->value->symbol, to->value->symbol);
-    __pretty_printer(exec); 
+    __pretty_printer(exec);
 }
 
 static void print_sequence(struct AST *tree)
@@ -34,65 +34,62 @@ static void print_command(struct AST *tree)
     if (!tree->linked_list)
         return;
     for (struct linked_node *node = tree->linked_list->head; node;
-                node = node->next)
+         node = node->next)
     {
         struct AST *child = node->data;
-            printf("%s ", child->value->symbol);
-        } 
- 
+        printf("%s ", child->value->symbol);
+    }
 }
 
 static void print_condition(struct AST *tree)
 {
-printf("condition %s: ", tree->value->symbol);
-        if (!tree->linked_list)
-            return;
-        for (struct linked_node *node = tree->linked_list->head; node;
-                node = node->next)
-        {
-            __pretty_printer(node->data);
-        } 
+    printf("condition %s: ", tree->value->symbol);
+    if (!tree->linked_list)
+        return;
+    for (struct linked_node *node = tree->linked_list->head; node;
+         node = node->next)
+    {
+        __pretty_printer(node->data);
+    }
 }
 
 static void print_iter(struct AST *tree)
 {
-printf("iter: ");
-        if (!tree->linked_list)
-            return;
-        for (struct linked_node *node = tree->linked_list->head; node;
-                node = node->next)
-        {
-            __pretty_printer(node->data);
-        }
+    printf("iter: ");
+    if (!tree->linked_list)
+        return;
+    for (struct linked_node *node = tree->linked_list->head; node;
+         node = node->next)
+    {
+        __pretty_printer(node->data);
+    }
 }
 
 static void print_pipe(struct AST *tree)
 {
-printf("pipe: from ");
-        __pretty_printer(tree->linked_list->head->data);
-        printf(" to ");
-        __pretty_printer(tree->linked_list->head->next->data);
+    printf("pipe: from ");
+    __pretty_printer(tree->linked_list->head->data);
+    printf(" to ");
+    __pretty_printer(tree->linked_list->head->next->data);
 }
 
 static void print_assignment(struct AST *tree)
 {
-
-        struct AST *name = tree->linked_list->head->data;
-        struct AST *value = tree->linked_list->head->next->data;
-        printf("assign: %s = %s", name->value->symbol,
-                value->value->symbol);
+    struct AST *name = tree->linked_list->head->data;
+    struct AST *value = tree->linked_list->head->next->data;
+    printf("assign: %s = %s", name->value->symbol, value->value->symbol);
 }
 
 static void print_operator(struct AST *tree)
 {
-printf("operator [%s]: ", tree->value->symbol);
-        if (!tree->linked_list)
-            return;
-        for (struct linked_node *node = tree->linked_list->head; node;
-                node = node->next)
-        {
-            __pretty_printer(node->data);
-        }
+    printf("operator [%s]: ", tree->value->symbol);
+    if (!tree->linked_list)
+        return;
+    for (struct linked_node *node = tree->linked_list->head; node;
+         node = node->next)
+    {
+        __pretty_printer(node->data);
+    }
 }
 
 static void __pretty_printer(struct AST *tree)
@@ -126,7 +123,6 @@ static void __pretty_printer(struct AST *tree)
     printf("}");
 }
 
-
 void pretty_printer(struct AST *tree)
 {
     if (!tree)
@@ -138,3 +134,4 @@ void pretty_printer(struct AST *tree)
     __pretty_printer(tree);
     printf("\n");
 }
+

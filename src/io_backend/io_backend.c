@@ -42,3 +42,4 @@ char *get_interactive_content(bool getline_mode)
     }
     return return_str;
 }
+

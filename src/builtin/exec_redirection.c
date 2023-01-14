@@ -33,11 +33,9 @@ int redirection_stderr_stdout(struct AST *tree, char *filename)
     fflush(stdout);
     // end stuff
 
-
     // restore stdout
     dup2(stderr_dup, STDERR_FILENO);
     dup2(stdout_dup, STDOUT_FILENO);
-
 
     // close all file descriptor
     close(file_fd);
@@ -54,7 +52,7 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
 
     int from_dup = dup(fd_from);
 
-    if(fd_to != -2)
+    if (fd_to != -2)
     {
         // put file_fd into fd_to
         if (dup2(fd_to, fd_from) == -1)
@@ -117,16 +115,17 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     int ret_val = 0;
 
     if (r_type == R_SUP_SUP) // >>
-        ret_val = open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
+        ret_val =
+            open(filename, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0755);
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     else if (r_type == R_SUP_PIPE || r_type == R_SUP) //  >|   >
-        ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+        ret_val =
+            open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
     else if (r_type == R_INF) // < 
         ret_val = check_if_file_exist(filename);
-        
     else
     {
         int val= my_itoa(filename);
@@ -137,7 +136,6 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
         // check if the filename is a number -> IO_NUMBER
         else if (val != -1)
             ret_val = val;
-
         else 
         {
             if (r_type == R_SUP_AND) // >&

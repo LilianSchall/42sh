@@ -1,7 +1,7 @@
 #include "parser.h"
 
 static struct AST *handle_redirection(struct linked_list *token_list,
-        struct AST *tree, bool trigger_warn)
+                                      struct AST *tree, bool trigger_warn)
 {
     if (tree == NULL)
         return NULL;
@@ -50,11 +50,12 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         return NULL;
     }
 
-    if (token->type == WORD || token->type == IO_NUMBER 
-            || is_redirect(token) || token->type == VARASSIGNMENT)
+    if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token)
+        || token->type == VARASSIGNMENT)
     {
-        struct AST *command_tree = simple_command_rule(token_list, trigger_warn);
-        
+        struct AST *command_tree =
+            simple_command_rule(token_list, trigger_warn);
+
         if (!command_tree)
         {
             free_AST(tree);
@@ -62,11 +63,12 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         }
         list_append(tree->linked_list, command_tree);
     }
-    else if (token->type == IF || token->type == WHILE || 
-            token->type == UNTIL || token->type == FOR)
+    else if (token->type == IF || token->type == WHILE || token->type == UNTIL
+             || token->type == FOR)
     {
-        struct AST *shell_com_tree = shell_command_rule(token_list, trigger_warn);
-        
+        struct AST *shell_com_tree =
+            shell_command_rule(token_list, trigger_warn);
+
         if (!shell_com_tree)
         {
             free_AST(tree);
@@ -76,8 +78,9 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         // purge newline token
         purge_newline_token(token_list);
 
-        list_append(tree->linked_list, 
-                handle_redirection(token_list, shell_com_tree, trigger_warn));
+        list_append(
+            tree->linked_list,
+            handle_redirection(token_list, shell_com_tree, trigger_warn));
     }
     else
     {
@@ -89,3 +92,4 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
 
     return tree;
 }
+

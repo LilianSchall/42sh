@@ -39,6 +39,7 @@ void free_AST(void *data);
 void remove_AST(struct AST *tree, enum AST_type type);
 
 // pretty_print an AST
-void pretty_printer(struct AST* tree);
+void pretty_printer(struct AST *tree);
 
 #endif /* !AST_H */
+

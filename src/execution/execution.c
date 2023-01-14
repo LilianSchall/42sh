@@ -17,7 +17,7 @@ int not_builtin_fn(int argc, char **argv)
         }
     }
     wait(&ret_val);
-    
+
     return WEXITSTATUS(ret_val);
 }
 
@@ -155,7 +155,7 @@ int execute_AST_operator(struct AST *tree)
 {
     char *op = tree->value->symbol;
     int ret_val = 0;
-    
+
     struct linked_node *node = tree->linked_list->head;
     struct AST *child = node->data;
     struct AST *child2;
@@ -171,16 +171,15 @@ int execute_AST_operator(struct AST *tree)
     {
         ret_val = execute_AST(child);
 
-        if(ret_val == 1)
+        if (ret_val == 1)
             return 1;
 
         return execute_AST(child2);
-
     }
     else if (!strcmp("||", op)) // || condition
     {
         ret_val = execute_AST(child);
-        if(ret_val == 0)
+        if (ret_val == 0)
             return 0;
 
         return execute_AST(child2);
@@ -254,7 +253,7 @@ int execute_AST(struct AST *tree)
 {
     if (!tree)
         return 0;
-    
+
     int ret_val = 0;
 
     switch (tree->type)
@@ -285,3 +284,4 @@ int execute_AST(struct AST *tree)
     }
     return ret_val;
 }
+

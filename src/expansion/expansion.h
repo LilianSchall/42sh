@@ -10,3 +10,4 @@
 char *expand_var(const char *str);
 
 #endif /* !VARIABLES_H */
+

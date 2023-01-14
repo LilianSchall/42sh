@@ -41,7 +41,6 @@ void remove_AST(struct AST *tree, enum AST_type type)
     tmp_interface->head = head;
     children->head = NULL;
 
-
     struct AST *child = list_head(tmp_interface);
     while (!child)
     {
@@ -57,5 +56,4 @@ void remove_AST(struct AST *tree, enum AST_type type)
 
     free_list(tmp_interface);
 }
-
 
