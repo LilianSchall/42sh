@@ -146,7 +146,7 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
     }
     if (tree->value->is_expandable)
     {
-        free(filename);
+        mem_free(filename);
     }
     return ret_val;
 }

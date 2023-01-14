@@ -39,7 +39,7 @@ char *expand_var(const char *str)
 
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
-            free(tmp);
+            mem_free(tmp);
 
             if (var)
             {
