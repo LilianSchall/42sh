@@ -4,8 +4,8 @@
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 
 #include "AST/AST.h"
@@ -49,8 +49,8 @@ int redirection_stderr_stdout(struct AST *tree, char *filename);
 // redirect fd_from file descriptor into into fd_to file descriptor
 int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to);
 
-
 // do the PIPE AST execution
 int execute_AST_pipe(struct AST *tree);
 
 #endif /* !BUILTIN_H */
+

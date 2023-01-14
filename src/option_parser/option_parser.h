@@ -18,3 +18,4 @@ int parse_given_args(int argc, char **argv, char **filename, char **input);
 bool is_option_activated(int options, int mode);
 
 #endif /* !OPTION_PARSER_H */
+

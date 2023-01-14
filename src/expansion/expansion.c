@@ -1,6 +1,6 @@
 #include "expansion.h"
 
-char* expand_var(const char *str)
+char *expand_var(const char *str)
 {
     char *result = mem_malloc(strlen(str) + 1);
     char *p = result;
@@ -22,14 +22,17 @@ char* expand_var(const char *str)
             {
                 while (*end && *end != '}')
                     end++;
-                if (*end == '}') {
+                if (*end == '}')
+                {
                     end++;
                 }
-                else {
+                else
+                {
                     end = str;
                 }
             }
-            else {
+            else
+            {
                 while (*end && *end != ' ' && *end != '$')
                     end++;
             }
@@ -114,3 +117,4 @@ char *expand_var(const char *str)
     return result;
 }
 #endif
+

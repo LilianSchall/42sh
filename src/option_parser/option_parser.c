@@ -43,3 +43,4 @@ bool is_option_activated(int options, int mode)
         return true;
     return false;
 }
+

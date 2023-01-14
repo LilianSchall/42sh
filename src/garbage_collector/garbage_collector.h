@@ -11,7 +11,6 @@ struct garbage_list
     struct garbage_list *next;
 };
 
-
 void new_garbage_collector(void);
 void *mem_malloc(size_t size);
 void *mem_calloc(size_t nmemb, size_t size);
@@ -22,3 +21,4 @@ void mem_free(void *ptr);
 void free_garbage_collector(void);
 
 #endif /* GARBAGE_COLLECTOR_H */
+

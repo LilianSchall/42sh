@@ -37,15 +37,15 @@ void new_garbage_collector(void)
 
 static void *mem_alloc(size_t nmemb, size_t size, bool is_calloc)
 {
-     void *ptr = NULL;
+    void *ptr = NULL;
 
-     if (is_calloc)
-         ptr = calloc(nmemb, size);
-     else
-         ptr = malloc(nmemb * size);
+    if (is_calloc)
+        ptr = calloc(nmemb, size);
+    else
+        ptr = malloc(nmemb * size);
 
-     if (!ptr)
-         return ptr;
+    if (!ptr)
+        return ptr;
 
     garbage_collector->next = new_item(ptr, garbage_collector->next);
 
@@ -59,7 +59,6 @@ void *mem_malloc(size_t size)
 
     if (size == 0)
         return NULL;
-
 
     void *ptr = mem_alloc(size, 1, false);
 
@@ -75,7 +74,7 @@ void *mem_calloc(size_t nmemb, size_t size)
         return calloc(nmemb, size);
 
     void *ptr = mem_alloc(nmemb, size, true);
-    
+
     return ptr;
 }
 
@@ -127,7 +126,7 @@ void mem_free(void *ptr)
 
     struct garbage_list *node = parent->next;
     parent->next = node->next;
-    
+
     free(node->ptr);
     free(node);
 }
@@ -136,12 +135,12 @@ void free_garbage_collector(void)
 {
     if (!garbage_collector)
         return;
-    
+
     struct garbage_list *head = garbage_collector;
     while (head)
     {
         struct garbage_list *next = head->next;
-        
+
         if (head->ptr)
             free(head->ptr);
         free(head);
@@ -149,3 +148,4 @@ void free_garbage_collector(void)
         head = next;
     }
 }
+

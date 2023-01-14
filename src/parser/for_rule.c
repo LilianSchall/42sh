@@ -1,7 +1,7 @@
 #include "parser.h"
 
 static struct AST *create_for_tree(struct token *for_token, struct token *word,
-        struct AST *iter, struct AST *seq)
+                                   struct AST *iter, struct AST *seq)
 {
     struct AST *for_tree = new_AST(for_token, CONDITION, new_list());
     list_append(for_tree->linked_list, new_AST(word, ARG, NULL));
@@ -11,9 +11,8 @@ static struct AST *create_for_tree(struct token *for_token, struct token *word,
     return for_tree;
 }
 
-
 // this function shall parse the [';']
-// if this function is 
+// if this function is
 static struct AST *parsing_semicolon(struct linked_list *token_list)
 {
     struct token *token = list_head(token_list);
@@ -43,20 +42,23 @@ static struct AST *parsing_semicolon(struct linked_list *token_list)
 create_iter:
     tree = new_AST(NULL, ITER, new_list());
 
-    list_append(tree->linked_list, new_AST(new_token(strdup("$@"), WORD, true), ARG, NULL));
+    list_append(tree->linked_list,
+                new_AST(new_token(strdup("$@"), WORD, true), ARG, NULL));
 
     return tree;
 }
 
 // this function shall parse the [ {'\n' 'in' { WORD } ';' | '\n' ]
-// if there is no word WORD, the function shall return an ITER AST with no child in it
+// if there is no word WORD, the function shall return an ITER AST with no child
+// in it
 static struct AST *parsing_in_clause(struct linked_list *token_list)
 {
     purge_newline_token(token_list);
 
-    struct token *token =NULL;
+    struct token *token = NULL;
     struct log_info infos = { .trigger_warn = true,
-        .sym = "IN", .rulename = "rule_for_rule" };
+                              .sym = "IN",
+                              .rulename = "rule_for_rule" };
 
     if (!(token = consume_token(token_list, IN, infos)))
     {
@@ -65,10 +67,10 @@ static struct AST *parsing_in_clause(struct linked_list *token_list)
     free_token(token); // in token is useless now
 
     struct AST *tree = new_AST(NULL, ITER, new_list());
-    
+
     infos.sym = "WORD";
     infos.trigger_warn = false;
-    while((token = consume_token(token_list, WORD, infos)) != NULL)
+    while ((token = consume_token(token_list, WORD, infos)) != NULL)
     {
         list_append(tree->linked_list, new_AST(token, ARG, NULL));
     }
@@ -93,7 +95,8 @@ struct AST *rule_for_rule(struct linked_list *token_list, bool trigger_warn)
     struct token *do_token = NULL;
 
     struct log_info infos = { .trigger_warn = trigger_warn,
-        .sym = "FOR", .rulename = "rule_for_rule" };
+                              .sym = "FOR",
+                              .rulename = "rule_for_rule" };
 
     if (!(for_token = consume_token(token_list, FOR, infos)))
         goto for_error;
@@ -103,9 +106,9 @@ struct AST *rule_for_rule(struct linked_list *token_list, bool trigger_warn)
     {
         goto for_error;
     }
-    
+
     // now we have to parse [';'] | [ {'\n'} 'in' { WORD } ';' | '\n' ]
-    
+
     struct AST *iter = parsing_semicolon(token_list);
 
     if (!iter)
@@ -149,9 +152,10 @@ free_tree:
     free_AST(iter);
     free_AST(seq);
 
-    for_error:
+for_error:
     free_token(do_token);
     free_token(word);
     free_token(for_token);
     return NULL;
 }
+

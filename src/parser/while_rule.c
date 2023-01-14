@@ -39,7 +39,7 @@ struct AST *rule_while_rule(struct linked_list *token_list, bool trigger_warn)
     }
 
     do_clause = combine_token_AST(do_clause, do_token);
-    
+
     // parsing done token
     info.sym = "DONE";
     if (!(tmp = consume_token(token_list, DONE, info)))
@@ -57,3 +57,4 @@ struct AST *rule_while_rule(struct linked_list *token_list, bool trigger_warn)
 
     return tree;
 }
+

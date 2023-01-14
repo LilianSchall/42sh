@@ -22,7 +22,7 @@ int get_echo_option(int *pos, int argc, char **argv,
         return 0;
 
     char *word = argv[*pos];
-    
+
     if (!word)
         return 0;
 
@@ -73,7 +73,6 @@ int get_echo_option(int *pos, int argc, char **argv,
 int print_echo_words(int *pos, int argc, char **argv,
                      struct echo_option *echo_option)
 {
-
     if (*pos >= argc)
         return 0;
 
@@ -112,8 +111,7 @@ int print_echo_words(int *pos, int argc, char **argv,
 // take argc & argv in parameter
 int echo_fn(int argc, char **argv)
 {
-
-    if(fcntl(1, F_GETFD) == -1)
+    if (fcntl(1, F_GETFD) == -1)
     {
         fprintf(stderr, "42sh: file descriptor is closed\n");
         return 1;
@@ -141,3 +139,4 @@ int echo_fn(int argc, char **argv)
 
     return return_value;
 }
+

@@ -42,7 +42,7 @@ enum token_type
     R_INF_AND, // <&
     R_INF_SUP, // <>
     R_PIPE, // |
-    NEG,    // !
+    NEG, // !
     VARASSIGNMENT, // test=3
     ERROR,
 };
@@ -81,23 +81,21 @@ enum token_type
         [R_INF_AND] = "<&",                                                    \
         [R_INF_SUP] = "<>",                                                    \
         [R_PIPE] = "|",                                                        \
-        [NEG] = "!",                                                            \
-        [VARASSIGNMENT] = "",                                                      \
+        [NEG] = "!",                                                           \
+        [VARASSIGNMENT] = "",                                                  \
         [ERROR] = NULL,                                                        \
     }
 
 #define CREATE_DELIMITATORS(Name)                                              \
-    char Name[] = { '!', '|', '&',  ';',  '<',  '>', '(',  ')',  '`',          \
+    char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`',          \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
+#define CREATE_REDIRECTIONS(Name)                                              \
+    char *Name[] = { ">>", ">&", "<&", ">|", "<>", NULL }
 
-#define CREATE_REDIRECTIONS(Name) \
-    char *Name[] = { \
-        ">>", ">&", "<&", ">|", "<>", NULL }
-
-#define CREATE_REDIRECT_SCOUT(Name) \
-    enum token_type Name[] = { \
-        R_SUP, R_SUP_PIPE, R_SUP_SUP, R_SUP_AND, R_INF, R_INF_AND, R_INF_SUP}
+#define CREATE_REDIRECT_SCOUT(Name)                                            \
+    enum token_type Name[] = { R_SUP, R_SUP_PIPE, R_SUP_SUP, R_SUP_AND,        \
+                               R_INF, R_INF_AND,  R_INF_SUP }
 
 struct token
 {
@@ -119,3 +117,4 @@ void print_token_list(struct linked_list *list);
 bool is_redirect(struct token *token);
 
 #endif /* !TOKEN_H */
+

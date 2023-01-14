@@ -81,3 +81,4 @@ struct AST *root_sequence_if_needed(struct AST *tree)
 
     return seq;
 }
+

@@ -15,7 +15,7 @@ struct AST *compound_list_rule(struct linked_list *token_list,
 
     if (!command)
         return NULL;
-    
+
     if (command->type == SEQUENCE)
         tree = command;
     else
@@ -58,3 +58,4 @@ struct AST *compound_list_rule(struct linked_list *token_list,
 
     return tree;
 }
+

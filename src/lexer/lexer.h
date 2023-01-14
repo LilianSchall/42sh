@@ -25,3 +25,4 @@ struct lexer_states
 struct linked_list *build_token_list(char *input);
 
 #endif /* !LEXER_H */
+

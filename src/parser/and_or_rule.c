@@ -8,7 +8,7 @@ struct AST *and_or_rule(struct linked_list *token_list, bool trigger_warn)
         return NULL;
 
     struct token *token = list_head(token_list);
-    
+
     // if we didn't found && or ||
     // we just end the rule and returne the pipeline;
     if (!token || (token->type != AND && token->type != OR))
@@ -38,3 +38,4 @@ struct AST *and_or_rule(struct linked_list *token_list, bool trigger_warn)
 
     return tree;
 }
+

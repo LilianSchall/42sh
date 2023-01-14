@@ -15,3 +15,4 @@ char *get_file_content(char *filename);
 char *get_interactive_content(bool read_mode);
 
 #endif /* !IO_BACKEND_H */
+

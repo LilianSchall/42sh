@@ -5,9 +5,9 @@
 #include <string.h>
 
 #include "AST/AST.h"
+#include "expansion/expansion.h"
 #include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
-#include "expansion/expansion.h"
 
 // this function duplicates the string str into a newly allocated
 // string. It will delete every byte that represent -1 by nospace
@@ -46,3 +46,4 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST);
 int my_itoa(char *string);
 
 #endif /* !COMMONS_H */
+

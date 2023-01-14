@@ -15,6 +15,5 @@
 // return NULL if the token_list is NULL (wrong execution)
 struct AST *build_shell_AST(struct linked_list *token_list);
 
-
-
 #endif /* !PARSER_H */
+

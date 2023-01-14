@@ -93,9 +93,9 @@ struct linked_list *list_insert(struct linked_list *list, void *data, int index)
         list->head = new_head;
         return list;
     }
-    
+
     struct linked_node *before = list->head;
-    while (before != NULL && index > 1) 
+    while (before != NULL && index > 1)
     {
         before = before->next;
         index--;
@@ -103,7 +103,7 @@ struct linked_list *list_insert(struct linked_list *list, void *data, int index)
 
     if (!before)
         return list;
-    
+
     struct linked_node *node = new_node(data, before->next);
     before->next = node;
 
@@ -175,3 +175,4 @@ void free_list(struct linked_list *list)
 {
     __list_deep_free(list, NULL);
 }
+

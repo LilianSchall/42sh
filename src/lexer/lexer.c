@@ -7,7 +7,8 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
                                          struct lexer_states states,
                                          char **input);
 struct token *parse_double_quoted_word(char **word_begin_ptr,
-        struct lexer_states states, char **input);
+                                       struct lexer_states states,
+                                       char **input);
 static void skip_char(char **stream, int offset);
 static void offset_char(char **stream, int offset);
 static char *get_word(char **word_begin_ptr, char **input);
@@ -23,10 +24,8 @@ struct token *create_token(char **word_begin_ptr, char **input,
     char *symbol = get_word(word_begin_ptr, input);
 
     int index = find_special_tokens(symbol, token_value);
-    enum token_type type = index == -1 ?
-        strstr(symbol, "=") ? VARASSIGNMENT
-        : WORD
-        : index;
+    enum token_type type =
+        index == -1 ? strstr(symbol, "=") ? VARASSIGNMENT : WORD : index;
     // here index serves as an enum
     return new_token(symbol, type, is_expandable);
 }
@@ -131,7 +130,7 @@ static bool is_chevron(char c)
 }
 
 struct token *parse_double_quoted_word(char **word_begin_ptr,
-        struct lexer_states states, char **input)
+                                       struct lexer_states states, char **input)
 {
     static CREATE_DELIMITATORS(delims);
 
@@ -141,8 +140,8 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
             *states.reading_double_quote = false;
         else
             *word_begin_ptr = *input;
-        // as we are double_quoted, every character including spaces are part of the
-        // word so our start of the word is here
+        // as we are double_quoted, every character including spaces are part of
+        // the word so our start of the word is here
 
         // we return NULL because we haven't parse any token at all right now
         return NULL;
@@ -157,7 +156,7 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     }
 
     // else we are currently reading a word
-    // we stop reading a word if we encounter a single quote    
+    // we stop reading a word if we encounter a single quote
     if (GETCHAR(input, 0) == '"') // we found the matching quote
     {
         if (!GETCHAR(input, 1)) // if we are at the end of the input
@@ -227,7 +226,8 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         struct token *token = NULL;
         char *offset_input = *input + 1;
         if (*word_begin_ptr + 1 < *input)
-            token = create_token(word_begin_ptr, &offset_input, token_value, true); 
+            token =
+                create_token(word_begin_ptr, &offset_input, token_value, true);
         else
             token = create_token(word_begin_ptr, input, token_value, true);
         token->type = IO_NUMBER;
@@ -239,7 +239,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
 
     // this rule is quite bizarre but I will explain it
     // it is used to make the $ stick to the variable name
-    if (GETCHAR(input,0) == '$' && *input == *word_begin_ptr)
+    if (GETCHAR(input, 0) == '$' && *input == *word_begin_ptr)
         return NULL;
 
     if (GETCHAR(input, 0) == 0)
@@ -253,16 +253,17 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
         return NULL;
     }
-    
+
     char tmp[3];
     tmp[0] = GETCHAR(input, 0);
     tmp[1] = GETCHAR(input, 1);
     tmp[2] = 0;
-    
+
     // else if two same delimitators are following each other
-    if (!isspace(GETCHAR(input, 0)) && ((GETCHAR(input, 0) == GETCHAR(input, 1)
-        && *input == *word_begin_ptr) ||
-        find_special_tokens(tmp, redirections) != -1))
+    if (!isspace(GETCHAR(input, 0))
+        && ((GETCHAR(input, 0) == GETCHAR(input, 1)
+             && *input == *word_begin_ptr)
+            || find_special_tokens(tmp, redirections) != -1))
     // then it is not a delimitator but a special token
     // so we wait to reach the end of this special token
     {
@@ -331,8 +332,7 @@ void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
     else if (*states.reading_quote)
         current_token = parse_quoted_word(word_begin_ptr, states, input);
     else if (*states.reading_double_quote)
-        current_token = parse_double_quoted_word(word_begin_ptr,
-                states, input);
+        current_token = parse_double_quoted_word(word_begin_ptr, states, input);
     else
         current_token = parse_unquoted_word(word_begin_ptr, states, input);
 
@@ -369,7 +369,8 @@ struct linked_list *build_token_list(char *input)
     bool reading_double_quote = false;
 
     struct lexer_states states = { .reading_quote = &reading_quote,
-                                .reading_double_quote = &reading_double_quote,
+                                   .reading_double_quote =
+                                       &reading_double_quote,
                                    .reading_comm = &reading_comm };
 
     char *word_begin_ptr = NULL;
@@ -392,3 +393,4 @@ struct linked_list *build_token_list(char *input)
 
     return token_list;
 }
+
