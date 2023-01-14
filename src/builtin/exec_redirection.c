@@ -89,10 +89,9 @@ int check_if_file_exist(char *filename)
         ret_val = open(filename, O_RDONLY | O_CLOEXEC);
     else
     {
-        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n",
-            filename);
+        fprintf(stderr, "42sh: %s: cannot overwrite existing file\n", filename);
         ret_val = -1;
-    }    
+    }
     return ret_val;
 }
 
@@ -124,22 +123,23 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
             open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
     else if (r_type == R_INF_SUP) // <>
         ret_val = open(filename, O_CREAT | O_RDWR | O_CLOEXEC, 0755);
-    else if (r_type == R_INF) // < 
+    else if (r_type == R_INF) // <
         ret_val = check_if_file_exist(filename);
     else
     {
-        int val= my_itoa(filename);
-        // check if it as FD to close 
-        if(!strcmp(filename, "-"))
+        int val = my_itoa(filename);
+        // check if it as FD to close
+        if (!strcmp(filename, "-"))
             ret_val = -2;
 
         // check if the filename is a number -> IO_NUMBER
         else if (val != -1)
             ret_val = val;
-        else 
+        else
         {
             if (r_type == R_SUP_AND) // >&
-                ret_val = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
+                ret_val = open(filename,
+                               O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0755);
             else if (r_type == R_INF_AND) // <&
                 ret_val = check_if_file_exist(filename);
         }
@@ -157,3 +157,4 @@ void close_fd(int fd, struct AST *tree)
     if (tree->value->type != IO_NUMBER)
         close(fd);
 }
+
