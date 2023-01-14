@@ -159,7 +159,10 @@ char **new_argv(struct AST *tree, int *argc)
         argv[0] = copy_string(tree->value->symbol);
 
     if(!temp)
+    {
+        argv[1] = NULL;
         return argv;
+    }
 
     struct linked_node *ln = temp->head;
 
