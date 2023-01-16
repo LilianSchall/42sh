@@ -29,6 +29,7 @@ src = files(
 	'AST/AST.c',
     'AST/pretty_printer.c',
 	'lexer/lexer.c',
+    'symbol/symbol.c',
 	'builtin/exec_pipe.c',
 	'builtin/exec_bool.c',
 	'builtin/exec_redirection.c',
