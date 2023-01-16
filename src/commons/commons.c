@@ -117,7 +117,7 @@ char *str_replace(char *string, char *occ, char *c)
             for (int j = 0; j < c_len; j++)
                 string[i + j] = c[j]; // replace
 
-            i += (diff > 0 ? diff : -diff) + 1;
+            i += (diff > 0 ? diff : -diff);
         }
         else
             i++;
