@@ -85,7 +85,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     else
     {
         if (trigger_warn)
-            warnx("No match for token: %s at command_rule", token->symbol);
+            warnx("No match for token at command_rule");
         free_AST(tree);
         return NULL;
     }

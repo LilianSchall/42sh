@@ -99,14 +99,13 @@ enum token_type
 
 struct token
 {
-    char *symbol;
+    struct symbol **values; // null terminated array containing symbols
     enum token_type type;
-    bool is_expandable;
 };
 
 // create a token with the right attributes and returns it.
-// returns null if symbol is NULL (wrong execution).
-struct token *new_token(char *symbol, enum token_type type, bool is_expandable);
+// returns null if values is NULL (wrong execution).
+struct token *new_token(struct symbol **values, enum token_type type);
 
 // free a token and its attributes.
 // if the token is NULL, does nothing

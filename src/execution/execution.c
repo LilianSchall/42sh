@@ -128,7 +128,7 @@ int execute_AST_for(struct AST *tree)
     int ret_val = 0;
     struct linked_node *child = tree->linked_list->head;
     struct AST *ast_arg = child->data;
-    char *var_name = ast_arg->value->symbol;
+    char *var_name = ast_arg->value->values[0]->value;
     child = child->next; // should not be NULL (check here if error occurs)
     struct AST *ast_iter_seq = child->data;
     child = child->next; // should not be NULL either
@@ -139,7 +139,7 @@ int execute_AST_for(struct AST *tree)
         while (iter_child)
         {
             struct AST *iter_arg = iter_child->data;
-            setenv(var_name, iter_arg->value->symbol, 1);
+            setenv(var_name, iter_arg->value->values[0]->value, 1);
             ret_val = execute_AST(ast_seq);
             iter_child = iter_child->next;
         }
@@ -153,7 +153,7 @@ int execute_AST_for(struct AST *tree)
 
 int execute_AST_operator(struct AST *tree)
 {
-    char *op = tree->value->symbol;
+    enum token_type type = tree->value->type;
     int ret_val = 0;
 
     struct linked_node *node = tree->linked_list->head;
@@ -163,11 +163,11 @@ int execute_AST_operator(struct AST *tree)
     if (node->next)
         child2 = node->next->data;
 
-    if (!strcmp("!", op)) // ! condition
+    if (type == NEG) // ! condition
     {
         ret_val = !execute_AST(child);
     }
-    else if (!strcmp("&&", op)) // && condition
+    else if (type == AND) // && condition
     {
         ret_val = execute_AST(child);
 
@@ -176,7 +176,7 @@ int execute_AST_operator(struct AST *tree)
 
         return execute_AST(child2);
     }
-    else if (!strcmp("||", op)) // || condition
+    else if (type == OR) // || condition
     {
         ret_val = execute_AST(child);
         if (ret_val == 0)

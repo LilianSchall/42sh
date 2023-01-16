@@ -15,7 +15,7 @@ struct token *consume_token(struct linked_list *token_list,
     if (token->type != type)
     {
         if (info.trigger_warn)
-            warnx("%s: %s missmatch at %s", token->symbol, info.sym,
+            warnx("%s missmatch at %s", info.sym,
                   info.rulename);
         return NULL;
     }

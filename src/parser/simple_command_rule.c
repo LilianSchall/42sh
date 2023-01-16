@@ -76,7 +76,7 @@ struct AST *simple_command_rule(struct linked_list *token_list,
             return tree;
         }
         if (trigger_warn)
-            warnx("%s: simple_command missmatch", token->symbol);
+            warnx("simple_command missmatch");
         goto simple_command_end;
     }
 
