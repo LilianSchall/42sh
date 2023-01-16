@@ -56,7 +56,7 @@ void free_symbol_array(void *data)
     mem_free(values);
 }
 
-void print_symbols(struct symbol **values)
+void print_symbols(struct symbol **symbols)
 {
     if (!symbols)
         return;
