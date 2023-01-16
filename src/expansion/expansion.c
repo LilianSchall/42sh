@@ -11,27 +11,75 @@ void delete_scipt_var()
 {
     script_var = NULL;
 }
-#if 0
-char *get_var(char *name, int quoted)
+
+char *get_var_pid()
 {
-    if (strlen(name) == 1);
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", getpid());
+    return res;
+}
+
+char *get_var_aro(int quoted)
+{
+    return NULL;
+}
+
+char *get_var_star(int quoted)
+{
+    return NULL;
+}
+
+char *get_var_sharp()
+{
+    return NULL;
+}
+
+char *get_var_qmark()
+{
+    return NULL;
+}
+
+char *get_var_random()
+{
+    return NULL;
+}
+
+char *get_var_n()
+{
+    return NULL;
+}
+
+char *get_spec_var(const char *name, int quoted)
+{
+    if (strlen(name) == 1)
     {
         switch (name[0])
         {
             case '@':
-                return get_var_all(quoted);
+                return get_var_aro(quoted);
                 break;
             case '*':
-                return get_var_every(quoted);
+                return get_var_star(quoted);
+                break;
+            case '#':
+                return get_var_sharp();
                 break;
             case '$':
                 return get_var_pid();
                 break;
+            default:
+                return get_var_n(name);
+                break;
         }
     }
+    else if (!strcmp(name, "RANDOM"))
+        return get_var_random();
+    else
+        return get_var_n(name);
+
     return NULL;
 }
-#endif
+
 char *expand_var(const char *str)
 {
     char *result = mem_malloc(strlen(str) + 1);
@@ -72,6 +120,9 @@ char *expand_var(const char *str)
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
             mem_free(tmp);
+
+            if (!var)
+                var = get_spec_var(var_name, 0);
 
             if (var)
             {

@@ -47,6 +47,11 @@ int execute_AST_cmd(struct AST *tree)
 
     free_argv(argc, argv);
 
+    char *tmp = mem_malloc(sizeof(char) * 4);
+    sprintf(tmp, "%d", ret_val);
+    setenv("?", tmp, 1);
+    mem_free(tmp);
+
     return ret_val;
 }
 
