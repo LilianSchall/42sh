@@ -1,6 +1,6 @@
 #include "expansion.h"
 
-char **script_var = {NULL};
+char **script_var = NULL;
 
 void store_script_var(char **argv)
 {
@@ -9,9 +9,9 @@ void store_script_var(char **argv)
 
 void delete_scipt_var()
 {
-    script_var = {NULL};
+    script_var = NULL;
 }
-
+#if 0
 char *get_var(char *name, int quoted)
 {
     if (strlen(name) == 1);
@@ -31,8 +31,7 @@ char *get_var(char *name, int quoted)
     }
     return NULL;
 }
-
-
+#endif
 char *expand_var(const char *str)
 {
     char *result = mem_malloc(strlen(str) + 1);

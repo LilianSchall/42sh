@@ -101,15 +101,15 @@ int check_if_file_exist(char *filename)
 int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 {
     if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
-        return my_itoa(tree->value->symbol);
+        return my_itoa(tree->value->values[0]->value);
 
     char *filename = NULL;
 
     // check if filename is a string to expand
-    if (tree->value->is_expandable)
-        filename = expand_var(tree->value->symbol);
+    if (tree->value->values[0]->is_expandable)
+        filename = expand_var(tree->value->values[0]->value);
     else
-        filename = tree->value->symbol; // get the filename
+        filename = tree->value->values[0]->value; // get the filename
 
     int ret_val = 0;
 
@@ -144,7 +144,7 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
                 ret_val = check_if_file_exist(filename);
         }
     }
-    if (tree->value->is_expandable)
+    if (tree->value->values[0]->is_expandable)
     {
         mem_free(filename);
     }
