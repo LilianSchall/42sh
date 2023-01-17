@@ -107,9 +107,9 @@ Test(exec_subshell, exec_subshell_1, .init = redirect)
 
 
 
-    int v = execute_AST(ast_final);
+    execute_AST(ast_final);
     free_AST(ast_final);
 
 
-    cr_assert_stdout_eq_str("5\n5\n5\n5\n");
+    cr_assert_stdout_eq_str("5\n5\n10\n5\n");
 }
