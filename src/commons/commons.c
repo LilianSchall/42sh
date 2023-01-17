@@ -148,7 +148,7 @@ char **new_argv(struct AST *tree, int *argc)
 
     if (tree->value->values[0]->is_expandable)
     {
-        argv[0] = expand_var(tree->value->values[0]->value);
+        argv[0] = expand_var(tree->value->values[0]->value, 0);
         if (!*(argv[0]))
         {
             i--;
@@ -171,7 +171,7 @@ char **new_argv(struct AST *tree, int *argc)
         struct AST *child = ln->data;
         if (child->value->values[0]->is_expandable)
         {
-            char *tmp = expand_var(child->value->values[0]->value);
+            char *tmp = expand_var(child->value->values[0]->value, 0);
             if (*tmp)
                 argv[i] = tmp;
             else

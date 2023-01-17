@@ -107,7 +107,7 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 
     // check if filename is a string to expand
     if (tree->value->values[0]->is_expandable)
-        filename = expand_var(tree->value->values[0]->value);
+        filename = expand_var(tree->value->values[0]->value, 0);
     else
         filename = tree->value->values[0]->value; // get the filename
 

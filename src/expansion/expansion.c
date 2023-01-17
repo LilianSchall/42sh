@@ -1,27 +1,33 @@
 #include "expansion.h"
 
-char **script_var = NULL;
+struct var spec_var = {.argc = 0, .argv = NULL};
 
-void store_script_var(char **argv)
+void set_spec_var(int argc, char **argv)
 {
-    script_var = argv;
+    spec_var.argc = argc;
+    spec_var.argv = argv;
 }
 
-void delete_scipt_var()
-{
-    script_var = NULL;
-}
-
-char *get_var_pid()
+char *get_var_pid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", getpid());
     return res;
 }
 
+char *get_all_unquoted()
+{
+
+}
+
 char *get_var_aro(int quoted)
 {
-    return NULL;
+    if (!quoted)
+        return get_all_unquoted();
+    for (int i = 0; i < spec_var.argc; i++)
+    {
+
+    }
 }
 
 char *get_var_star(int quoted)
@@ -29,23 +35,28 @@ char *get_var_star(int quoted)
     return NULL;
 }
 
-char *get_var_sharp()
+char *get_var_sharp(void)
+{
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", spec_var.argc);
+    return res;
+}
+
+char *get_var_random(void)
 {
     return NULL;
 }
 
-char *get_var_qmark()
+char *get_var_uid(void)
 {
     return NULL;
 }
 
-char *get_var_random()
+char *get_var_n(const char *name)
 {
-    return NULL;
-}
-
-char *get_var_n()
-{
+    int i = atoi(name);
+    if (i < spec_var.argc)
+        return spec_var.argv[i];
     return NULL;
 }
 
@@ -61,11 +72,11 @@ char *get_spec_var(const char *name, int quoted)
             case '*':
                 return get_var_star(quoted);
                 break;
-            case '#':
-                return get_var_sharp();
-                break;
             case '$':
                 return get_var_pid();
+                break;
+            case '#':
+                return get_var_sharp();
                 break;
             default:
                 return get_var_n(name);
@@ -74,13 +85,14 @@ char *get_spec_var(const char *name, int quoted)
     }
     else if (!strcmp(name, "RANDOM"))
         return get_var_random();
+    else if (!strcmp(name, "UID"))
+        return get_var_uid();
     else
         return get_var_n(name);
-
     return NULL;
 }
 
-char *expand_var(const char *str)
+char *expand_var(const char *str, int quoted)
 {
     char *result = mem_malloc(strlen(str) + 1);
     char *p = result;
@@ -122,7 +134,7 @@ char *expand_var(const char *str)
             mem_free(tmp);
 
             if (!var)
-                var = get_spec_var(var_name, 0);
+                var = get_spec_var(var_name, quoted);
 
             if (var)
             {
