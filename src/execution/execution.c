@@ -7,7 +7,7 @@ static int continue_val = 0;
 // used to know the number of loop that we are in (the outermost enclosing loop)
 static int nb_loop = 0;
 
-int not_builtin_fn(int argc, char **argv)
+static int not_builtin_fn(int argc, char **argv)
 {
     if (argc == 0)
         return 0;
@@ -28,7 +28,7 @@ int not_builtin_fn(int argc, char **argv)
     return WEXITSTATUS(ret_val);
 }
 
-int execute_AST_cmd(struct AST *tree)
+static int execute_AST_cmd(struct AST *tree)
 {
     int ret_val = 0;
 
@@ -65,7 +65,7 @@ int execute_AST_cmd(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_if(struct AST *tree)
+static int execute_AST_if(struct AST *tree)
 {
     struct linked_node *child = tree->linked_list->head;
     struct AST *cond = child->data;
@@ -83,10 +83,29 @@ int execute_AST_if(struct AST *tree)
     return 0;
 }
 
+static int execute_AST_subshell(struct AST *tree)
+{
+    int ret_val = 0;
+    int pid = fork();
+
+    if (!pid) // child goes in
+    {
+        struct AST *child = tree->linked_list->head->data;
+        ret_val = execute_AST(child);
+        exit(ret_val);
+
+    }
+    wait(&ret_val);
+    if(WIFEXITED(ret_val))
+        return WEXITSTATUS(ret_val);
+    return 0;
+    
+}
+
 // exec a while or until command
 // if val_cond = 0 -> while
 // if val_cond = 1 -> until
-int execute_AST_while_until(struct AST *tree, int val_cond)
+static int execute_AST_while_until(struct AST *tree, int val_cond)
 {
     int return_val = 0;
     int while_cond = val_cond;
@@ -114,7 +133,7 @@ int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
-int execute_AST_redirection(struct AST *tree)
+static int execute_AST_redirection(struct AST *tree)
 {
     int return_val = 0;
     enum token_type r_type = tree->value->type;
@@ -144,7 +163,7 @@ int execute_AST_redirection(struct AST *tree)
     return return_val;
 }
 
-int execute_AST_for(struct AST *tree)
+static int execute_AST_for(struct AST *tree)
 {
     int ret_val = 0;
     struct linked_node *child = tree->linked_list->head;
@@ -179,7 +198,7 @@ int execute_AST_for(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_operator(struct AST *tree)
+static int execute_AST_operator(struct AST *tree)
 {
     char *op = tree->value->symbol;
     int ret_val = 0;
@@ -216,7 +235,7 @@ int execute_AST_operator(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_assignment(struct AST *tree)
+static int execute_AST_assignment(struct AST *tree)
 {
     int ret_val = 1;
     struct linked_node *child = tree->linked_list->head;
@@ -238,7 +257,7 @@ int execute_AST_assignment(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_condition(struct AST *tree)
+static int execute_AST_condition(struct AST *tree)
 {
     int ret_val = 0;
     switch (tree->value->type)
@@ -267,7 +286,7 @@ int execute_AST_condition(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_sequence(struct AST *tree)
+static int execute_AST_sequence(struct AST *tree)
 {
     int ret_val = 0;
 
@@ -297,6 +316,9 @@ int execute_AST(struct AST *tree)
     {
     case SEQUENCE:
         ret_val = execute_AST_sequence(tree);
+        break;
+    case SUBSHELL:
+        ret_val = execute_AST_subshell(tree);
         break;
     case REDIRECTION:
         ret_val = execute_AST_redirection(tree);
