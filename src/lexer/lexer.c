@@ -9,32 +9,36 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
 struct token *parse_double_quoted_word(char **word_begin_ptr,
                                        struct lexer_states states,
                                        char **input);
-static void skip_char(char **stream, int offset);
+static void skip_char(char **stream, int offset, int replace_value);
 static void offset_char(char **stream, int offset);
-static char *get_word(char **word_begin_ptr, char **input);
+static int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym);
 static struct token *create_token(char **word_begin_ptr, char **input,
-                                  char **token_value, bool is_expandable);
-static void execute_parsing(struct linked_list *token_list,
+                                  char **token_value);
+static void execute_lexing(struct linked_list *token_list,
                             char **word_begin_ptr, char **input,
                             struct lexer_states states);
 
 struct token *create_token(char **word_begin_ptr, char **input,
-                           char **token_value, bool is_expandable)
+                           char **token_value)
 {
-    char *symbol = get_word(word_begin_ptr, input);
+    struct symbol sym = { 0 };
+    int offset = get_symbol(word_begin_ptr, input, &sym);
 
     int index = find_special_tokens(symbol, token_value);
     enum token_type type =
         index == -1 ? strstr(symbol, "=") ? VARASSIGNMENT : WORD : index;
     // here index serves as an enum
     return new_token(new_unique_symbols(symbol, is_expandable), type);
+
+
+    // TODO remake create_token
 }
 
 // this function skips a char by replacing it by -1
 // and goes by offset char to the right
-void skip_char(char **stream, int offset)
+void skip_char(char **stream, int offset, int replace_value)
 {
-    **stream = -1;
+    **stream = replace_value;
     offset_char(stream, offset);
 }
 
@@ -44,9 +48,9 @@ void offset_char(char **stream, int offset)
     *stream += offset;
 }
 
-// this function makes the neccesary operations to duplicate the word
-// enclosed by the two pointers
-char *get_word(char **word_begin_ptr, char **input)
+// this function makes the neccesary operations to create a new symbol
+// based on the string enclosed by the two pointers
+int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
 {
     int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
     char tmp = GETCHAR(input, offset);
@@ -55,6 +59,9 @@ char *get_word(char **word_begin_ptr, char **input)
     GETCHAR(input, offset) = tmp;
 
     return word;
+
+    // TODO: rework the get_symbol
+
 }
 
 static bool my_isspace(char c)
@@ -136,7 +143,7 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
 
     if (!(*word_begin_ptr))
     {
-        if (GETCHAR(input, 0) == '\"') // word is ''
+        if (GETCHAR(input, 0) == '\"') // word is ""
             *states.reading_double_quote = false;
         else
             *word_begin_ptr = *input;
@@ -253,6 +260,11 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
         return NULL;
     }
+    
+    // if the token is like foo#foo
+    // then it is a whole token and not a comment after the #
+    if (GETCHAR(input, 0) == '#' && !isspace(GETCHAR(input, 1)))
+        return NULL;
 
     char tmp[3];
     tmp[0] = GETCHAR(input, 0);
@@ -271,22 +283,23 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     }
 
     // if we encounter a single quote while already parsing a word
-    // we omit the quote by putting its slot to -1
+    // we omit the quote by putting its slot to -2
     // and juste continue reading the word but this time in quoted mode
     // when we will create the token, we will read the whole word again
     // and delete the -1 from the token
     if (GETCHAR(input, 0) == '\'')
     {
-        skip_char(input, 0);
+        skip_char(input, 0, -2);
         *states.reading_quote = true;
         return NULL;
     }
     // same thing for double quote, we skip the double quote and enter
     // double_quoted mode
+    // the omitted quote will be replaced by a -3
     // at the end the whole word will be regenerated
     else if (GETCHAR(input, 0) == '"')
     {
-        skip_char(input, 0);
+        skip_char(input, 0, -3);
         *states.reading_double_quote = true;
         return NULL;
     }
@@ -299,11 +312,11 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         && *input <= *word_begin_ptr + 1)
     {
         *input -= 1;
-        token = create_token(word_begin_ptr, input, token_value, true);
+        token = create_token(word_begin_ptr, input, token_value);
         return token;
     }
     else
-        token = create_token(word_begin_ptr, input, token_value, true);
+        token = create_token(word_begin_ptr, input, token_value);
 
     if (*input > *word_begin_ptr + 1)
         offset_char(input, -1);
@@ -322,7 +335,7 @@ struct token *parse_comment(char **input, struct lexer_states states)
     return NULL;
 }
 
-void execute_parsing(struct linked_list *token_list, char **word_begin_ptr,
+void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
                      char **input, struct lexer_states states)
 {
     struct token *current_token = NULL;
@@ -378,7 +391,7 @@ struct linked_list *build_token_list(char *input)
     struct linked_list *token_list = new_list();
 
     for (; *input != '\0'; input++)
-        execute_parsing(token_list, &word_begin_ptr, &input, states);
+        execute_lexing(token_list, &word_begin_ptr, &input, states);
 
     if (reading_quote || reading_double_quote) // quote missmatch
     {
