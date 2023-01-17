@@ -52,7 +52,7 @@ int my_strdup(char *str, struct symbol *sym)
     sym->is_double_quoted = type == DOUBLE_QUOTE_MARKER;
     sym->is_single_quoted = type == SINGLE_QUOTE_MARKER;
 
-    return i;
+    return i + (str[i] == type ? 1 : 0);
 }
 
 int find_special_tokens(char *str, char **special_tokens)

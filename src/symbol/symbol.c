@@ -69,6 +69,7 @@ void print_symbols(struct symbol **symbols)
     {
         struct symbol *sym = symbols[i];
 
-        printf("%s\n", sym->value);
+        printf("%s, ", sym->value);
+        printf("is_expandable: %d, ", sym->is_expandable);
     } 
 }

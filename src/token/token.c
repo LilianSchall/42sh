@@ -34,7 +34,7 @@ void print_token_list(struct linked_list *list)
     {
         struct token *token = node->data;
 
-        printf("%lu. token:", i);
+        printf(" %lu. token:", i);
         print_symbols(token->values);
         printf("token type: ");
         if (token->type == WORD)
@@ -48,6 +48,7 @@ void print_token_list(struct linked_list *list)
         else
             printf("%s", dico[token->type]);
         i++;
+        printf("\n");
     }
 }
 
