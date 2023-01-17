@@ -1,37 +1,57 @@
 #include "commons.h"
 
-static size_t my_strlen(char *str)
+static size_t my_strlen(char *str, int type)
 {
     // this function will only count the chars between 0 and 128
-    size_t len = 0;
     size_t i = 0;
-    while (str[i] != '\0')
-    {
-        if (str[i] != -1)
-            len++;
+    size_t len = 0;
+    
+    if (type != 0)
         i++;
+
+    while (str[i] > 0 || str[i] == -1)
+    {
+        if (str[i] > 0) // if it is a char and not a marker
+            len++; // then we count it as part of the symbol
     }
 
     return len;
 }
 
-char *my_strdup(char *str)
+static int type_of_subword(char *str)
 {
-    size_t len = my_strlen(str);
+    // if the string is unquoted then return 0
+    if (str[0] >= 0)
+        return 0;
 
-    char *new_str = mem_calloc(len + 1, 1);
+    // else return the quote marker
+    return str[0];
+}
 
-    if (!new_str)
-        return NULL;
+int my_strdup(char *str, struct symbol *sym)
+{
+    int type = type_of_subword(str);
+
+    size_t len = my_strlen(str, type);
+
+    char *symbol = mem_calloc(len, 1);
 
     size_t j = 0;
-    for (size_t i = 0; str[i]; i++)
+    size_t i = 0;
+    for (; j < len; i++)
     {
-        if (str[i] != -1)
-            new_str[j++] = str[i];
+        if (str[i] >= 0)
+        {
+            symbol[j++] = str[i];
+        }
     }
 
-    return new_str;
+    sym->value = symbol;
+    sym->is_expandable = type != SINGLE_QUOTE_MARKER;
+    sym->is_double_quoted = type == DOUBLE_QUOTE_MARKER;
+    sym->is_single_quoted = type == SINGLE_QUOTE_MARKER;
+
+    return i;
 }
 
 int find_special_tokens(char *str, char **special_tokens)
