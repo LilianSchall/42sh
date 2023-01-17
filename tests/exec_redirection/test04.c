@@ -19,24 +19,24 @@ void redirect_4(void)
 
 Test(exec_redirection, redirection_4, .init = redirect_4)
 {
-    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("foo"), false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
+    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("foo"), false, false, false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
 
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_hello);
     
-    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("echo"), false), (enum token_type) ARG), (enum AST_type) COMMAND, ll_ast);
+    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) ARG), (enum AST_type) COMMAND, ll_ast);
     
     struct linked_list *ll_command = new_list();
     ll_command = list_append(ll_command, ast_echo);
 
-    struct AST *ast_seq_c = new_AST(new_token(new_unique_symbols(copy_string(""), false), (enum token_type) ARG), 
+    struct AST *ast_seq_c = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), 
                 (enum AST_type) SEQUENCE, ll_command);
 
 
-    struct AST *ast_fd_from = new_AST(new_token(new_unique_symbols(copy_string("1"), false), (enum token_type) IO_NUMBER), 
+    struct AST *ast_fd_from = new_AST(new_token(new_unique_symbols(copy_string("1"), false, false, false), (enum token_type) IO_NUMBER), 
     (enum AST_type) ARG, NULL);
 
-    struct AST *ast_fd_to = new_AST(new_token(new_unique_symbols(copy_string("2"), false), (enum token_type) WORD), 
+    struct AST *ast_fd_to = new_AST(new_token(new_unique_symbols(copy_string("2"), false, false, false), (enum token_type) WORD), 
     (enum AST_type) ARG, NULL);
     
     struct linked_list *ll_redir = new_list();
@@ -45,7 +45,7 @@ Test(exec_redirection, redirection_4, .init = redirect_4)
     ll_redir = list_append(ll_redir, ast_fd_to);
 
     
-    struct AST *ast_redirect = new_AST(new_token(new_unique_symbols(copy_string(">&"), false), (enum token_type) R_SUP_AND), 
+    struct AST *ast_redirect = new_AST(new_token(new_unique_symbols(copy_string(">&"), false, false, false), (enum token_type) R_SUP_AND), 
     (enum AST_type) REDIRECTION, ll_redir);
 
 
@@ -53,7 +53,7 @@ Test(exec_redirection, redirection_4, .init = redirect_4)
     ll_ast_2 = list_append(ll_ast_2, ast_redirect);
     
    
-    struct AST *ast_final = new_AST(new_token(new_unique_symbols(copy_string(""), false), (enum token_type) ARG), 
+    struct AST *ast_final = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), 
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
