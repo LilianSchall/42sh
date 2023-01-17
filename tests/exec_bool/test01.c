@@ -1,32 +1,29 @@
 #include "AST/AST.h"
 #include "builtin/builtin.h"
 #include "linked_list/linked_list.h"
+#include "symbol/symbol.h"
 #include "token/token.h"
 
-#include <stdio.h>
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
+#include <stdio.h>
 
-int exec_bool(void)
-{
+int exec_bool(void) {
 
-    
-    struct AST *ast = new_AST(new_token(copy_string("true"), (enum token_type) COMMAND, false), (enum AST_type) COMMAND, NULL);
-    
+  struct AST *ast =
+      new_AST(new_token(new_unique_symbols(copy_string("true"), false), (enum token_type) COMMAND), (enum AST_type)COMMAND, NULL);
 
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast);
-    
-    struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) WORD, false), (enum AST_type) SEQUENCE, ll_ast2);
+  struct linked_list *ll_ast2 = new_list();
+  ll_ast2 = list_append(ll_ast2, ast);
 
-    int result = execute_AST(ast_final);
+  struct AST *ast_final =
+      new_AST(new_token(new_unique_symbols(copy_string("true"), false), (enum token_type) WORD), (enum AST_type)SEQUENCE, ll_ast2);
 
-    free_AST(ast_final);
+  int result = execute_AST(ast_final);
 
-    return result;
+  free_AST(ast_final);
+
+  return result;
 }
 
-Test(exec_bool, basic_true)
-{
-    cr_assert_eq(exec_bool(), 0);
-}
+Test(exec_bool, basic_true) { cr_assert_eq(exec_bool(), 0); }

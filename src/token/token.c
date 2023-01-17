@@ -1,6 +1,6 @@
 #include "token.h"
 
-struct token *new_token(struct symbol **values, enum token_type type, bool is_expandable)
+struct token *new_token(struct symbol **values, enum token_type type)
 {
     struct token *token = mem_malloc(sizeof(struct token));
 
@@ -9,7 +9,6 @@ struct token *new_token(struct symbol **values, enum token_type type, bool is_ex
 
     token->values = values;
     token->type = type;
-    token->is_expandable = is_expandable;
 
     return token;
 }

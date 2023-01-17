@@ -146,9 +146,9 @@ char **new_argv(struct AST *tree, int *argc)
 
     int i = 1;
 
-    if (tree->value->is_expandable)
+    if (tree->value->values[0]->is_expandable)
     {
-        argv[0] = expand_var(tree->value->symbol);
+        argv[0] = expand_var(tree->value->values[0]->value, 0);
         if (!*(argv[0]))
         {
             i--;
@@ -156,7 +156,7 @@ char **new_argv(struct AST *tree, int *argc)
         }
     }
     else
-        argv[0] = copy_string(tree->value->symbol);
+        argv[0] = copy_string(tree->value->values[0]->value);
 
     if (!temp)
     {
@@ -169,9 +169,9 @@ char **new_argv(struct AST *tree, int *argc)
     for (; i < *argc; i++)
     {
         struct AST *child = ln->data;
-        if (child->value->is_expandable)
+        if (child->value->values[0]->is_expandable)
         {
-            char *tmp = expand_var(child->value->symbol);
+            char *tmp = expand_var(child->value->values[0]->value, 0);
             if (*tmp)
                 argv[i] = tmp;
             else
@@ -181,7 +181,7 @@ char **new_argv(struct AST *tree, int *argc)
             }
         }
         else
-            argv[i] = copy_string(child->value->symbol);
+            argv[i] = copy_string(child->value->values[0]->value);
         ln = ln->next;
     }
 
@@ -207,7 +207,7 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
     struct linked_list *ll_ast = new_list();
 
     // add command name
-    ll_ast = list_append(ll_ast, AST->value->symbol);
+    ll_ast = list_append(ll_ast, AST->value->values[0]->value);
 
     if (!AST->linked_list)
         return ll_ast;
@@ -219,7 +219,7 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
     while (node) // add all childs
     {
         ast_temp = node->data;
-        ll_ast = list_append(ll_ast, ast_temp->value->symbol);
+        ll_ast = list_append(ll_ast, ast_temp->value->values[0]->value);
         node = node->next;
     }
 
