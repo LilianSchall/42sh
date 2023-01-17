@@ -20,9 +20,9 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
     struct AST *tree = new_AST(NULL, ASSIGNMENT, new_list());
 
     list_append(tree->linked_list,
-                new_AST(new_token(new_unique_symbols(name, false),  WORD), ARG, NULL));
+                new_AST(new_token(new_unique_symbols(name, false, false, false),  WORD), ARG, NULL));
     list_append(tree->linked_list,
-                new_AST(new_token(new_unique_symbols(value, false), WORD), ARG, NULL));
+                new_AST(new_token(new_unique_symbols(value, false, false, false), WORD), ARG, NULL));
 
     free_token(token);
 

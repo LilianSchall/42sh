@@ -28,9 +28,10 @@ void free_symbol(void *data)
 }
 
 // this function returns an array with one symbol element
-struct symbol **new_unique_symbols(char *value, bool is_expandable)
+struct symbol **new_unique_symbols(char *value, bool is_expandable,
+        bool is_single_quoted, bool is_double_quoted)
 {
-    struct symbol *sym = new_symbol(value, is_expandable, false, false);
+    struct symbol *sym = new_symbol(value, is_expandable, is_single_quoted, is_double_quoted);
 
     if (!sym)
         return NULL;
