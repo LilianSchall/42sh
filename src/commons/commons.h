@@ -9,9 +9,13 @@
 #include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
 
+#define SINGLE_QUOTE_MARKER -3
+#define DOUBLE_QUOTE_MARKER -2
+#define DELIMITER_MARKER -1
+
 // this function duplicates the string str into a newly allocated
-// string. It will delete every byte that represent -1 by nospace
-char *my_strdup(char *str);
+// string. It will delete every byte that represent a negative nb by nospace
+int my_strdup(char *str, struct symbol *sym);
 
 // search if the given str is in special tokens and returns its index
 // returns -1 if it hasn't found any

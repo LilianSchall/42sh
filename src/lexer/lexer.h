@@ -10,6 +10,7 @@
 #include "token/token.h"
 
 #define GETCHAR(Stream, Nb) (*(*Stream + Nb))
+#define DEFAULT_NB_SYMBOLS 4
 
 struct lexer_states
 {

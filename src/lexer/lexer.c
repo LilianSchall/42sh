@@ -17,21 +17,64 @@ static struct token *create_token(char **word_begin_ptr, char **input,
 static void execute_lexing(struct linked_list *token_list,
                             char **word_begin_ptr, char **input,
                             struct lexer_states states);
+static void add_sym_to_array(struct symbol **symbols, struct symbol *sym,
+        int *capacity)
+{
+    int len = 0;
+
+    while (symbols[len])
+        len++;
+
+    if (len + 1 >= *capacity)
+    {
+        *capacity += DEFAULT_NB_SYMBOLS;
+        symbols = mem_realloc(symbols, sizeof(struct symbol *) * (*capacity));
+
+        for (int i = len; i < *capacity; i++)
+            symbols[i] = NULL;
+    }
+
+    symbols[len++] = sym;
+}
+
 
 struct token *create_token(char **word_begin_ptr, char **input,
                            char **token_value)
 {
     struct symbol sym = { 0 };
-    int offset = get_symbol(word_begin_ptr, input, &sym);
+    int capacity = DEFAULT_NB_SYMBOLS;
+    struct symbol **symbols = mem_calloc(DEFAULT_NB_SYMBOLS, 
+            sizeof(struct symbol *));
+    while (*word_begin_ptr < *input)
+    {
+        int offset = get_symbol(word_begin_ptr, input, &sym);
+        struct symbol *new_sym = mem_malloc(sizeof(struct symbol *));
+        *new_sym = sym;
 
-    int index = find_special_tokens(symbol, token_value);
-    enum token_type type =
-        index == -1 ? strstr(symbol, "=") ? VARASSIGNMENT : WORD : index;
-    // here index serves as an enum
-    return new_token(new_unique_symbols(symbol, is_expandable), type);
+        add_sym_to_array(symbols, new_sym, &capacity);
+        *word_begin_ptr += offset;
+    }
 
+    if (symbols[0] == NULL)
+    {
+        mem_free(symbols);
+        return NULL;
+    }
 
-    // TODO remake create_token
+    int index = find_special_tokens(symbols[0]->value, token_value);
+    enum token_type type = ERROR;
+
+    if (symbols[1] == NULL) // it means there is only one symbol
+    {
+        if (strstr(symbols[0]->value, "="))
+            type = VARASSIGNMENT;
+        else if (index != -1)
+            type = index;
+    }
+    else
+        type = WORD;
+
+    return new_token(symbols, type);
 }
 
 // this function skips a char by replacing it by -1
@@ -50,18 +93,20 @@ void offset_char(char **stream, int offset)
 
 // this function makes the neccesary operations to create a new symbol
 // based on the string enclosed by the two pointers
+// it returns the nb of char read
 int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
 {
+    // this offset is used to correctly parse delimitors and operators
+    // that are less then 3 char
     int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
+    
+    // the char that we will temporarily replace
     char tmp = GETCHAR(input, offset);
-    GETCHAR(input, offset) = '\0';
-    char *word = my_strdup(*word_begin_ptr);
+    int char_read = my_strdup(*word_begin_ptr, sym);
+    // we replace the temp char
     GETCHAR(input, offset) = tmp;
 
-    return word;
-
-    // TODO: rework the get_symbol
-
+    return char_read;
 }
 
 static bool my_isspace(char c)
@@ -92,19 +137,6 @@ struct token *parse_quoted_word(char **word_begin_ptr,
 
     if (GETCHAR(input, 0) == '\'') // we found the matching quote
     {
-        if (!GETCHAR(input, 1)) // if we are at the end of the input
-        {
-            // we parse the last token
-            **input = '\0';
-
-            char *symbol = my_strdup(*word_begin_ptr);
-            **input = '\'';
-
-            // in quoted mode, every token is a word
-            *states.reading_quote = false;
-            return new_token(new_unique_symbols(symbol, false), WORD);
-        }
-
         // else if we are not at the end and the next char is not a space
         //  and it isn't a delimitator
         if (!my_isspace(GETCHAR(input, 1))
@@ -113,18 +145,19 @@ struct token *parse_quoted_word(char **word_begin_ptr,
         {
             // we haven't finished reading our whole token,
             // so we skip the the quote and continue reading
-            skip_char(input, 1);
+            skip_char(input, 1, SINGLE_QUOTE_MARKER);
 
             // we skip the next quote too if there is any and stay in quote mode
             if (GETCHAR(input, 1) == '\'')
-                skip_char(input, 0);
+                skip_char(input, 0, SINGLE_QUOTE_MARKER);
             else
                 *states.reading_quote = false;
         }
         else
         {
             *states.reading_quote = false;
-            return create_token(word_begin_ptr, input, NULL, false);
+            skip_char(input, 0, SINGLE_QUOTE_MARKER);
+            return create_token(word_begin_ptr, input, NULL);
         }
     }
 
@@ -158,7 +191,7 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     if (GETCHAR(input, 0) == '\\')
     {
         // we escape it
-        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
+        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0, DELIMITER_MARKER);
         return NULL;
     }
 
@@ -166,19 +199,6 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     // we stop reading a word if we encounter a single quote
     if (GETCHAR(input, 0) == '"') // we found the matching quote
     {
-        if (!GETCHAR(input, 1)) // if we are at the end of the input
-        {
-            // we parse the last token
-            **input = '\0';
-
-            char *symbol = my_strdup(*word_begin_ptr);
-            **input = '"';
-
-            // in quoted mode, every token is a word
-            *states.reading_double_quote = false;
-            return new_token(new_unique_symbols(symbol, true), WORD);
-        }
-
         // else if we are not at the end and the next char is not a space
         //  and it isn't a delimitator
         if (!my_isspace(GETCHAR(input, 1))
@@ -187,18 +207,19 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
         {
             // we haven't finished reading our whole token,
             // so we skip the the quote and continue reading
-            skip_char(input, 1);
+            skip_char(input, 1, DOUBLE_QUOTE_MARKER);
 
             // we skip the next quote too if there is any and stay in quote mode
             if (GETCHAR(input, 1) == '"')
-                skip_char(input, 0);
+                skip_char(input, 0, DOUBLE_QUOTE_MARKER);
             else
                 *states.reading_double_quote = false;
         }
         else
         {
             *states.reading_double_quote = false;
-            return create_token(word_begin_ptr, input, NULL, true);
+            skip_char(input, 0, DOUBLE_QUOTE_MARKER);
+            return create_token(word_begin_ptr, input, NULL);
         }
     }
     return NULL;
@@ -234,9 +255,9 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         char *offset_input = *input + 1;
         if (*word_begin_ptr + 1 < *input)
             token =
-                create_token(word_begin_ptr, &offset_input, token_value, true);
+                create_token(word_begin_ptr, &offset_input, token_value);
         else
-            token = create_token(word_begin_ptr, input, token_value, true);
+            token = create_token(word_begin_ptr, input, token_value);
         token->type = IO_NUMBER;
         return token;
     }
@@ -250,14 +271,15 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         return NULL;
 
     if (GETCHAR(input, 0) == 0)
-        return create_token(word_begin_ptr, input, token_value, true);
+        return create_token(word_begin_ptr, input, token_value);
 
     // the current char is a delimitator
     // if it is an escape char
     if (GETCHAR(input, 0) == '\\')
     {
         // we escape it
-        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0);
+        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0,\
+                DELIMITER_MARKER);
         return NULL;
     }
     
@@ -283,23 +305,23 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     }
 
     // if we encounter a single quote while already parsing a word
-    // we omit the quote by putting its slot to -2
+    // we omit the quote by putting its slot to SINGLE_QUOTE_MARKER
     // and juste continue reading the word but this time in quoted mode
     // when we will create the token, we will read the whole word again
     // and delete the -1 from the token
     if (GETCHAR(input, 0) == '\'')
     {
-        skip_char(input, 0, -2);
+        skip_char(input, 0, SINGLE_QUOTE_MARKER);
         *states.reading_quote = true;
         return NULL;
     }
     // same thing for double quote, we skip the double quote and enter
     // double_quoted mode
-    // the omitted quote will be replaced by a -3
+    // the omitted quote will be replaced by a DOUBLE_QUOTE_MARKER
     // at the end the whole word will be regenerated
     else if (GETCHAR(input, 0) == '"')
     {
-        skip_char(input, 0, -3);
+        skip_char(input, 0, DOUBLE_QUOTE_MARKER);
         *states.reading_double_quote = true;
         return NULL;
     }
@@ -400,7 +422,7 @@ struct linked_list *build_token_list(char *input)
     }
 
     if (word_begin_ptr)
-        execute_parsing(token_list, &word_begin_ptr, &input, states);
+        execute_lexing(token_list, &word_begin_ptr, &input, states);
 
     clean_token_list(token_list);
 
