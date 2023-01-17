@@ -351,7 +351,7 @@ struct token *parse_comment(char **input, struct lexer_states states)
     if (GETCHAR(input, 0) == '\n')
     {
         *states.reading_comm = false;
-        return new_token(new_unique_symbols(strdup("\n"), false), NEWLINE);
+        return new_token(new_unique_symbols(strdup("\n"), false, false, false), NEWLINE);
     }
 
     return NULL;

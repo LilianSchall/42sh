@@ -14,7 +14,8 @@ struct symbol
     bool is_double_quoted;
 };
 
-struct symbol *new_symbol(char *value, bool is_expandable);
+struct symbol *new_symbol(char *value, bool is_expandable,
+        bool is_single_quoted, bool is_double_quoted);
 
 struct symbol **new_unique_symbols(char *value, bool is_expandable,
         bool is_single_quoted, bool is_double_quoted);

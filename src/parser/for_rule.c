@@ -43,7 +43,7 @@ create_iter:
     tree = new_AST(NULL, ITER, new_list());
 
     list_append(tree->linked_list,
-                new_AST(new_token(new_unique_symbols(strdup("$@"), true), WORD), ARG, NULL));
+                new_AST(new_token(new_unique_symbols(strdup("$@"), true, false, false), WORD), ARG, NULL));
 
     return tree;
 }
