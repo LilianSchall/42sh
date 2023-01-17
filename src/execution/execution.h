@@ -10,7 +10,7 @@
 #include "builtin/builtin.h"
 #include "garbage_collector/garbage_collector.h"
 
-// #include "exec_echo.h"
+// global variable to stock status of break in loop command
 
 // execute the given COMMAND AST
 int execute_AST_cmd(struct AST *tree);

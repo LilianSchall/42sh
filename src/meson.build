@@ -33,6 +33,7 @@ src = files(
 	'builtin/exec_bool.c',
 	'builtin/exec_redirection.c',
 	'builtin/exec_echo.c',
+	'builtin/exec_break_continue.c',
 	'io_backend/io_backend.c',
 	'token/token.c',
 )
