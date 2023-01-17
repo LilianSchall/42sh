@@ -13,6 +13,7 @@ static size_t my_strlen(char *str, int type)
     {
         if (str[i] > 0) // if it is a char and not a marker
             len++; // then we count it as part of the symbol
+        i++;
     }
 
     return len;
@@ -34,7 +35,7 @@ int my_strdup(char *str, struct symbol *sym)
 
     size_t len = my_strlen(str, type);
 
-    char *symbol = mem_calloc(len, 1);
+    char *symbol = mem_calloc(len + 1, 1);
 
     size_t j = 0;
     size_t i = 0;

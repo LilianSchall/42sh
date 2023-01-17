@@ -45,15 +45,17 @@ struct token *create_token(char **word_begin_ptr, char **input,
     int capacity = DEFAULT_NB_SYMBOLS;
     struct symbol **symbols = mem_calloc(DEFAULT_NB_SYMBOLS, 
             sizeof(struct symbol *));
-    while (*word_begin_ptr < *input)
+    
+    char *begin = *word_begin_ptr;
+    do
     {
-        int offset = get_symbol(word_begin_ptr, input, &sym);
+        int offset = get_symbol(&begin, input, &sym);
         struct symbol *new_sym = mem_malloc(sizeof(struct symbol *));
         *new_sym = sym;
 
         add_sym_to_array(symbols, new_sym, &capacity);
-        *word_begin_ptr += offset;
-    }
+        begin += offset;
+    } while (begin < *input);
 
     if (symbols[0] == NULL)
     {
@@ -70,6 +72,8 @@ struct token *create_token(char **word_begin_ptr, char **input,
             type = VARASSIGNMENT;
         else if (index != -1)
             type = index;
+        else
+            type = WORD;
     }
     else
         type = WORD;
@@ -102,6 +106,7 @@ int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
     
     // the char that we will temporarily replace
     char tmp = GETCHAR(input, offset);
+    GETCHAR(input, offset) = '\0';
     int char_read = my_strdup(*word_begin_ptr, sym);
     // we replace the temp char
     GETCHAR(input, offset) = tmp;
