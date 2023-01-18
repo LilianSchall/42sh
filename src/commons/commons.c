@@ -154,36 +154,48 @@ char *copy_string(char *src)
 }
 
 // take a string in parameter and return a argv of all words
-char **split_string(char *str) 
+char **split_string(char *str)
 {
-    char **result = mem_malloc(sizeof(char*));
-    char *start = str;
-    char *p = start;
+    //fprintf(stderr, "%s\n\n", str);
+    char **result = mem_malloc(sizeof(char*) * 2);;
+    char *p = str;
     int i = 0;
+    while (*p == ' ' || *p == "\n")
+        p++;
+    char *start = p;
+    int quoted = 0;
     while (*p)
     {
-        if (*p == ' ')
-        {
-            int len = p - start;
-            result[i] = mem_malloc(len);
-            memcpy(result[i], start, len + 1);
-            result[i][len] = 0;
-            i++;
-            mem_realloc(result, sizeof(char*) * (i + 1));
-            start = p;
-        }
         if (*p == '"')
         {
+            quoted = !quoted;
+            int len = strlen(p+1);
+            memmove(p, p+1, len);
+            *(p + len) = 0;
             p++;
-            while (*p && *p != '"')
-                p++;
         }
-        p++;
+        else if (!quoted && (*p == ' ' || *p == '\n'))
+        {
+            int len = p - start;
+            result[i] = mem_malloc(len + 1);
+            memmove(result[i], start, len);
+            result[i][len] = 0;
+            i++;
+            result = mem_realloc(result, sizeof(char*) * (i + 2));
+			while (*p == ' ' || *p == '\n')
+                p++;
+			start = p;
+        }
+		else
+			p++;
     }
-    result[i] = NULL;
+    int len = p - start;
+    result[i] = mem_malloc(len + 1);
+    memcpy(result[i], start, len);
+    result[i][len] = 0;
+    result[i + 1] = NULL;
     return result;
 }
-
 
 // check if tree is as D_SUBSHELL type
 // if it is : it execute the AST and redirect the stdout into a string
