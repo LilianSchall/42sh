@@ -350,18 +350,21 @@ char *get_content_of_pipe(int pipefd[2])
     size_t size = 0;
     size_t i = 0;
 
-    while (read(pipefd[0], buffer, sizeof(char) * 1024) > 0) {
-        size += strlen(buffer);
+    size_t nb_read = read(pipefd[0], buffer, sizeof(buffer));
+
+    while (nb_read > 0) 
+    {
+        size += nb_read;
         output = realloc(output, sizeof(char) * (size + 1));
         
-        size_t j = i;
-        while(i < j + strlen(buffer))
+        for(size_t j = 0; j < nb_read; j++)
         {
-            output[i] = buffer[i - j];
+            output[i] = buffer[j];
             i++;
         }
+        output[i] = '\0';
+        nb_read = read(pipefd[0], buffer, sizeof(buffer));
     }
-    output[i] = '\0';
     close(pipefd[0]);
     return output;
 }
