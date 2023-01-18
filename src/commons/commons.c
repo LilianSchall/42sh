@@ -156,30 +156,31 @@ char *copy_string(char *src)
 // take a string in parameter and return a argv of all words
 char **split_string(char *str) 
 {
-    int count = 0;
-    int len = strlen(str);
-    for (int i = 0; i < len; i++) 
-    {
-        if (isspace(str[i]) && !isspace(str[i + 1])) 
-        {
-            count++;
-        }
-    }
-    char **result = mem_malloc(sizeof(char *) * (count + 2));
-    char *token;
+    char **result = mem_malloc(sizeof(char*));
+    char *start = str;
+    char *p = start;
     int i = 0;
-    char *str_cpy = my_strdup(str);
-    char *delimiter = " \n\0";
-    token = strtok(str_cpy, delimiter);
-    while (token != NULL) 
+    while (*p)
     {
-        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
-        strcpy(result[i], token);
-        token = strtok(NULL, delimiter);
-        i++;
+        if (*p == ' ')
+        {
+            int len = p - start;
+            result[i] = mem_malloc(len);
+            memcpy(result[i], start, len + 1);
+            result[i][len] = 0;
+            i++;
+            mem_realloc(result, sizeof(char*) * (i + 1));
+            start = p;
+        }
+        if (*p == '"')
+        {
+            p++;
+            while (*p && *p != '"')
+                p++;
+        }
+        p++;
     }
     result[i] = NULL;
-    mem_free(str_cpy);
     return result;
 }
 
@@ -232,7 +233,7 @@ char **new_argv(struct AST *tree, int *argc)
         char **tmp = split_string(str);
         mem_free(str);
         int j = 0;
-        if (tmp[j])
+        while (tmp[j])
         {
             argv[i] = strdup(tmp[j]);
             i++;
