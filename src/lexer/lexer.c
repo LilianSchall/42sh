@@ -70,7 +70,7 @@ struct token *create_token(char **word_begin_ptr, char **input,
     {
         if (strstr(symbols[0]->value, "="))
             type = VARASSIGNMENT;
-        else if (index != -1)
+        else if (index != -1 && symbols[0]->is_expandable)
             type = index;
         else
             type = WORD;
