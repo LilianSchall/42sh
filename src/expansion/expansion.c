@@ -1,5 +1,6 @@
 #include "expansion.h"
 
+#if 0
 struct var spec_var = {.argc = 0, .argv = NULL};
 
 void set_spec_var(int argc, char **argv)
@@ -60,7 +61,7 @@ char *get_var_n(const char *name)
     return NULL;
 }
 
-char *get_spec_var(const char *name, int quoted)
+char *get_spec_var(char ***res, const char *name, int quoted)
 {
     if (strlen(name) == 1)
     {
@@ -91,6 +92,7 @@ char *get_spec_var(const char *name, int quoted)
         return get_var_n(name);
     return NULL;
 }
+#endif
 
 char *expand_var(const char *str, int quoted)
 {
@@ -133,10 +135,10 @@ char *expand_var(const char *str, int quoted)
             char *var = getenv(tmp);
             mem_free(tmp);
 
-            if (!var)
-                var = get_spec_var(var_name, quoted);
+			//if (!var)
+			//	var = get_spec_var(var_name, quoted);            
 
-            if (var)
+			if (var)
             {
                 // Replace the variable with its value
                 int len = strlen(var);
@@ -162,5 +164,38 @@ char *expand_var(const char *str, int quoted)
         }
     }
     *p = '\0';
+    return result;
+}
+
+char *expand_symbol_array(struct symbol **values)
+{
+    char *result = mem_malloc(strlen(values[0]->value) + 1);
+	char *p = result;
+    int index = 0;
+    for (int i = 0; values[i] != NULL; i++)
+	{
+		char * expanded = NULL;
+        if (values[i]->is_expandable)
+		{		
+            expanded = expand_var(values[i]->value, 0);
+        }
+        else
+		{
+			expanded = strdup(values[i]->value);
+    	}
+#if 0
+		printf("%d\n", i);
+		printf("%s\n", values[i]->value);
+		printf("%s\n", expanded);
+#endif
+		int len = strlen(expanded);
+        int cur_len = p - result;
+        result = mem_realloc(result, cur_len + len + 1);
+        p = result + cur_len;
+        memcpy(p, expanded, len);
+        p += len;
+		mem_free(expanded);
+	}
+	*p = '\0';
     return result;
 }

@@ -25,6 +25,9 @@ struct echo_option
     char option_e; // -E disable the interpretation of \n, \t and \\ escapes.
 };
 
+// set the *val to argv[1] if it exist, else set to 1
+int exec_break_continue(int argc, char **argv, int *val, int nb_loop);
+
 // echo  builtin function
 // take argc & argv in parameter
 int echo_fn(int argc, char **argv);

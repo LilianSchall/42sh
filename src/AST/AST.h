@@ -9,6 +9,8 @@
 
 enum AST_type
 {
+    D_SUBSHELL, // $(..)
+    SUBSHELL, // (..)
     REDIRECTION,
     PIPE,
     OPERATOR, // ! && ||

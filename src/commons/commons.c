@@ -138,7 +138,7 @@ char *str_replace(char *string, char *occ, char *c)
             for (int j = 0; j < c_len; j++)
                 string[i + j] = c[j]; // replace
 
-            i += (diff > 0 ? diff : -diff) + 1;
+            i += (diff > 0 ? diff : -diff);
         }
         else
             i++;
@@ -153,67 +153,104 @@ char *copy_string(char *src)
     return strcpy(dest, src);
 }
 
+// take a string in parameter and return a argv of all words
+char **split_string(char *str) 
+{
+    int count = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) 
+    {
+        if (isspace(str[i]) && !isspace(str[i + 1])) 
+        {
+            count++;
+        }
+    }
+    char **result = mem_malloc(sizeof(char *) * (count + 2));
+    char *token;
+    int i = 0;
+    char *str_cpy = my_strdup(str);
+    char *delimiter = " \n\0";
+    token = strtok(str_cpy, delimiter);
+    while (token != NULL) 
+    {
+        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(result[i], token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+    result[i] = NULL;
+    mem_free(str_cpy);
+    return result;
+}
+
+
+// check if tree is as D_SUBSHELL type
+// if it is : it execute the AST and redirect the stdout into a string
+// then the string goes into a argv containing all words
+int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
+{
+    if(tree->type != D_SUBSHELL)
+        return 0;
+    
+    char *string = execute_AST_D_SUBSHELL(tree);
+    
+    char **temp_argv = split_string(string);
+
+    // to do : merge with actual argv
+
+    mem_free(temp_argv);
+    mem_free(string);
+    return 1;
+}
+
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL
 char **new_argv(struct AST *tree, int *argc)
 {
-    *argc = (int)list_size(tree->linked_list) + 1;
-    // int argc_tmp = *argc;
-
     struct linked_list *temp = tree->linked_list;
 
-    char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
-
-    int i = 1;
-
-    if (tree->value->values[0]->is_expandable)
-    {
-        argv[0] = expand_var(tree->value->values[0]->value, 0);
-        if (!*(argv[0]))
-        {
-            i--;
-            (*argc)--;
-        }
-    }
-    else
-        argv[0] = copy_string(tree->value->values[0]->value);
+    char **argv = mem_malloc(sizeof(char *));
 
     if (!temp)
     {
-        argv[1] = NULL;
+        argv[0] = NULL;
         return argv;
     }
 
     struct linked_node *ln = temp->head;
 
-    for (; i < *argc; i++)
+    int i = 0;
+    while (ln)
     {
         struct AST *child = ln->data;
-        if (child->value->values[0]->is_expandable)
-        {
-            char *tmp = expand_var(child->value->values[0]->value, 0);
-            if (*tmp)
-                argv[i] = tmp;
-            else
-            {
-                i--;
-                (*argc)--;
-            }
-        }
+        char *str = NULL;
+        if (child->type == D_SUBSHELL)
+            str = execute_AST_D_SUBSHELL(child);
         else
-            argv[i] = copy_string(child->value->values[0]->value);
+            str = expand_symbol_array(child->value->values);
+        char **tmp = split_string(str);
+        mem_free(str);
+        int j = 0;
+        if (tmp[j])
+        {
+            argv[i] = strdup(tmp[j]);
+            i++;
+            j++;
+            argv = mem_realloc(argv, sizeof(char*) * (i + 1));
+        }
+        free_argv(tmp);
         ln = ln->next;
     }
-
     argv[i] = NULL;
+    *argc = i;
     return argv;
 }
 
 // free argc (char **)
-void free_argv(int argc, char **argv)
+void free_argv(char **argv)
 {
-    for (int i = 0; i < argc; i++)
+    for (int i = 0; argv[i]; i++)
     {
         mem_free(argv[i]);
     }
@@ -262,3 +299,56 @@ int my_itoa(char *string)
     return val;
 }
 
+char **str_to_argv(char *str) 
+{
+    int count = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) 
+    {
+        if (isspace(str[i]) && !isspace(str[i + 1])) 
+        {
+            count++;
+        }
+    }
+    char **result = mem_malloc(sizeof(char *) * (count + 2));
+    char *token;
+    int i = 0;
+    char *str_cpy = copy_string(str);
+    char *delimiter = " \n\0";
+    token = strtok(str_cpy, delimiter);
+    while (token != NULL) 
+    {
+        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(result[i], token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+    result[i] = NULL;
+    mem_free(str_cpy);
+    return result;
+}
+
+
+char *get_content_of_pipe(int pipefd[2])
+{
+    close(pipefd[1]);
+    char buffer[1024];
+    char *output = malloc(sizeof(char));
+    size_t size = 0;
+    size_t i = 0;
+
+    while (read(pipefd[0], buffer, sizeof(char) * 1024) > 0) {
+        size += strlen(buffer);
+        output = realloc(output, sizeof(char) * (size + 1));
+        
+        size_t j = i;
+        while(i < j + strlen(buffer))
+        {
+            output[i] = buffer[i - j];
+            i++;
+        }
+    }
+    output[i] = '\0';
+    close(pipefd[0]);
+    return output;
+}
