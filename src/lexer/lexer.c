@@ -27,7 +27,7 @@ struct token *create_token(char **word_begin_ptr, char **input,
     enum token_type type =
         index == -1 ? strstr(symbol, "=") ? VARASSIGNMENT : WORD : index;
     // here index serves as an enum
-    return new_token(symbol, type, is_expandable);
+    return new_token(new_unique_symbols(symbol, is_expandable), type);
 }
 
 // this function skips a char by replacing it by -1
@@ -95,7 +95,7 @@ struct token *parse_quoted_word(char **word_begin_ptr,
 
             // in quoted mode, every token is a word
             *states.reading_quote = false;
-            return new_token(symbol, WORD, false);
+            return new_token(new_unique_symbols(symbol, false), WORD);
         }
 
         // else if we are not at the end and the next char is not a space
@@ -169,7 +169,7 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
 
             // in quoted mode, every token is a word
             *states.reading_double_quote = false;
-            return new_token(symbol, WORD, true);
+            return new_token(new_unique_symbols(symbol, true), WORD);
         }
 
         // else if we are not at the end and the next char is not a space
@@ -316,7 +316,7 @@ struct token *parse_comment(char **input, struct lexer_states states)
     if (GETCHAR(input, 0) == '\n')
     {
         *states.reading_comm = false;
-        return new_token(strdup("\n"), NEWLINE, false);
+        return new_token(new_unique_symbols(strdup("\n"), false), NEWLINE);
     }
 
     return NULL;

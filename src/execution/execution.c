@@ -96,6 +96,11 @@ static int execute_AST_cmd(struct AST *tree)
 
     free_argv(argc, argv);
 
+    char *tmp = mem_malloc(sizeof(char) * 4);
+    sprintf(tmp, "%d", ret_val);
+    setenv("?", tmp, 1);
+    mem_free(tmp);
+
     return ret_val;
 }
 
@@ -202,9 +207,15 @@ static int execute_AST_for(struct AST *tree)
     int ret_val = 0;
     struct linked_node *child = tree->linked_list->head;
     struct AST *ast_arg = child->data;
-    char *var_name = ast_arg->value->symbol;
+    char *var_name = ast_arg->value->values[0]->value;
+    
     child = child->next; // should not be NULL (check here if error occurs)
-    struct AST *ast_iter_seq = child->data;
+    struct AST *ast_iter = child->data;
+
+    // create iter table, should expand var and subshells
+    int argc = 0;
+    char **iter_args = new_argv(ast_iter, &argc); 
+
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;
 
@@ -225,16 +236,20 @@ static int execute_AST_for(struct AST *tree)
         if (break_val > 0)
             break_val--;
     }
-    else // the tree is a SEQUENCE, need to exec in a subshell
+
+    int i = 0;
+    while (iter_args[i])
     {
-        // TODO in step 3
+        setenv(var_name, iter_args[i], 1);
+        ret_val = execute_AST(ast_seq);
+        i++;
     }
     return ret_val;
 }
 
 static int execute_AST_operator(struct AST *tree)
 {
-    char *op = tree->value->symbol;
+    enum token_type type = tree->value->type;
     int ret_val = 0;
 
     struct linked_node *node = tree->linked_list->head;
@@ -244,11 +259,11 @@ static int execute_AST_operator(struct AST *tree)
     if (node->next)
         child2 = node->next->data;
 
-    if (!strcmp("!", op)) // ! condition
+    if (type == NEG) // ! condition
     {
         ret_val = !execute_AST(child);
     }
-    else if (!strcmp("&&", op)) // && condition
+    else if (type == AND) // && condition
     {
         ret_val = execute_AST(child);
 
@@ -257,7 +272,7 @@ static int execute_AST_operator(struct AST *tree)
 
         return execute_AST(child2);
     }
-    else if (!strcmp("||", op)) // || condition
+    else if (type == OR) // || condition
     {
         ret_val = execute_AST(child);
         if (ret_val == 0)
@@ -275,14 +290,14 @@ static int execute_AST_assignment(struct AST *tree)
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;
     // variable name is the token value of the ast
-    char *var_name = var_name_ast->value->symbol;
+    char *var_name = var_name_ast->value->values[0]->value;
 
     // taking second child(cant be NULL)
     struct AST *var_value_ast = child->next->data;
 
     if (var_value_ast->type == ARG)
     {
-        ret_val = setenv(var_name, var_value_ast->value->symbol, 1);
+        ret_val = setenv(var_name, var_value_ast->value->values[0]->value, 1);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {

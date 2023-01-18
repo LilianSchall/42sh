@@ -1,15 +1,14 @@
 #include "token.h"
 
-struct token *new_token(char *symbol, enum token_type type, bool is_expandable)
+struct token *new_token(struct symbol **values, enum token_type type)
 {
     struct token *token = mem_malloc(sizeof(struct token));
 
     if (!token)
         return NULL;
 
-    token->symbol = symbol;
+    token->values = values;
     token->type = type;
-    token->is_expandable = is_expandable;
 
     return token;
 }
@@ -21,7 +20,7 @@ void free_token(void *data)
 
     struct token *token = data;
 
-    mem_free(token->symbol);
+    free_symbol_array(token->values);
     mem_free(token);
 }
 
@@ -35,7 +34,8 @@ void print_token_list(struct linked_list *list)
     {
         struct token *token = node->data;
 
-        printf("%lu. token: %s ", i, token->symbol);
+        printf("%lu. token:", i);
+        print_symbols(token->values);
         printf("token type: ");
         if (token->type == WORD)
             printf("word");
@@ -48,7 +48,6 @@ void print_token_list(struct linked_list *list)
         else
             printf("%s", dico[token->type]);
         i++;
-        printf(" is_expandable: %d\n", token->is_expandable);
     }
 }
 

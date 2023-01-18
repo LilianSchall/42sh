@@ -187,7 +187,7 @@ int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
 // last elem of argv is NULL
 char **new_argv(struct AST *tree, int *argc)
 {
-    *argc = (int)list_size(tree->linked_list) + 1;
+    *argc = list_size(tree->linked_list) + 1;
     // int argc_tmp = *argc;
 
     struct linked_list *temp = tree->linked_list;
@@ -195,18 +195,7 @@ char **new_argv(struct AST *tree, int *argc)
     char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
 
     int i = 1;
-
-    if (tree->value->is_expandable)
-    {
-        argv[0] = expand_var(tree->value->symbol);
-        if (!*(argv[0]))
-        {
-            i--;
-            (*argc)--;
-        }
-    }
-    else
-        argv[0] = copy_string(tree->value->symbol);
+    argv[0] = copy_string(tree->value->values[0]->value);
 
     if (!temp)
     {
@@ -216,25 +205,24 @@ char **new_argv(struct AST *tree, int *argc)
 
     struct linked_node *ln = temp->head;
 
-    for (; i < *argc; i++)
+    while (ln)
     {
         struct AST *child = ln->data;
-        if (child->value->is_expandable)
+        char **tmp = expand_symbol_array(child->value->values);
+        int j = 1;
+        while (tmp[j])
+           strcat(tmp[0], tmp[j]);
+        if (!tmp[0])
         {
-            char *tmp = expand_var(child->value->symbol);
-            if (*tmp)
-                argv[i] = tmp;
-            else
-            {
-                i--;
-                (*argc)--;
-            }
+            mem_free(tmp);
+            ln = ln->next;
+            continue;
         }
-        else
-            argv[i] = copy_string(child->value->symbol);
+        argv[i] = tmp[0];
+        mem_free(tmp);
+        i++;
         ln = ln->next;
     }
-
     argv[i] = NULL;
     return argv;
 }
@@ -242,7 +230,7 @@ char **new_argv(struct AST *tree, int *argc)
 // free argc (char **)
 void free_argv(int argc, char **argv)
 {
-    for (int i = 0; i < argc; i++)
+    for (int i = 0; argv[i]; i++)
     {
         mem_free(argv[i]);
     }
@@ -257,7 +245,7 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
     struct linked_list *ll_ast = new_list();
 
     // add command name
-    ll_ast = list_append(ll_ast, AST->value->symbol);
+    ll_ast = list_append(ll_ast, AST->value->values[0]->value);
 
     if (!AST->linked_list)
         return ll_ast;
@@ -269,7 +257,7 @@ struct linked_list *get_linked_list_from_AST(struct AST *AST)
     while (node) // add all childs
     {
         ast_temp = node->data;
-        ll_ast = list_append(ll_ast, ast_temp->value->symbol);
+        ll_ast = list_append(ll_ast, ast_temp->value->values[0]->value);
         node = node->next;
     }
 

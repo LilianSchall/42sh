@@ -49,9 +49,9 @@ struct AST *else_clause_rule(struct linked_list *token_list, bool trigger_warn)
     struct AST *else_clause = else_clause_rule(token_list, false);
 
     struct AST *tree =
-        new_AST(new_token(strdup("else"), ELSE, false), SEQUENCE, new_list());
+        new_AST(new_token(new_unique_symbols(strdup("else"),false), ELSE), SEQUENCE, new_list());
     struct AST *if_tree =
-        new_AST(new_token(strdup("if"), IF, false), CONDITION, new_list());
+        new_AST(new_token(new_unique_symbols(strdup("if"), false), IF), CONDITION, new_list());
 
     list_append(tree->linked_list, if_tree);
     list_append(if_tree->linked_list, cond);
