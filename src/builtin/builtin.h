@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "AST/AST.h"
 #include "commons/commons.h"
@@ -54,6 +55,9 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to);
 
 // do the PIPE AST execution
 int execute_AST_pipe(struct AST *tree);
+
+// cd builtin function
+int exec_cd(int argc, char *argv[]);
 
 #endif /* !BUILTIN_H */
 
