@@ -18,7 +18,7 @@ Test(parser, parse_echo_foo_semicolon)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, COMMAND, ARG };
+    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, ARG };
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -34,7 +34,7 @@ Test(parser, parse_echo_foo_echo_foo)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, ARG, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -50,7 +50,7 @@ Test(parser, echo_foo_newline_echo_foo_newline_echo_fada)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, COMMAND, ARG, COMMAND, ARG, ARG};
+    enum AST_type types[] = { SEQUENCE, COMMAND, ARG, ARG, COMMAND, ARG, ARG, COMMAND, ARG, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 

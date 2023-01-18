@@ -29,6 +29,7 @@ static void stick_correctly_child(struct AST **tree, struct AST **redirect_tree,
     }
 }
 
+
 struct AST *simple_command_rule(struct linked_list *token_list,
                                 bool trigger_warn)
 {
@@ -81,13 +82,17 @@ struct AST *simple_command_rule(struct linked_list *token_list,
     }
 
     free_AST(tree); // we are erasing all assignment child
-    tree = new_AST(token, COMMAND, NULL);
+    tree = new_AST(NULL, COMMAND, new_list());
     list_pop(token_list);
 
+    list_append(tree->linked_list, new_AST(token, ARG, NULL));
+
     token = list_head(token_list);
+    
+    // parsing arguments
     while (token != NULL
-           && (token->type == WORD || token->type == VARASSIGNMENT
-               || token->type == IO_NUMBER || is_redirect(token)))
+           && (is_non_delimitator(token->type) || token->type == IO_NUMBER
+           || is_redirect(token)))
     {
         struct AST *child = element_rule(token_list, trigger_warn);
 

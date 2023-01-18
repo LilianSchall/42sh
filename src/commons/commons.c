@@ -168,7 +168,7 @@ char **split_string(char *str)
     char **result = mem_malloc(sizeof(char *) * (count + 2));
     char *token;
     int i = 0;
-    char *str_cpy = my_strdup(str);
+    char *str_cpy = strdup(str);
     char *delimiter = " \n\0";
     token = strtok(str_cpy, delimiter);
     while (token != NULL) 
