@@ -36,7 +36,6 @@ char *execute_AST_D_SUBSHELL(struct AST *tree)
         // parent process
         char * result = get_content_of_pipe(pipefd);
         wait(NULL);
-        fprintf(stderr,"debug: got string '%s'\n", result);
         return result;
     }
 }
