@@ -1,7 +1,6 @@
 #include "expansion.h"
 
 #if 0
-
 struct var spec_var = {.argc = 0, .argv = NULL};
 
 void set_spec_var(int argc, char **argv)

@@ -187,43 +187,60 @@ int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
 // last elem of argv is NULL
 char **new_argv(struct AST *tree, int *argc)
 {
-    *argc = list_size(tree->linked_list) + 1;
-    // int argc_tmp = *argc;
-
     struct linked_list *temp = tree->linked_list;
 
-    char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
-
-    int i = 1;
-    argv[0] = copy_string(tree->value->values[0]->value);
+    char **argv = mem_malloc(sizeof(char *));
 
     if (!temp)
     {
-        argv[1] = NULL;
+        argv[0] = NULL;
         return argv;
     }
 
     struct linked_node *ln = temp->head;
 
+    int i = 0;
     while (ln)
     {
         struct AST *child = ln->data;
-        char **tmp = expand_symbol_array(child->value->values);
-        int j = 1;
-        while (tmp[j])
-           strcat(tmp[0], tmp[j]);
-        if (!tmp[0])
+        if (child->type == D_SUBSHELL)
         {
-            mem_free(tmp);
-            ln = ln->next;
-            continue;
+            char *str = execute_AST_D_SUBSHELL(child);
+            char **tmp_argv = split_string(str);
+            mem_free(str);
+            int j = 0;
+            while(tmp_argv[j])
+            {
+                argv[i] = temp_argv[j];
+                j++;
+                i++;
+                argv = mem_realloc(argv, sizeof(char*) * (i + 1));
+            }
+
+            free_argv(tmp_argv);
         }
-        argv[i] = tmp[0];
-        mem_free(tmp);
-        i++;
+        else //TODO char*** because of $@
+        {
+            char **tmp = expand_symbol_array(child->value->values);
+            int j = 1;
+            while (tmp[j])
+                strcat(tmp[0], tmp[j]);
+            if (!tmp[0])
+            {
+                mem_free(tmp);
+            }
+            else
+            {
+                argv[i] = tmp[0];
+                mem_free(tmp);
+                i++;
+                argv = mem_realloc(argv, sizeof(char*) * (i + 1));
+            }
+        }
         ln = ln->next;
     }
     argv[i] = NULL;
+    *argc = i;
     return argv;
 }
 

@@ -219,31 +219,18 @@ static int execute_AST_for(struct AST *tree)
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;
 
-    if (ast_iter_seq->type == ITER)
-    {
-        struct linked_node *iter_child = ast_iter_seq->linked_list->head;
-        while (iter_child && break_val == 0 && continue_val == 0)
-        {
-            struct AST *iter_arg = iter_child->data;
-            setenv(var_name, iter_arg->value->symbol, 1);
-            ret_val = execute_AST(ast_seq);
-            iter_child = iter_child->next;
-
-            if (continue_val > 0)
-                continue_val--;
-        }
-
-        if (break_val > 0)
-            break_val--;
-    }
-
     int i = 0;
-    while (iter_args[i])
+    while (iter_args[i] && break_val == 0 && continue_val == 0)
     {
         setenv(var_name, iter_args[i], 1);
         ret_val = execute_AST(ast_seq);
         i++;
+        if (continue_val > 0)
+            continue_val--;
     }
+    if (break_val > 0)
+        break_val--;
+
     return ret_val;
 }
 
