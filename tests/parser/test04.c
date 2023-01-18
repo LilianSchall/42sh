@@ -18,7 +18,7 @@ Test(parser, parse_if_true_then_baba_else_boo)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, CONDITION, SEQUENCE, COMMAND, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, CONDITION, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG, ARG, SEQUENCE, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 

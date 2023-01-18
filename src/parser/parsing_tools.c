@@ -82,3 +82,17 @@ struct AST *root_sequence_if_needed(struct AST *tree)
     return seq;
 }
 
+bool is_non_delimitator(enum token_type type)
+{
+    static CREATE_NON_DELIMITATOR(types);
+    size_t len = sizeof(types) / sizeof(enum token_type);
+    
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (types[i] == type)
+            return true;
+    }
+
+    return false;
+}
