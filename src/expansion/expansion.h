@@ -15,8 +15,8 @@ struct var
     char **argv;
 };
 
-// char **expand_var(const char *str, int quoted);
-char **expand_symbol_array(const struct symbol **values);
+char *expand_var(const char *str, int quoted);
+char *expand_symbol_array(struct symbol **values);
 
 #endif /* !EXPANSION_H */
 

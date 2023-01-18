@@ -36,7 +36,7 @@ char *copy_string(char *src);
 char **new_argv(struct AST *tree, int *argc);
 
 // free argv
-void free_argv(int argc, char **argv);
+void free_argv(char **argv);
 
 // return a linked list of all 'word' in our AST
 // it only takes the left child

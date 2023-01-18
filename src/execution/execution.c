@@ -94,7 +94,7 @@ static int execute_AST_cmd(struct AST *tree)
         ret_val = not_builtin_fn(argc, argv); // not a builtin command
     }
 
-    free_argv(argc, argv);
+    free_argv(argv);
 
     char *tmp = mem_malloc(sizeof(char) * 4);
     sprintf(tmp, "%d", ret_val);

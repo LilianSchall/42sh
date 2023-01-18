@@ -203,40 +203,22 @@ char **new_argv(struct AST *tree, int *argc)
     while (ln)
     {
         struct AST *child = ln->data;
+        char *str = NULL;
         if (child->type == D_SUBSHELL)
+            str = execute_AST_D_SUBSHELL(child);
+        else
+            str = expand_symbol_array(child->value->values);
+        char **tmp = split_string(str);
+        mem_free(str);
+        int j = 0;
+        if (tmp[j])
         {
-            char *str = execute_AST_D_SUBSHELL(child);
-            char **tmp_argv = split_string(str);
-            mem_free(str);
-            int j = 0;
-            while(tmp_argv[j])
-            {
-                argv[i] = temp_argv[j];
-                j++;
-                i++;
-                argv = mem_realloc(argv, sizeof(char*) * (i + 1));
-            }
-
-            free_argv(tmp_argv);
+            argv[i] = strdup(tmp[j]);
+            i++;
+            j++;
+            argv = mem_realloc(argv, sizeof(char*) * (i + 1));
         }
-        else //TODO char*** because of $@
-        {
-            char **tmp = expand_symbol_array(child->value->values);
-            int j = 1;
-            while (tmp[j])
-                strcat(tmp[0], tmp[j]);
-            if (!tmp[0])
-            {
-                mem_free(tmp);
-            }
-            else
-            {
-                argv[i] = tmp[0];
-                mem_free(tmp);
-                i++;
-                argv = mem_realloc(argv, sizeof(char*) * (i + 1));
-            }
-        }
+        free_argv(tmp);
         ln = ln->next;
     }
     argv[i] = NULL;
@@ -245,7 +227,7 @@ char **new_argv(struct AST *tree, int *argc)
 }
 
 // free argc (char **)
-void free_argv(int argc, char **argv)
+void free_argv(char **argv)
 {
     for (int i = 0; argv[i]; i++)
     {
