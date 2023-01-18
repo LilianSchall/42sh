@@ -42,7 +42,9 @@ int execute_AST_pipe(struct AST *tree)
     dup2(save2, STDIN_FILENO);
     dup2(save, STDOUT_FILENO);
 
-
+    close(save2);
+    close(save);
+    
     return result;
 }
 

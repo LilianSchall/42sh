@@ -10,13 +10,9 @@
 #include "builtin/builtin.h"
 #include "garbage_collector/garbage_collector.h"
 
-// #include "exec_echo.h"
-
-// execute the given COMMAND AST
-int execute_AST_cmd(struct AST *tree);
-
-// execute the given REDIRECTION AST
-int execute_AST_redirection(struct AST *tree);
+// execute ast d_subshell
+// return the string printed in stdout of the subshell
+char *execute_AST_D_SUBSHELL(struct AST *tree);
 
 // execute the given AST
 // returns the status code after executing the AST

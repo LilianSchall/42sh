@@ -1,0 +1,12 @@
+while true; do echo 1; while true; do echo 2; while true; do echo 3; break 3; done; done; echo foooo; done; echo end
+while true; do echo 1; while false; do echo 2; continue 1; echo foo; done; break 10; done; echo end
+for i in 1 2 3 4 5; do echo $i; continue 1; echo foo; done
+for i in 1 2 3 4 5; do echo $i; break 1; echo foo; done
+for i in 'false' 'false' 'true' 'false'; do echo $i; if $i; then break; fi; echo foo; done
+for i in 'false' 'false' 'true' 'false'; do if $i; then break; else echo $i; fi; done
+for i in 'false' 'false' 'true' 'false'; do if $i; then continue; else echo $i; fi; done
+for i in 'false' 'false' 'true' 'false'; do for j in 1 2 3; do echo $i $j; break 2;done; done
+for i in 'false' 'false' 'true' 'false'; do for j in 1 2 3; do echo $i $j; continue 2;done; done
+for i in 'false' 'false' 'true' 'false'; do for j in 1 2 3; do echo $i $j; break -1;done; done; 
+for i in 'false' 'false' 'true' 'false'; do for j in 1 2 3; do echo $i $j; break -3;done; done; echo foooo
+echo foo; break 2; for i in 1 2; do echo $i; done; echo ratio
