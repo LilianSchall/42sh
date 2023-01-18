@@ -177,8 +177,6 @@ static bool is_chevron(char c)
 struct token *parse_double_quoted_word(char **word_begin_ptr,
                                        struct lexer_states states, char **input)
 {
-    static CREATE_DELIMITATORS(delims);
-
     if (!(*word_begin_ptr))
     {
         if (GETCHAR(input, 0) == '\"') // word is ""
