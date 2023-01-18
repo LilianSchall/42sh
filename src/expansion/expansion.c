@@ -201,7 +201,6 @@ char **expand_symbol_array(const struct symbol **values)
     int index = 0;
     for (int i = 0; values[i] != NULL; i++)
 	{
-        printf("%d\n", index);
         if (values[i]->is_expandable)
 		{		
             char **expanded = expand_var(values[i]->value, 0);

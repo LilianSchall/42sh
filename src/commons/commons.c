@@ -145,18 +145,7 @@ char **new_argv(struct AST *tree, int *argc)
     char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
 
     int i = 1;
-
-    if (tree->value->values[0]->is_expandable)
-    {
-        argv[0] = expand_var(tree->value->values[0]->value, 0);
-        if (!*(argv[0]))
-        {
-            i--;
-            (*argc)--;
-        }
-    }
-    else
-        argv[0] = copy_string(tree->value->values[0]->value);
+    argv[0] = copy_string(tree->value->values[0]->value);
 
     if (!temp)
     {
@@ -169,19 +158,9 @@ char **new_argv(struct AST *tree, int *argc)
     for (; i < *argc; i++)
     {
         struct AST *child = ln->data;
-        if (child->value->values[0]->is_expandable)
-        {
-            char *tmp = expand_var(child->value->values[0]->value, 0);
-            if (*tmp)
-                argv[i] = tmp;
-            else
-            {
-                i--;
-                (*argc)--;
-            }
-        }
-        else
-            argv[i] = copy_string(child->value->values[0]->value);
+        char **tmp = expand_symbol_array(child->value->values);
+        argv[i] = tmp[0];
+        mem_free(tmp);
         ln = ln->next;
     }
 
