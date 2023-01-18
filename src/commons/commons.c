@@ -132,6 +132,61 @@ char *copy_string(char *src)
     return strcpy(dest, src);
 }
 
+char **split_string(char *str) 
+{
+    int count = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) 
+    {
+        if (isspace(str[i]) && !isspace(str[i + 1])) 
+        {
+            count++;
+        }
+    }
+    char **result = mem_malloc(sizeof(char *) * (count + 2));
+    char *token;
+    int i = 0;
+    char *str_cpy = my_strdup(str);
+    char *delimiter = " \n\0";
+    token = strtok(str_cpy, delimiter);
+    while (token != NULL) 
+    {
+        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(result[i], token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+    result[i] = NULL;
+    mem_free(str_cpy);
+    return result;
+}
+
+int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
+{
+    if(tree->type != D_SUBSHELL)
+        return 0;
+    
+    char *string = execute_AST_D_SUBSHELL(tree);
+    
+    char **temp_argv = split_string(string);
+
+    int j = 0;
+
+    while(temp_argv && temp_argv[j] != NULL)
+    {
+        argv = realloc(argv, sizeof(char *) * ( *argc + 2 ));
+        argv[*i] = temp_argv[j];
+        mem_free(temp_argv[j]);
+        j++;
+        *i += 1;
+        *argc += 1;
+    }
+    
+    mem_free(temp_argv);
+    mem_free(string);
+    return 1;
+}
+
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL
@@ -241,3 +296,56 @@ int my_itoa(char *string)
     return val;
 }
 
+char **str_to_argv(char *str) 
+{
+    int count = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) 
+    {
+        if (isspace(str[i]) && !isspace(str[i + 1])) 
+        {
+            count++;
+        }
+    }
+    char **result = mem_malloc(sizeof(char *) * (count + 2));
+    char *token;
+    int i = 0;
+    char *str_cpy = copy_string(str);
+    char *delimiter = " \n\0";
+    token = strtok(str_cpy, delimiter);
+    while (token != NULL) 
+    {
+        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
+        strcpy(result[i], token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+    result[i] = NULL;
+    mem_free(str_cpy);
+    return result;
+}
+
+
+char *get_content_of_pipe(int pipefd[2])
+{
+    close(pipefd[1]);
+    char buffer[1024];
+    char *output = malloc(sizeof(char));
+    size_t size = 0;
+    size_t i = 0;
+
+    while (read(pipefd[0], buffer, sizeof(char) * 1024) > 0) {
+        size += strlen(buffer);
+        output = realloc(output, sizeof(char) * (size + 1));
+        
+        size_t j = i;
+        while(i < j + strlen(buffer))
+        {
+            output[i] = buffer[i - j];
+            i++;
+        }
+    }
+    output[i] = '\0';
+    close(pipefd[0]);
+    return output;
+}

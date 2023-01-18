@@ -7,6 +7,40 @@ static int continue_val = 0;
 // used to know the number of loop that we are in (the outermost enclosing loop)
 static int nb_loop = 0;
 
+
+char *execute_AST_D_SUBSHELL(struct AST *tree) 
+{
+    int pipefd[2];
+    pipe(pipefd);
+
+    int pid = fork();
+    if (pid == 0) 
+    {
+        // child process
+        close(pipefd[0]);
+
+        int save1 = dup(STDOUT_FILENO);
+
+        dup2(pipefd[1], STDOUT_FILENO);
+        struct AST *child = tree->linked_list->head->data;
+        execute_AST(child);
+        fflush(stdout);
+
+        close(pipefd[1]);
+        dup2(save1, STDOUT_FILENO);
+        close(save1);
+        exit(0);
+    } 
+    else 
+    {
+        // parent process
+        char * result = get_content_of_pipe(pipefd);
+        wait(NULL);
+        fprintf(stderr,"debug: got string '%s'\n", result);
+        return result;
+    }
+}
+
 static int not_builtin_fn(int argc, char **argv)
 {
     if (argc == 0)
