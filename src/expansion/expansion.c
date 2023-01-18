@@ -94,11 +94,13 @@ char *get_spec_var(char ***res, const char *name, int quoted)
     return NULL;
 }
 #endif
+
 char **expand_var(const char *str, int quoted)
 {
     char **result = mem_malloc(sizeof(char*) * 2);
 	int index = 0;
-	result[0] = mem_malloc(strlen(str));
+	result[0] = mem_malloc(strlen(str) + 1);
+    result[1] = NULL;
     char *p = result[0];
     while (*str)
     {
@@ -175,7 +177,8 @@ char **expand_var(const char *str, int quoted)
         }
     }
     *p = '\0';
-	result[index] = NULL;
+    if (index)
+        result[index] = NULL;
     return result;
 }
 

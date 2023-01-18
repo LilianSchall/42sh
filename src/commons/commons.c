@@ -137,7 +137,7 @@ char *copy_string(char *src)
 // last elem of argv is NULL
 char **new_argv(struct AST *tree, int *argc)
 {
-    *argc = (int)list_size(tree->linked_list) + 1;
+    *argc = list_size(tree->linked_list) + 1;
     // int argc_tmp = *argc;
 
     struct linked_list *temp = tree->linked_list;
@@ -155,15 +155,24 @@ char **new_argv(struct AST *tree, int *argc)
 
     struct linked_node *ln = temp->head;
 
-    for (; i < *argc; i++)
+    while (ln)
     {
         struct AST *child = ln->data;
         char **tmp = expand_symbol_array(child->value->values);
+        int j = 1;
+        while (tmp[j])
+           strcat(tmp[0], tmp[j]);
+        if (!tmp[0])
+        {
+            mem_free(tmp);
+            ln = ln->next;
+            continue;
+        }
         argv[i] = tmp[0];
         mem_free(tmp);
+        i++;
         ln = ln->next;
     }
-
     argv[i] = NULL;
     return argv;
 }
@@ -171,7 +180,7 @@ char **new_argv(struct AST *tree, int *argc)
 // free argc (char **)
 void free_argv(int argc, char **argv)
 {
-    for (int i = 0; i < argc; i++)
+    for (int i = 0; argv[i]; i++)
     {
         mem_free(argv[i]);
     }
