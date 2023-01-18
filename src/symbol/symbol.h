@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "garbage_collector/garbage_collector.h"
 
@@ -25,5 +26,7 @@ void free_symbol(void *data);
 void free_symbol_array(void *data);
 
 void print_symbols(struct symbol **values);
+
+char *get_cat_symbols(struct symbol **values);
 
 #endif /* !SYMBOL_H */

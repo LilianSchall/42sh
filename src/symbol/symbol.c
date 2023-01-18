@@ -73,3 +73,18 @@ void print_symbols(struct symbol **symbols)
         printf("is_expandable: %d, ", sym->is_expandable);
     } 
 }
+
+char *get_cat_symbols(struct symbol **values)
+{
+    size_t len = 0;
+
+    for (size_t i = 0; values[i]; i++)
+        len += strlen(values[i]->value);
+
+    char *str = mem_calloc(len + 1, 1);
+
+    for (size_t i = 0; values[i]; i++)
+        strcat(str, values[i]->value);
+
+    return str;
+}
