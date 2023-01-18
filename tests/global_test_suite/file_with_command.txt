@@ -57,7 +57,6 @@ echo "$PWD"
 ls # comment
 i=0; while (($i != 3)); do ls; ((i++)); done
 if false; then echo PERDU; else echo GAGNE; fi > k.tmp; cat k.tmp 
-VAR=3; if true; then echo "Salut"; echo "Correcteur"; while [ $VAR -gt 0 ]; do until true; do echo KO SI JE M AFFICHE;	done; if true; then echo OK SI JE M AFFICHE; else echo KO SI JE M AFFICHE; fi; echo "Encore un tour"; ((VAR--));done; fi > k.tmp; cat k.tmp
 cat k.tmp || echo lol; echo k.tmp || echo lol
 echo lol && echo pouet && echo truc; cat k.tmp && echo lol; false && echo pouet
 echo a||echo b&&echo c&&echo d;cat k.tmp &&cat k.tmp
