@@ -1,5 +1,7 @@
 #include "expansion.h"
 
+#if 0
+
 struct var spec_var = {.argc = 0, .argv = NULL};
 
 void set_spec_var(int argc, char **argv)
@@ -60,7 +62,7 @@ char *get_var_n(const char *name)
     return NULL;
 }
 
-char *get_spec_var(const char *name, int quoted)
+char *get_spec_var(char ***res, const char *name, int quoted)
 {
     if (strlen(name) == 1)
     {
@@ -91,11 +93,13 @@ char *get_spec_var(const char *name, int quoted)
         return get_var_n(name);
     return NULL;
 }
-
-char *expand_var(const char *str, int quoted)
+#endif
+char **expand_var(const char *str, int quoted)
 {
-    char *result = mem_malloc(strlen(str) + 1);
-    char *p = result;
+    char **result = mem_malloc(sizeof(char*) * 2);
+	int index = 0;
+	result[0] = mem_malloc(strlen(str));
+    char *p = result[0];
     while (*str)
     {
         if (*str == '$')
@@ -130,28 +134,37 @@ char *expand_var(const char *str, int quoted)
             }
 
             char *tmp = strndup(var_name, end - var_name - brackets);
-            char *var = getenv(tmp);
+            char **var = mem_malloc(sizeof(char*) * 2); 
+			var[0] = getenv(tmp);
+            var[1] = NULL;
             mem_free(tmp);
 
-            if (!var)
-                var = get_spec_var(var_name, quoted);
+            //if (!var[0])
+            //    get_spec_var(&var, var_name, quoted);
 
-            if (var)
+			int var_index = 0;
+            while (var[var_index])
             {
                 // Replace the variable with its value
-                int len = strlen(var);
-                int cur_len = p - result;
-                result = mem_realloc(result, cur_len + len + strlen(end) + 1);
-                p = result + cur_len;
-                memcpy(p, var, len);
+                int len = strlen(var[var_index]);
+                int cur_len = p - result[index];
+                result[index] = mem_realloc(result[index], cur_len + len + 1);
+				// +strlen(end) ?
+                p = result[index] + cur_len;
+                memcpy(p, var[var_index], len);
                 p += len;
+				*p = '\0';
                 str = end;
+				index++;
+				result = mem_realloc(result, sizeof(char*) * (index + 2));
+				var_index++;
             }
-            else
+            if (!var_index)
             {
                 // No variable found, remove the ${variable} or $variable
                 str = end;
             }
+            mem_free(var);
         }
         else
         {
@@ -162,5 +175,52 @@ char *expand_var(const char *str, int quoted)
         }
     }
     *p = '\0';
+	result[index] = NULL;
+    return result;
+}
+
+char **expand_symbol_array(const struct symbol **values)
+{
+    int count = 0;
+    for (int i = 0; values[i] != NULL; i++)
+	{
+        if (values[i]->is_expandable)
+		{
+            char **expanded = expand_var(values[i]->value, 0);
+            for (int j = 0; expanded[j] != NULL; j++)
+            {
+                mem_free(expanded[j]);
+                count++;
+            }
+            mem_free(expanded);
+        }
+        else
+            count++;
+    }
+    char **result = mem_malloc(sizeof(char *) * (count + 1));
+    int index = 0;
+    for (int i = 0; values[i] != NULL; i++)
+	{
+        printf("%d\n", index);
+        if (values[i]->is_expandable)
+		{		
+            char **expanded = expand_var(values[i]->value, 0);
+            for (int j = 0; expanded[j] != NULL; j++)
+			{
+                result[index] = expanded[j];
+                index++;
+            }
+            mem_free(expanded);
+        }
+        else
+		{
+            int len = strlen(values[i]->value);
+            result[index] = mem_malloc(len + 1);
+            memcpy(result[index], values[i]->value, len);
+            result[index][len] = '\0';
+            index++;
+        }
+    }
+    result[count] = NULL;
     return result;
 }

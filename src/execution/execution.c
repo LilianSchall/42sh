@@ -134,24 +134,22 @@ int execute_AST_for(struct AST *tree)
     struct linked_node *child = tree->linked_list->head;
     struct AST *ast_arg = child->data;
     char *var_name = ast_arg->value->values[0]->value;
+    
     child = child->next; // should not be NULL (check here if error occurs)
-    struct AST *ast_iter_seq = child->data;
+    struct AST *ast_iter = child->data;
+
+    // create iter table, should expand var and subshells
+    int argc = 0;
+    char **iter_args = new_argv(ast_iter, &argc); 
+
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;
-    if (ast_iter_seq->type == ITER)
+    int i = 0;
+    while (iter_args[i])
     {
-        struct linked_node *iter_child = ast_iter_seq->linked_list->head;
-        while (iter_child)
-        {
-            struct AST *iter_arg = iter_child->data;
-            setenv(var_name, iter_arg->value->values[0]->value, 1);
-            ret_val = execute_AST(ast_seq);
-            iter_child = iter_child->next;
-        }
-    }
-    else // the tree is a SEQUENCE, need to exec in a subshell
-    {
-        // TODO in step 3
+        setenv(var_name, iter_args[i], 1);
+        ret_val = execute_AST(ast_seq);
+        i++;
     }
     return ret_val;
 }

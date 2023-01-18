@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "symbol/symbol.h"
 #include "garbage_collector/garbage_collector.h"
 
 struct var
@@ -14,7 +15,8 @@ struct var
     char **argv;
 };
 
-char *expand_var(const char *str, int quoted);
+// char **expand_var(const char *str, int quoted);
+char **expand_symbol_array(const struct symbol **values);
 
 #endif /* !EXPANSION_H */
 
