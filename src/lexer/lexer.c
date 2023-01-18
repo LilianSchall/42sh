@@ -204,19 +204,20 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     // we stop reading a word if we encounter a single quote
     if (GETCHAR(input, 0) == '"') // we found the matching quote
     {
-        // else if we are not at the end and the next char is not a space
-        //  and it isn't a delimitator
-        if (!my_isspace(GETCHAR(input, 1))
-            && (find_delims(GETCHAR(input, 1), delims) == -1
-                || GETCHAR(input, 1) == '"'))
+        // if we are not at the end and the next char is not a space
+        // and it isn't a delimitator
+        if (!my_isspace(GETCHAR(input, 1)))
         {
             // we haven't finished reading our whole token,
             // so we skip the the quote and continue reading
-            skip_char(input, 1, DOUBLE_QUOTE_MARKER);
+            skip_char(input, 0, DOUBLE_QUOTE_MARKER);
 
             // we skip the next quote too if there is any and stay in quote mode
             if (GETCHAR(input, 1) == '"')
+            {
+                offset_char(input, 1);
                 skip_char(input, 0, DOUBLE_QUOTE_MARKER);
+            }
             else
                 *states.reading_double_quote = false;
         }
