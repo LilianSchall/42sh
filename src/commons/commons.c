@@ -132,6 +132,7 @@ char *copy_string(char *src)
     return strcpy(dest, src);
 }
 
+// take a string in parameter and return a argv of all words
 char **split_string(char *str) 
 {
     int count = 0;
@@ -161,6 +162,10 @@ char **split_string(char *str)
     return result;
 }
 
+
+// check if tree is as D_SUBSHELL type
+// if it is : it execute the AST and redirect the stdout into a string
+// then the string goes into a argv containing all words
 int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
 {
     if(tree->type != D_SUBSHELL)
@@ -170,18 +175,8 @@ int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
     
     char **temp_argv = split_string(string);
 
-    int j = 0;
+    // to do : merge with actual argv
 
-    while(temp_argv && temp_argv[j] != NULL)
-    {
-        argv = realloc(argv, sizeof(char *) * ( *argc + 2 ));
-        argv[*i] = temp_argv[j];
-        mem_free(temp_argv[j]);
-        j++;
-        *i += 1;
-        *argc += 1;
-    }
-    
     mem_free(temp_argv);
     mem_free(string);
     return 1;
