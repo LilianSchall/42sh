@@ -2,7 +2,7 @@
 
 int exec_cd(int argc, char *argv[])
 {
-    char *old_cwd = getenv("OLD_CWD");
+    char *old_cwd = getenv("OLD_PWD");
     char *home = getenv("HOME");
     char cwd[1024];
     char new_cwd[1024];
@@ -40,7 +40,7 @@ int exec_cd(int argc, char *argv[])
         return 1;
     }
     getcwd(new_cwd, 1024);
-    setenv("OLD_CWD", cwd, 1);
-    setenv("CWD", new_cwd, 1);
+    setenv("OLD_PWD", cwd, 1);
+    setenv("PWD", new_cwd, 1);
     return 0;
 }
