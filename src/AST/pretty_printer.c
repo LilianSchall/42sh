@@ -4,7 +4,11 @@ static void __pretty_printer(struct AST *tree);
 
 static void print_subshell(struct AST *tree, bool is_redirected)
 {
-    return;
+    printf("subshell: [%s] ", is_redirected ? "redirected" : "");
+
+    tree = tree->linked_list->head->data;
+
+    __pretty_printer(tree);
 }
 
 static void print_function(struct AST *tree)
@@ -12,7 +16,7 @@ static void print_function(struct AST *tree)
     struct AST *name_AST = tree->linked_list->head->data;
     char *name = get_cat_symbols(name_AST->value->values);
 
-    printf("function [%s]:", name);
+    printf("function [%s]: ", name);
     tree = tree->linked_list->head->next->data;
 
     __pretty_printer(tree);
