@@ -60,7 +60,7 @@ int execute_AST_pipe(struct AST *tree);
 int exec_cd(int argc, char *argv[]);
 
 // unset builtin function
-int exec_unset(int argc, char *argv[])
+int exec_unset(int argc, char *argv[]);
 
 #endif /* !BUILTIN_H */
 
