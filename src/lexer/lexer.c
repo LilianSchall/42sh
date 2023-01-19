@@ -337,7 +337,10 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     if (find_delims(GETCHAR(word_begin_ptr, 0), delims) == -1
         && *input <= *word_begin_ptr + 1)
     {
-        *input -= 1;
+        // if we do not lex a special $ token
+        if (GETCHAR(word_begin_ptr, 0) != '$')
+            *input -= 1; // we have to go back by -1
+
         token = create_token(word_begin_ptr, input, token_value);
         return token;
     }

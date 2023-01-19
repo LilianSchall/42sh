@@ -32,8 +32,6 @@ static struct AST *subshell_subrule(struct linked_list *token_list,
 {
     struct token *token = list_head(token_list);
     list_pop(token_list);
-    enum AST_type type = token->type == OPEN_PARENTHESE ? SUBSHELL : 
-         D_SUBSHELL;
 
     free_token(token);
 
@@ -53,7 +51,7 @@ static struct AST *subshell_subrule(struct linked_list *token_list,
     list_pop(token_list);
     free_token(token);
 
-    struct AST *tree = new_AST(NULL, type, new_list());
+    struct AST *tree = new_AST(NULL, SUBSHELL, new_list());
     list_append(tree->linked_list, compound);
 
     return tree;
@@ -69,7 +67,7 @@ struct AST *shell_command_rule(struct linked_list *token_list,
         goto shell_command_error;
     if (token->type == OPEN_BRACE)
         return command_block_subrule(token_list, trigger_warn);
-    else if (token->type == OPEN_PARENTHESE || token->type == DOLL_OPEN_PARENTHESE)
+    else if (token->type == OPEN_PARENTHESE)
         return subshell_subrule(token_list, trigger_warn);
     else if (token->type == IF)
         return rule_if_rule(token_list, trigger_warn);

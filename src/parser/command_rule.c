@@ -50,7 +50,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         return NULL;
     }
 
-    if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token)
+    if (is_substitution_ruled(token->type) || token->type == IO_NUMBER || is_redirect(token)
         || token->type == VARASSIGNMENT)
     {
         // THIS part of the parser is now LR(1)
@@ -81,7 +81,8 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
                 child);
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
-             || token->type == FOR || token->type == OPEN_BRACE)
+             || token->type == FOR || token->type == OPEN_BRACE
+             || token->type == OPEN_PARENTHESE)
     {
         struct AST *shell_com_tree =
             shell_command_rule(token_list, trigger_warn);

@@ -59,7 +59,8 @@ static void print_command(struct AST *tree)
          node = node->next)
     {
         struct AST *child = node->data;
-        printf("%s ", child->value->values[0]->value);
+
+        __pretty_printer(child);
     }
 }
 

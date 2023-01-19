@@ -26,6 +26,7 @@ void blend_sequence_AST(struct AST *tree, struct AST *child);
 struct AST *root_sequence_if_needed(struct AST *tree);
 
 bool is_non_delimitator(enum token_type type);
+bool is_substitution_ruled(enum token_type type);
 
 #endif /* !PARSING_TOOLS_H */
 

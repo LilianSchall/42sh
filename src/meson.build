@@ -24,6 +24,7 @@ src = files(
 	'parser/pipeline_rule.c',
     'parser/assignment_word_rule.c',
     'parser/funcdec_rule.c',
+    'parser/substitution_rule.c',
 	'execution/execution.c',
 	'expansion/expansion.c',
 	'commons/commons.c',
