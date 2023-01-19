@@ -26,7 +26,10 @@ struct echo_option
 };
 
 // set the *val to argv[1] if it exist, else set to 1
-int exec_break_continue(int argc, char **argv, int *val, int nb_loop);
+int exec_break_continue(int argc, char **argv, int *val);
+
+// do the exit function and the the status structure in order to exit
+int exit_fn(int argc, char **argv);
 
 // echo  builtin function
 // take argc & argv in parameter

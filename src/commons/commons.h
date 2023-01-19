@@ -16,6 +16,31 @@
 #define DOUBLE_QUOTE_MARKER -2
 #define DELIMITER_MARKER -1
 
+extern struct status *status;
+
+struct status
+{
+    int continue_val;
+    int break_val;
+    int nb_loop;
+    int exit_code;
+    int exit_bool;
+};
+
+// create the status structure
+void new_status(void);
+
+// free the status structure
+void free_status(void);
+
+// return true if we need to continue in boucle
+// return false if we need to stop
+int check_status(void);
+
+void increase_nb_loop(void);
+
+void decrease_nb_loop(void);
+
 // this function duplicates the string str into a newly allocated
 // string. It will delete every byte that represent a negative nb by nospace
 int my_strdup(char *str, struct symbol *sym);

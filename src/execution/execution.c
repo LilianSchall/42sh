@@ -40,6 +40,10 @@ static int execute_AST_cmd(struct AST *tree)
     {
         ret_val = echo_fn(argc, argv);
     }
+    else if (!strcmp("exit", argv[0])) // exit command
+    {
+        ret_val = exit_fn(argc, argv);
+    }
     else if (!strcmp("true", argv[0])) // true
     {
         ret_val = true_fn(argc, argv);
@@ -50,11 +54,11 @@ static int execute_AST_cmd(struct AST *tree)
     }
     else if (!strcmp("break", argv[0])) // false
     {
-        ret_val = exec_break_continue(argc, argv, &break_val, nb_loop);
+        ret_val = exec_break_continue(argc, argv, &(status->break_val));
     }
-    else if (!strcmp("continue", argv[0])) // false
+    else if (!strcmp("continue", argv[0])) 
     {
-        ret_val = exec_break_continue(argc, argv, &continue_val, nb_loop);
+        ret_val = exec_break_continue(argc, argv, &(status->continue_val));
     }
     else
     {
@@ -83,7 +87,7 @@ static int execute_AST_sequence(struct AST *tree)
     for (struct linked_node *node = tree->linked_list->head; node;
          node = node->next)
     {
-        if(break_val != 0 || continue_val != 0)
+        if(!check_status() || (status && status->exit_bool == 1))
             return ret_val;
 
         struct AST *child = node->data;
