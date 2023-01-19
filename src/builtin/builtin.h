@@ -42,5 +42,7 @@ int true_fn(int argc, char **argv);
 // return 1
 int false_fn(int argc, char **argv);
 
+int cd_fun(int argc, char **argv);
+
 #endif /* !BUILTIN_H */
 
