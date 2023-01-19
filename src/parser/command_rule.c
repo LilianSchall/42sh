@@ -53,15 +53,32 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token)
         || token->type == VARASSIGNMENT)
     {
-        struct AST *command_tree =
-            simple_command_rule(token_list, trigger_warn);
+        // THIS part of the parser is now LR(1)
+        // To know which rule to execute between simple_command_rule
+        // and funcdec_rule, which both have WORD as first,
+        // we need to resolve the conflict by making one look ahead
+        struct token *next = list_next(token_list);
+        struct AST *child = NULL;
+        enum token_type type = ERROR;
 
-        if (!command_tree)
+        if (!next)
+            child = simple_command_rule(token_list, trigger_warn);
+        else
         {
-            free_AST(tree);
+            type = next->type;
+            child = type != OPEN_PARENTHESE ?
+                simple_command_rule(token_list, trigger_warn) :
+                funcdec_rule(token_list, trigger_warn);
+        }
+
+        if (!child)
+        {
+            free_AST(child);
             return NULL;
         }
-        list_append(tree->linked_list, command_tree);
+        list_append(tree->linked_list, type == OPEN_PARENTHESE ?
+                handle_redirection(token_list, child, trigger_warn) :
+                child);
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
              || token->type == FOR || token->type == OPEN_BRACE)
@@ -76,7 +93,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         }
 
         // purge newline token
-        purge_newline_token(token_list);
+        // purge_newline_token(token_list);
 
         list_append(
             tree->linked_list,
