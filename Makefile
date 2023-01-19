@@ -21,6 +21,9 @@ build:
 	meson setup build
 	ninja -C build
 
+function: debug
+	bash ./tests/global_test_suite/testsuite.sh ./tests/global_test_suite/file_with_command.txt ./42sh
+
 $(EXE): $(SRC_OBJ) $(MAIN_OBJ)
 	$(CC) -o $(EXE) $^
 
