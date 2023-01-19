@@ -193,6 +193,9 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     // if it is an escape char
     if (GETCHAR(input, 0) == '\\')
     {
+        char next = GETCHAR(input, 1);
+        if (next != '$' && next != '`' && next != '"' && next != '\n')
+            return NULL;
         // we escape it
         skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0, DELIMITER_MARKER);
         return NULL;
