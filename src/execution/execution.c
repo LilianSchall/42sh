@@ -230,6 +230,8 @@ static int execute_AST_for(struct AST *tree)
     if (break_val > 0)
         break_val--;
 
+    free_argv(iter_args);
+
     return ret_val;
 }
 

@@ -8,20 +8,11 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
+
 int exec5(void)
 {
-    struct AST *ast_1 = new_AST(new_token(new_unique_symbols(copy_string("-neF"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
-    struct AST *ast_2 = new_AST(new_token(new_unique_symbols(copy_string("test \\n test"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);
-    
-    struct linked_list *ll_ast = new_list();
-    ll_ast = list_append(ll_ast, ast_1);
-    ll_ast = list_append(ll_ast, ast_2);
-    
-    struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast);
-
-    struct AST *ast_final = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_ast2);
+    struct AST *ast_final = new_AST_COMMAND("echo", "-neEF", "test \\n test");
 
     execute_AST(ast_final);
 
@@ -40,5 +31,5 @@ Test(exec_echo, basic_opt_wrong, .init = redirect_stdout5)
     exec5();
     fflush(stdout);
 
-    cr_assert_stdout_eq_str("-neF test \\n test\n");
+    cr_assert_stdout_eq_str("-neEF test \\n test\n");
 }

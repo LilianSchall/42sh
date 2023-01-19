@@ -9,22 +9,13 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
+
 int exec_cond_1(void)
 {
-    struct AST *ast_false = new_AST(new_token(new_unique_symbols(copy_string("false"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, NULL);   
-
-    struct linked_list *ll_false = new_list();
-    ll_false = list_append(ll_false, ast_false);
     
-    struct AST *ast_seq_1 = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_false);
-
-    
-    struct AST *ast_true = new_AST(new_token(new_unique_symbols(copy_string("true"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, NULL);   
-
-    struct linked_list *ll_true = new_list();
-    ll_true = list_append(ll_true, ast_true);
-    
-    struct AST *ast_seq_2 = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_true);
+    struct AST *ast_seq_1 = new_AST_COMMAND("false", NULL, NULL);    
+    struct AST *ast_seq_2 = new_AST_COMMAND("true", NULL, NULL);
 
 
     struct linked_list *ll_cond = new_list();

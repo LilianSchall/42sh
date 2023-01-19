@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
-
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 // cat < README.md
 
 void redirect_7(void)
@@ -20,15 +20,7 @@ void redirect_7(void)
 Test(exec_redirection, redirection_7, .init = redirect_7)
 {
     
-    struct linked_list *ll_ast = new_list();
-    
-    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("cat"), false, false, false), (enum token_type) ARG), (enum AST_type) COMMAND, ll_ast);
-    
-    struct linked_list *ll_command = new_list();
-    ll_command = list_append(ll_command, ast_echo);
-
-    struct AST *ast_seq_c = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), 
-                (enum AST_type) SEQUENCE, ll_command);
+    struct AST *ast_seq_c = new_AST_COMMAND("cat", NULL, NULL);
 
 
     struct AST *ast_fd_from = new_AST(new_token(new_unique_symbols(copy_string("0"), false, false, false), (enum token_type) IO_NUMBER), 

@@ -8,20 +8,18 @@
 #include <criterion/redirect.h>
 #include <stdio.h>
 
-int exec_bool(void) {
 
-  struct AST *ast =
-      new_AST(new_token(new_unique_symbols(copy_string("true"), false, false, false), (enum token_type) COMMAND), (enum AST_type)COMMAND, NULL);
 
-  struct linked_list *ll_ast2 = new_list();
-  ll_ast2 = list_append(ll_ast2, ast);
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 
-  struct AST *ast_final =
-      new_AST(new_token(new_unique_symbols(copy_string("true"), false, false, false), (enum token_type) WORD), (enum AST_type)SEQUENCE, ll_ast2);
+int exec_bool(void) 
+{
 
-  int result = execute_AST(ast_final);
+  struct AST *ast = new_AST_COMMAND("true", NULL, NULL);
 
-  free_AST(ast_final);
+  int result = execute_AST(ast);
+
+  free_AST(ast);
 
   return result;
 }
