@@ -1,49 +1,4 @@
-#include "builtin/builtin.h"
-
-// redirect stdout & stderr into file named filename
-int redirection_stderr_stdout(struct AST *tree, char *filename)
-{
-    int file_fd;
-    // open our file
-    file_fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0755);
-
-    if (file_fd == -1)
-        return 2;
-
-    // duplicate STDOUT file descriptor
-    int stderr_dup = dup(STDERR_FILENO);
-    int stdout_dup = dup(STDOUT_FILENO);
-
-    // put file_fd into stderr
-    if (dup2(file_fd, STDERR_FILENO) == -1)
-    {
-        close(file_fd);
-        return 2;
-    }
-    // put file_fd into stdout
-    if (dup2(file_fd, STDOUT_FILENO) == -1)
-    {
-        close(file_fd);
-        return 2;
-    }
-    // do stuff
-    int return_val = execute_AST(tree);
-
-    fflush(stderr);
-    fflush(stdout);
-    // end stuff
-
-    // restore stdout
-    dup2(stderr_dup, STDERR_FILENO);
-    dup2(stdout_dup, STDOUT_FILENO);
-
-    // close all file descriptor
-    close(file_fd);
-    close(stderr_dup);
-    close(stdout_dup);
-
-    return return_val;
-}
+#include "execution/execution.h"
 
 // redirect fd_from file descriptor into into fd_to file descriptor
 int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to)
@@ -101,15 +56,15 @@ int check_if_file_exist(char *filename)
 int get_fd_from_ast(struct AST *tree, enum token_type r_type)
 {
     if (tree->value->type == IO_NUMBER) // IO_NUMBER (0,1,2,...)
-        return my_itoa(tree->value->symbol);
+        return my_itoa(tree->value->values[0]->value);
 
     char *filename = NULL;
 
     // check if filename is a string to expand
-    if (tree->value->is_expandable)
-        filename = expand_var(tree->value->symbol);
+    if (tree->value->values[0]->is_expandable)
+        filename = expand_var(tree->value->values[0]->value, 0);
     else
-        filename = tree->value->symbol; // get the filename
+        filename = tree->value->values[0]->value; // get the filename
 
     int ret_val = 0;
 
@@ -144,7 +99,7 @@ int get_fd_from_ast(struct AST *tree, enum token_type r_type)
                 ret_val = check_if_file_exist(filename);
         }
     }
-    if (tree->value->is_expandable)
+    if (tree->value->values[0]->is_expandable)
     {
         mem_free(filename);
     }
@@ -158,3 +113,34 @@ void close_fd(int fd, struct AST *tree)
         close(fd);
 }
 
+
+
+int execute_AST_redirection(struct AST *tree)
+{
+    int return_val = 0;
+    enum token_type r_type = tree->value->type;
+
+    struct linked_node *child_list = tree->linked_list->head;
+
+    struct AST *ast_from = child_list->data;
+    struct AST *ast_exec = child_list->next->data;
+    struct AST *ast_to = child_list->next->next->data;
+
+    int fd_from = get_fd_from_ast(ast_from, r_type);
+    if (fd_from == -1)
+        return 2;
+
+    int fd_to = get_fd_from_ast(ast_to, r_type);
+    if (fd_to == -1)
+    {
+        close_fd(fd_from, ast_from);
+        return 2;
+    }
+
+    return_val = redirection_fd_to_fd(ast_exec, fd_from, fd_to);
+
+    close_fd(fd_from, ast_from);
+    close_fd(fd_to, ast_to);
+
+    return return_val;
+}

@@ -1,37 +1,58 @@
 #include "commons.h"
 
-static size_t my_strlen(char *str)
+static size_t my_strlen(char *str, int type)
 {
     // this function will only count the chars between 0 and 128
-    size_t len = 0;
     size_t i = 0;
-    while (str[i] != '\0')
+    size_t len = 0;
+    
+    if (type != 0)
+        i++;
+
+    while (str[i] > 0 || str[i] == -1)
     {
-        if (str[i] != -1)
-            len++;
+        if (str[i] > 0) // if it is a char and not a marker
+            len++; // then we count it as part of the symbol
         i++;
     }
 
     return len;
 }
 
-char *my_strdup(char *str)
+static int type_of_subword(char *str)
 {
-    size_t len = my_strlen(str);
+    // if the string is unquoted then return 0
+    if (str[0] >= 0)
+        return 0;
 
-    char *new_str = mem_calloc(len + 1, 1);
+    // else return the quote marker
+    return str[0];
+}
 
-    if (!new_str)
-        return NULL;
+int my_strdup(char *str, struct symbol *sym)
+{
+    int type = type_of_subword(str);
+
+    size_t len = my_strlen(str, type);
+
+    char *symbol = mem_calloc(len + 1, 1);
 
     size_t j = 0;
-    for (size_t i = 0; str[i]; i++)
+    size_t i = 0;
+    for (; j < len; i++)
     {
-        if (str[i] != -1)
-            new_str[j++] = str[i];
+        if (str[i] >= 0)
+        {
+            symbol[j++] = str[i];
+        }
     }
 
-    return new_str;
+    sym->value = symbol;
+    sym->is_expandable = type != SINGLE_QUOTE_MARKER && type != DELIMITER_MARKER;
+    sym->is_double_quoted = type == DOUBLE_QUOTE_MARKER;
+    sym->is_single_quoted = type == SINGLE_QUOTE_MARKER;
+
+    return i + (str[i] == type ? 1 : 0);
 }
 
 int find_special_tokens(char *str, char **special_tokens)
@@ -132,99 +153,6 @@ char *copy_string(char *src)
     return strcpy(dest, src);
 }
 
-// transform a linked list into a argc (char **)
-// argc is a pointer (it will be updated with the length of argv)
-// last elem of argv is NULL
-char **new_argv(struct AST *tree, int *argc)
-{
-    *argc = (int)list_size(tree->linked_list) + 1;
-    // int argc_tmp = *argc;
-
-    struct linked_list *temp = tree->linked_list;
-
-    char **argv = mem_malloc(sizeof(char *) * (*argc + 1));
-
-    int i = 1;
-
-    if (tree->value->is_expandable)
-    {
-        argv[0] = expand_var(tree->value->symbol);
-        if (!*(argv[0]))
-        {
-            i--;
-            (*argc)--;
-        }
-    }
-    else
-        argv[0] = copy_string(tree->value->symbol);
-
-    if (!temp)
-    {
-        argv[1] = NULL;
-        return argv;
-    }
-
-    struct linked_node *ln = temp->head;
-
-    for (; i < *argc; i++)
-    {
-        struct AST *child = ln->data;
-        if (child->value->is_expandable)
-        {
-            char *tmp = expand_var(child->value->symbol);
-            if (*tmp)
-                argv[i] = tmp;
-            else
-            {
-                i--;
-                (*argc)--;
-            }
-        }
-        else
-            argv[i] = copy_string(child->value->symbol);
-        ln = ln->next;
-    }
-
-    argv[i] = NULL;
-    return argv;
-}
-
-// free argc (char **)
-void free_argv(int argc, char **argv)
-{
-    for (int i = 0; i < argc; i++)
-    {
-        mem_free(argv[i]);
-    }
-    mem_free(argv);
-}
-
-// return a linked list of all 'word' in our AST
-// it only takes the left child
-// example of usage : get echo words
-struct linked_list *get_linked_list_from_AST(struct AST *AST)
-{
-    struct linked_list *ll_ast = new_list();
-
-    // add command name
-    ll_ast = list_append(ll_ast, AST->value->symbol);
-
-    if (!AST->linked_list)
-        return ll_ast;
-
-    struct linked_node *node = AST->linked_list->head;
-
-    struct AST *ast_temp;
-
-    while (node) // add all childs
-    {
-        ast_temp = node->data;
-        ll_ast = list_append(ll_ast, ast_temp->value->symbol);
-        node = node->next;
-    }
-
-    return ll_ast;
-}
 
 int my_itoa(char *string)
 {

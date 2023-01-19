@@ -3,6 +3,7 @@
 #include "linked_list/linked_list.h"
 #include "token/token.h"
 
+#include "symbol/symbol.h"
 #include <stdio.h>
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
@@ -10,9 +11,9 @@
 
 int exec_var(void)
 {
-    struct AST *ast_var_name = new_AST(new_token(strdup("test"), (enum token_type) WORD, false), (enum AST_type) ARG, NULL);   
+    struct AST *ast_var_name = new_AST(new_token(new_unique_symbols(copy_string("test"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
 
-    struct AST *ast_var_value = new_AST(new_token(strdup("prout"), (enum token_type) WORD, false), (enum AST_type) ARG, NULL);
+    struct AST *ast_var_value = new_AST(new_token(new_unique_symbols(copy_string("prout"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);
 
     struct linked_list *ll_ast_ass = new_list();
     ll_ast_ass = list_append(ll_ast_ass, ast_var_name);

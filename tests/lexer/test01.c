@@ -9,10 +9,33 @@ static struct token *get_token(void *data)
     return token;
 }
 
-static void test_token(struct linked_node **node, const char *sym, enum token_type type)
+static char *get_full_sym(struct symbol **values)
 {
-    cr_expect_str_eq(get_token((*node)->data)->symbol, sym);
+    size_t len = 0;
+
+    for (size_t i = 0; values[i]; i++)
+    {
+        len += strlen(values[i]->value);
+    }
+
+    char *str = mem_calloc(len + 1, 1);
+
+    for (size_t i = 0; values[i]; i++)
+    {
+        strcat(str, values[i]->value);
+    }
+
+    return str;
+}
+
+void test_token(struct linked_node **node, const char *sym, enum token_type type)
+{
+    char *str = get_full_sym(get_token((*node)->data)->values);
+    cr_expect_str_eq(str, sym);
     cr_expect_eq(get_token((*node)->data)->type, type);
+
+    mem_free(str);
+
     *node = (*node)->next;
 }
 

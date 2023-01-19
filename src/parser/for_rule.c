@@ -43,7 +43,7 @@ create_iter:
     tree = new_AST(NULL, ITER, new_list());
 
     list_append(tree->linked_list,
-                new_AST(new_token(strdup("$@"), WORD, true), ARG, NULL));
+                new_AST(new_token(new_unique_symbols(strdup("$@"), true, false, false), WORD), ARG, NULL));
 
     return tree;
 }
@@ -67,12 +67,21 @@ static struct AST *parsing_in_clause(struct linked_list *token_list)
     free_token(token); // in token is useless now
 
     struct AST *tree = new_AST(NULL, ITER, new_list());
-
-    infos.sym = "WORD";
-    infos.trigger_warn = false;
-    while ((token = consume_token(token_list, WORD, infos)) != NULL)
+    token = list_head(token_list);
+    while (token && (is_substitution_ruled(token->type)
+        || is_non_delimitator(token->type)))
     {
-        list_append(tree->linked_list, new_AST(token, ARG, NULL));
+        struct AST *word = substitution_rule(token_list, false);
+        
+        if (!word)
+        {
+            warnx("Missing word WORD or D_SUBSHELL at rule_for_rule");
+            free_AST(tree);
+            return NULL;
+        }
+        list_append(tree->linked_list, word);
+
+        token = list_head(token_list);
     }
 
     // parsing ';' or '\n'

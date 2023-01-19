@@ -15,7 +15,7 @@ struct token *consume_token(struct linked_list *token_list,
     if (token->type != type)
     {
         if (info.trigger_warn)
-            warnx("%s: %s missmatch at %s", token->symbol, info.sym,
+            warnx("%s missmatch at %s", info.sym,
                   info.rulename);
         return NULL;
     }
@@ -82,3 +82,22 @@ struct AST *root_sequence_if_needed(struct AST *tree)
     return seq;
 }
 
+bool is_non_delimitator(enum token_type type)
+{
+    static CREATE_NON_DELIMITATOR(types);
+    size_t len = sizeof(types) / sizeof(enum token_type);
+    
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (types[i] == type)
+            return true;
+    }
+
+    return false;
+}
+
+bool is_substitution_ruled(enum token_type type)
+{
+    return type == WORD || type == DOLL_OPEN_PARENTHESE;
+}

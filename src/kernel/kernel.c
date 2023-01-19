@@ -48,6 +48,7 @@ int launch_shell(int options, char *file_script, char *input)
     int status_code = 0;
 
     new_garbage_collector();
+    new_status();
 
     if (input)
         status_code = execute_shell_command(options, input);
@@ -65,6 +66,7 @@ int launch_shell(int options, char *file_script, char *input)
     else
         status_code = launch_script_mode(options, file_script);
 
+    free_status();
     free_garbage_collector();
 
     return status_code;

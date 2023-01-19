@@ -54,6 +54,7 @@ struct AST *simple_command_rule(struct linked_list *token_list,
         if (child == NULL)
         {
             free_AST(redirect_tree);
+            redirect_tree = NULL;
         }
 
         stick_correctly_child(&tree, &redirect_tree, &last_redirect_tree,
@@ -62,7 +63,7 @@ struct AST *simple_command_rule(struct linked_list *token_list,
         token = list_head(token_list);
     }
 
-    if (!token || token->type != WORD)
+    if (!token || !is_substitution_ruled(token->type))
     {
         if (redirect_tree) // then simple_command will be prefix {prefix}
         {
@@ -76,18 +77,30 @@ struct AST *simple_command_rule(struct linked_list *token_list,
             return tree;
         }
         if (trigger_warn)
-            warnx("%s: simple_command missmatch", token->symbol);
+            warnx("simple_command missmatch");
         goto simple_command_end;
     }
-
+    // now we are parsing the name of the command
     free_AST(tree); // we are erasing all assignment child
-    tree = new_AST(token, COMMAND, NULL);
-    list_pop(token_list);
+    tree = new_AST(NULL, COMMAND, new_list());
+
+    struct AST *name = substitution_rule(token_list, trigger_warn);
+    if (!name)
+    {
+        free_AST(tree);
+        free_AST(redirect_tree);
+        tree = NULL;
+        goto simple_command_end;
+    }
+    list_append(tree->linked_list, name);
+    // the name is now transformed as arg of command AST
 
     token = list_head(token_list);
-    while (token != NULL
-           && (token->type == WORD || token->type == VARASSIGNMENT
-               || token->type == IO_NUMBER || is_redirect(token)))
+    
+    // parsing arguments
+    while (token != NULL && (is_non_delimitator(token->type) 
+           || is_substitution_ruled(token->type) || token->type == IO_NUMBER
+           || is_redirect(token)))
     {
         struct AST *child = element_rule(token_list, trigger_warn);
 

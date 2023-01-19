@@ -3,18 +3,7 @@
 #include "linked_list/linked_list.h"
 #include "lexer/lexer.h"
 
-static struct token *get_token(void *data)
-{
-    struct token *token = data;
-    return token;
-}
-
-static void test_token(struct linked_node **node, const char *sym, enum token_type type)
-{
-    cr_expect_str_eq(get_token((*node)->data)->symbol, sym);
-    cr_expect_eq(get_token((*node)->data)->type, type);
-    *node = (*node)->next;
-}
+extern void test_token(struct linked_node **node, const char *sym, enum token_type type);
 
 Test(lexer, echo_foo_pipe_cat_zero_inf_file)
 {

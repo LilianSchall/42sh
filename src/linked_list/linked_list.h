@@ -19,6 +19,12 @@ struct linked_list
 struct linked_list *new_list(void);
 
 void *list_head(struct linked_list *list);
+
+
+// !!!warning: use this function with precaution !!!
+// This function returns the item after the head (or NULL if it doesn't exist)
+void *list_next(struct linked_list *list);
+
 size_t list_size(struct linked_list *list);
 
 struct linked_list *list_insert(struct linked_list *list, void *data,

@@ -7,6 +7,7 @@
 
 #include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"
+#include "symbol/symbol.h"
 
 enum token_type
 {
@@ -18,6 +19,7 @@ enum token_type
     OPEN_BRACE,
     CLOSE_BRACE,
     OPEN_PARENTHESE,
+    DOLL_OPEN_PARENTHESE,
     CLOSE_PARENTHESE,
     FOR,
     IN,
@@ -57,6 +59,7 @@ enum token_type
         [OPEN_BRACE] = "{",                                                    \
         [CLOSE_BRACE] = "}",                                                   \
         [OPEN_PARENTHESE] = "(",                                               \
+        [DOLL_OPEN_PARENTHESE] = "$(",                                          \
         [CLOSE_PARENTHESE] = ")",                                              \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \
@@ -90,6 +93,11 @@ enum token_type
     char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`',          \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
+#define CREATE_NON_DELIMITATOR(Name) \
+    enum token_type Name[] = { WORD, OPEN_BRACE, CLOSE_BRACE, FOR, IN, DO,      \
+        DONE, WHILE, UNTIL, CASE, ESAC, IF, THEN, ELIF, ELSE, FI, \
+        VARASSIGNMENT, NEG }
+
 #define CREATE_REDIRECTIONS(Name)                                              \
     char *Name[] = { ">>", ">&", "<&", ">|", "<>", NULL }
 
@@ -99,14 +107,13 @@ enum token_type
 
 struct token
 {
-    char *symbol;
+    struct symbol **values; // null terminated array containing symbols
     enum token_type type;
-    bool is_expandable;
 };
 
 // create a token with the right attributes and returns it.
-// returns null if symbol is NULL (wrong execution).
-struct token *new_token(char *symbol, enum token_type type, bool is_expandable);
+// returns null if values is NULL (wrong execution).
+struct token *new_token(struct symbol **values, enum token_type type);
 
 // free a token and its attributes.
 // if the token is NULL, does nothing

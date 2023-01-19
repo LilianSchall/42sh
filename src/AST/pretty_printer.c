@@ -2,6 +2,28 @@
 
 static void __pretty_printer(struct AST *tree);
 
+static void print_subshell(struct AST *tree, bool is_redirected)
+{
+    printf("subshell: [%s] ", is_redirected ? "redirected" : "");
+
+    tree = tree->linked_list->head->data;
+
+    __pretty_printer(tree);
+}
+
+static void print_function(struct AST *tree)
+{
+    struct AST *name_AST = tree->linked_list->head->data;
+    char *name = get_cat_symbols(name_AST->value->values);
+
+    printf("function [%s]: ", name);
+    tree = tree->linked_list->head->next->data;
+
+    __pretty_printer(tree);
+
+    mem_free(name);
+}
+
 static void print_redirection(struct AST *tree)
 {
     struct linked_node *node = tree->linked_list->head;
@@ -12,7 +34,7 @@ static void print_redirection(struct AST *tree)
     node = node->next;
     struct AST *to = node->data;
 
-    printf("redirect %s to %s: ", io->value->symbol, to->value->symbol);
+    printf("redirect %s to %s: ", io->value->values[0]->value, to->value->values[0]->value);
     __pretty_printer(exec);
 }
 
@@ -30,20 +52,21 @@ static void print_sequence(struct AST *tree)
 
 static void print_command(struct AST *tree)
 {
-    printf("command %s ", tree->value->symbol);
+    printf("command ");
     if (!tree->linked_list)
         return;
     for (struct linked_node *node = tree->linked_list->head; node;
          node = node->next)
     {
         struct AST *child = node->data;
-        printf("%s ", child->value->symbol);
+
+        __pretty_printer(child);
     }
 }
 
 static void print_condition(struct AST *tree)
 {
-    printf("condition %s: ", tree->value->symbol);
+    printf("condition %s: ", tree->value->values[0]->value);
     if (!tree->linked_list)
         return;
     for (struct linked_node *node = tree->linked_list->head; node;
@@ -77,12 +100,12 @@ static void print_assignment(struct AST *tree)
 {
     struct AST *name = tree->linked_list->head->data;
     struct AST *value = tree->linked_list->head->next->data;
-    printf("assign: %s = %s", name->value->symbol, value->value->symbol);
+    printf("assign: %s = %s", name->value->values[0]->value, value->value->values[0]->value);
 }
 
 static void print_operator(struct AST *tree)
 {
-    printf("operator [%s]: ", tree->value->symbol);
+    printf("operator [%s]: ", tree->value->values[0]->value);
     if (!tree->linked_list)
         return;
     for (struct linked_node *node = tree->linked_list->head; node;
@@ -98,8 +121,11 @@ static void __pretty_printer(struct AST *tree)
         return;
 
     printf("{");
-
-    if (tree->type == REDIRECTION)
+    if (tree->type == D_SUBSHELL || tree->type == SUBSHELL)
+        print_subshell(tree, tree->type == D_SUBSHELL);
+    else if (tree->type == FUNCTION)
+        print_function(tree);
+    else if (tree->type == REDIRECTION)
         print_redirection(tree);
     else if (tree->type == SEQUENCE)
         print_sequence(tree);
@@ -111,7 +137,7 @@ static void __pretty_printer(struct AST *tree)
         print_iter(tree);
     else if (tree->type == ARG)
     {
-        printf("arg: %s", tree->value->symbol);
+        printf("arg: %s", tree->value->values[0]->value);
     }
     else if (tree->type == PIPE)
         print_pipe(tree);

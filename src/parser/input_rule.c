@@ -27,7 +27,8 @@ struct AST *input_rule(struct linked_list *token_list)
 
     if (token->type != NEWLINE)
     {
-        warnx("%s: command not found", token->symbol);
+        free_AST(tree);
+        warnx("command not found at input_rule");
         return NULL;
     }
 

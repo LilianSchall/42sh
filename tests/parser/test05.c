@@ -12,13 +12,13 @@ extern void test_AST(struct AST *tree, enum AST_type types[], size_t size);
 
 Test(parser, while_echo_foo_semicolon_do_echo_prout_echo_file_done)
 {
-    char input[] = "while 'echo' \"foo\" do echo prout\necho 'file';done";
+    char input[] = "while 'echo' \"foo\"\ndo echo prout\necho 'file';done";
 
     struct linked_list *token_list = build_token_list(input);
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, CONDITION, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, CONDITION, SEQUENCE, COMMAND, ARG, ARG, SEQUENCE, COMMAND, ARG, ARG, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -28,13 +28,13 @@ Test(parser, while_echo_foo_semicolon_do_echo_prout_echo_file_done)
 
 Test(parser, while_true_do_echo_foo_done_sup_file)
 {
-    char input[] = "while true\ndo\necho foo; done\n> file";
+    char input[] = "while true\ndo\necho foo; done> file";
 
     struct linked_list *token_list = build_token_list(input);
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, SEQUENCE, COMMAND, ARG, ARG};
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -50,7 +50,7 @@ Test(parser, for_i_semicolon_do_echo_foo_done)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, CONDITION, ARG, ITER, ARG, SEQUENCE, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, CONDITION, ARG, ITER, ARG, SEQUENCE, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -66,7 +66,7 @@ Test(parser, for_i_in_do_echo_foo_done)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, CONDITION, ARG, ITER, SEQUENCE, COMMAND, ARG};
+    enum AST_type types[] = { SEQUENCE, CONDITION, ARG, ITER, SEQUENCE, COMMAND, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
