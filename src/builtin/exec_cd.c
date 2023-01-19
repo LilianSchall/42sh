@@ -11,7 +11,6 @@ int cd_fun(int argc, char *argv[])
     if (argc == 1)
     {
 	    dir_to_go = home;
-	    printf("%s\n", home);
     }
     else if (argc == 2)
     {
