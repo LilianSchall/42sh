@@ -8,20 +8,12 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
+
 int exec6(void)
 {
-    struct AST *ast_1 = new_AST(new_token(new_unique_symbols(copy_string("README.md"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
-    struct AST *ast_2 = new_AST(new_token(new_unique_symbols(copy_string("-e"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);
-    
-    struct linked_list *ll_ast = new_list();
-    ll_ast = list_append(ll_ast, ast_1);
-    ll_ast = list_append(ll_ast, ast_2);
-    
-    struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string("cat"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast);
 
-    struct AST *ast_final = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) SEQUENCE, ll_ast2);
+    struct AST *ast_final = new_AST_COMMAND("cat", "-e", "README.md");
 
     execute_AST(ast_final);
 

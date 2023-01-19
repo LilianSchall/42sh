@@ -8,6 +8,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 
 int exec_while_1(void)
 {
@@ -22,17 +23,11 @@ int exec_while_1(void)
     struct linked_list *ll_ast2 = new_list();
     ll_ast2 = list_append(ll_ast2, ast_echo);
     
-    struct AST *ast_bloc = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), (enum AST_type) SEQUENCE, ll_ast2);
+    struct AST *ast_bloc = new_AST_COMMAND("echo", "it is working !", NULL);
 
     // --- 
-
-
-    struct AST *ast_true = new_AST(new_token(new_unique_symbols(copy_string("false"), false, false, false), (enum token_type) ARG), (enum AST_type) COMMAND, NULL);
     
-    struct linked_list *ll_ast_cond = new_list();
-    ll_ast_cond = list_append(ll_ast_cond, ast_true);
-    
-    struct AST *ast_cond = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), (enum AST_type) SEQUENCE, ll_ast_cond);
+    struct AST *ast_cond = new_AST_COMMAND("false", NULL, NULL);
 
     
     struct linked_list *ll_while = new_list();

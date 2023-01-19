@@ -9,6 +9,8 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
+
 void redirect_1(void)
 {
     cr_redirect_stdout();
@@ -18,18 +20,8 @@ void redirect_1(void)
 Test(exec_redirection, redirection_1, .init = redirect_1)
 {
     // echo hello > file.txt
-    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("hello"), false, false, false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
 
-    struct linked_list *ll_ast = new_list();
-    ll_ast = list_append(ll_ast, ast_hello);
-    
-    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) ARG), (enum AST_type) COMMAND, ll_ast);
-    
-    struct linked_list *ll_command = new_list();
-    ll_command = list_append(ll_command, ast_echo);
-
-    struct AST *ast_seq_c = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) ARG), 
-                (enum AST_type) SEQUENCE, ll_command);
+    struct AST *ast_seq_c = new_AST_COMMAND("echo", "hello", NULL);
 
 
     struct AST *ast_fd_from = new_AST(new_token(new_unique_symbols(copy_string("1"), false, false, false), (enum token_type) IO_NUMBER), 

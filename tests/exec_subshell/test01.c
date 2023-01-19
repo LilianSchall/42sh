@@ -8,6 +8,8 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
+
 static void redirect(void)
 {
     cr_redirect_stdout();
@@ -17,11 +19,11 @@ static void redirect(void)
 static struct AST * echo_a(void)
 {
     struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("$a"), true, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
-
+    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
     struct linked_list *ll_ast = new_list();
+    ll_ast = list_append(ll_ast, ast_echo);
     ll_ast = list_append(ll_ast, ast_hello);
-    
-    struct AST *ast_foo_1 = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
+    struct AST *ast_foo_1 = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
     
     return ast_foo_1;
 }
@@ -38,8 +40,6 @@ static struct AST * set_a_5(void)
     ll_ast = list_append(ll_ast, ast_hello);
 
     struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) ASSIGNMENT, ll_ast);
-
-  
 
     return ast;
 }

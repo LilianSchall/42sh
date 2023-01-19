@@ -9,6 +9,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
+extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 
 void redirect_pipe_1(void)
 {
@@ -18,54 +19,13 @@ void redirect_pipe_1(void)
 Test(exec_redirection, pipe_1, .init = redirect_pipe_1)
 {
     // echo blabla | head -c 10 | cat -e 
-    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("blabla"), false, false, false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
-
-    struct linked_list *ll_ast = new_list();
-    ll_ast = list_append(ll_ast, ast_hello);
-    
-    struct AST *ast_echo = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
-    
-    struct linked_list *ll_command = new_list();
-    ll_command = list_append(ll_command, ast_echo);
-
-    struct AST *ast_seq_echo = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) COMMAND), 
-                (enum AST_type) SEQUENCE, ll_command);
 
 
-   // echo hello 
-    struct AST *ast_c = new_AST(new_token(new_unique_symbols(copy_string("-c"), false, false, false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
-    struct AST *ast_5 = new_AST(new_token(new_unique_symbols(copy_string("10"), false, false, false), (enum token_type) ARG), (enum AST_type) ARG, NULL);   
+    struct AST *ast_seq_echo = new_AST_COMMAND("echo", "blabla", NULL);
 
-    struct linked_list *ll_ast2 = new_list();
-    ll_ast2 = list_append(ll_ast2, ast_c);
-    ll_ast2 = list_append(ll_ast2, ast_5);
-    
-    struct AST *ast_head = new_AST(new_token(new_unique_symbols(copy_string("head"), false, false, false), (enum token_type) WORD), 
-        (enum AST_type) COMMAND, ll_ast2);
-    
-    struct linked_list *ll_comman_2d = new_list();
-    ll_comman_2d = list_append(ll_comman_2d, ast_head);
+    struct AST *ast_seq_head = new_AST_COMMAND("head", "-c", "10");
 
-    struct AST *ast_seq_head = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), 
-                (enum AST_type) SEQUENCE, ll_comman_2d);
-
-
-
-    // cat -e 
-    struct AST *ast_e = new_AST(new_token(new_unique_symbols(copy_string("-e"), false, false, false), (enum token_type) ARG), 
-    (enum AST_type) ARG, NULL);   
-
-    struct linked_list *ll_ast3 = new_list();
-    ll_ast3 = list_append(ll_ast3, ast_e);
-    
-    struct AST *ast_cat = new_AST((new_token(new_unique_symbols(copy_string("cat"), false, false, false), (enum token_type) WORD)), 
-            (enum AST_type) COMMAND, ll_ast3);
-    
-    struct linked_list *ll_command3 = new_list();
-    ll_command3 = list_append(ll_command3, ast_cat);
-
-    struct AST *ast_seq_cat = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) COMMAND), 
-                (enum AST_type) SEQUENCE, ll_command3);
+    struct AST *ast_seq_cat = new_AST_COMMAND("cat", "-e", NULL);
 
     
     struct linked_list *ll_redir = new_list();
