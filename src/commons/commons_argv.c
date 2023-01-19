@@ -36,13 +36,17 @@ char **split_string(char *str)
 		else
 			p++;
     }
-
+    if (*(p - 1) == ' ' || *(p - 1) == '\n')
+    {
+        result[i] = NULL;
+        return result;
+    }
     int len = p - start;
     result[i] = mem_malloc(len + 1);
     memcpy(result[i], start, len);
     result[i][len] = 0;
     result[i + 1] = NULL;
-
+    i = 0;
     return result;
 }
 
