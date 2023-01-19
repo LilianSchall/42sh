@@ -154,35 +154,50 @@ char *copy_string(char *src)
 }
 
 // take a string in parameter and return a argv of all words
-char **split_string(char *str) 
+char **split_string(char *str)
 {
-    int count = 0;
-    int len = strlen(str);
-    for (int i = 0; i < len; i++) 
-    {
-        if (isspace(str[i]) && !isspace(str[i + 1])) 
-        {
-            count++;
-        }
-    }
-    char **result = mem_malloc(sizeof(char *) * (count + 2));
-    char *token;
+    //fprintf(stderr, "%s\n\n", str);
+    char **result = mem_malloc(sizeof(char*) * 2);;
+    char *p = str;
     int i = 0;
-    char *str_cpy = strdup(str);
-    char *delimiter = " \n\0";
-    token = strtok(str_cpy, delimiter);
-    while (token != NULL) 
+    while (*p == ' ' || *p == "\n")
+        p++;
+    char *start = p;
+    int quoted = 0;
+    while (*p)
     {
-        result[i] = mem_malloc(sizeof(char) * (strlen(token) + 1));
-        strcpy(result[i], token);
-        token = strtok(NULL, delimiter);
-        i++;
+        if (*p == '"')
+        {
+            quoted = !quoted;
+            int len = strlen(p+1);
+            memmove(p, p+1, len);
+            *(p + len) = 0;
+            p++;
+        }
+        else if (!quoted && (*p == ' ' || *p == '\n'))
+        {
+            int len = p - start;
+            result[i] = mem_malloc(len + 1);
+            memmove(result[i], start, len);
+            result[i][len] = 0;
+            i++;
+            result = mem_realloc(result, sizeof(char*) * (i + 2));
+			while (*p == ' ' || *p == '\n')
+                p++;
+			start = p;
+        }
+		else
+			p++;
     }
-    result[i] = NULL;
-    mem_free(str_cpy);
+
+    int len = p - start;
+    result[i] = mem_malloc(len + 1);
+    memcpy(result[i], start, len);
+    result[i][len] = 0;
+    result[i + 1] = NULL;
+
     return result;
 }
-
 
 // check if tree is as D_SUBSHELL type
 // if it is : it execute the AST and redirect the stdout into a string
@@ -232,7 +247,7 @@ char **new_argv(struct AST *tree, int *argc)
         char **tmp = split_string(str);
         mem_free(str);
         int j = 0;
-        if (tmp[j])
+        while (tmp[j])
         {
             argv[i] = strdup(tmp[j]);
             i++;
@@ -337,18 +352,21 @@ char *get_content_of_pipe(int pipefd[2])
     size_t size = 0;
     size_t i = 0;
 
-    while (read(pipefd[0], buffer, sizeof(char) * 1024) > 0) {
-        size += strlen(buffer);
+    size_t nb_read = read(pipefd[0], buffer, sizeof(buffer));
+
+    while (nb_read > 0) 
+    {
+        size += nb_read;
         output = realloc(output, sizeof(char) * (size + 1));
         
-        size_t j = i;
-        while(i < j + strlen(buffer))
+        for(size_t j = 0; j < nb_read; j++)
         {
-            output[i] = buffer[i - j];
+            output[i] = buffer[j];
             i++;
         }
+        output[i] = '\0';
+        nb_read = read(pipefd[0], buffer, sizeof(buffer));
     }
-    output[i] = '\0';
     close(pipefd[0]);
     return output;
 }
