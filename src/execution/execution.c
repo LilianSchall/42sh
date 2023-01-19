@@ -40,7 +40,7 @@ static int execute_AST_cmd(struct AST *tree)
     {
         ret_val = echo_fn(argc, argv);
     }
-    if (!strcmp("cd", argv[0])) // builtin command
+    else if (!strcmp("cd", argv[0])) // builtin command
     {
         ret_val = cd_fun(argc, argv);
     }

@@ -42,6 +42,7 @@ src = files(
     'symbol/symbol.c',
 	'builtin/exec_bool.c',
 	'builtin/exec_echo.c',
+	'builtin/exec_cd.c',
 	'builtin/exec_exit.c',
 	'builtin/exec_break_continue.c',
 	'io_backend/io_backend.c',
