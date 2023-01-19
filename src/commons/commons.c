@@ -199,25 +199,6 @@ char **split_string(char *str)
     return result;
 }
 
-// check if tree is as D_SUBSHELL type
-// if it is : it execute the AST and redirect the stdout into a string
-// then the string goes into a argv containing all words
-int check_dollar_subshell(struct AST *tree, int *i, int *argc, char **argv)
-{
-    if(tree->type != D_SUBSHELL)
-        return 0;
-    
-    char *string = execute_AST_D_SUBSHELL(tree);
-    
-    char **temp_argv = split_string(string);
-
-    // to do : merge with actual argv
-
-    mem_free(temp_argv);
-    mem_free(string);
-    return 1;
-}
-
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL

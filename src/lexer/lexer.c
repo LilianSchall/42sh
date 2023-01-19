@@ -66,15 +66,15 @@ struct token *create_token(char **word_begin_ptr, char **input,
     int index = find_special_tokens(symbols[0]->value, token_value);
     enum token_type type = ERROR;
 
-    if (symbols[1] == NULL) // it means there is only one symbol
+    if (strstr(symbols[0]->value, "="))
+        type = VARASSIGNMENT;
+    else if (symbols[1] == NULL) // it means there is only one symbol
     {
         if (index != -1 && symbols[0]->is_expandable)
             type = index;
         else
             type = WORD;
     }
-    else if (strstr(symbols[0]->value, "="))
-            type = VARASSIGNMENT;
     else
         type = WORD;
 
