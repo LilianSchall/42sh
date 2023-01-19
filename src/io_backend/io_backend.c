@@ -3,6 +3,8 @@
 char *get_file_content(char *filename)
 {
     FILE *file = fopen(filename, "r");
+    if(file == NULL)
+        return NULL;
     char buffer[MAX_LENGTH];
     fseek(file, 0, SEEK_END);
     long len = ftell(file);
