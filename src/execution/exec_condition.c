@@ -32,19 +32,19 @@ static int execute_AST_while_until(struct AST *tree, int val_cond)
     child = child->next;
     struct AST *bloc = child->data;
 
-    while (while_cond == val_cond && break_val == 0 && continue_val == 0)
+    while (while_cond == val_cond && check_status())
     {
         while_cond = execute_AST(cond); // check condition
 
         if (while_cond == val_cond)
             return_val = execute_AST(bloc); // exec commands
         
-        if (continue_val > 0)
-            continue_val--;
+        if (status && status->continue_val > 0)
+            status->continue_val -= 1;
     }
 
-    if (break_val > 0)
-        break_val--;
+    if (status && status->break_val > 0)
+        status->break_val -=1;
 
     return return_val;
 }
@@ -67,16 +67,16 @@ static int execute_AST_for(struct AST *tree)
     struct AST *ast_seq = child->data;
 
     int i = 0;
-    while (iter_args[i] && break_val == 0 && continue_val == 0)
+    while (iter_args[i] && check_status())
     {
         setenv(var_name, iter_args[i], 1);
         ret_val = execute_AST(ast_seq);
         i++;
-        if (continue_val > 0)
-            continue_val--;
+        if (status && status->continue_val > 0)
+            status->continue_val -= 1;
     }
-    if (break_val > 0)
-        break_val--;
+    if (status && status->break_val > 0)
+        status->break_val -= 1;
 
     free_argv(iter_args);
 
@@ -92,19 +92,19 @@ int execute_AST_condition(struct AST *tree)
         ret_val = execute_AST_if(tree);
         break;
     case WHILE:
-        nb_loop++;
+        increase_nb_loop();
         ret_val = execute_AST_while_until(tree, 0); // while is true
-        nb_loop--;
+        decrease_nb_loop();
         break;
     case UNTIL:
-        nb_loop++;
+        increase_nb_loop();
         ret_val = execute_AST_while_until(tree, 1); // until is true
-        nb_loop--;
+        decrease_nb_loop();
         break;
     case FOR:
-        nb_loop++;
+        increase_nb_loop();
         ret_val = execute_AST_for(tree);
-        nb_loop--;
+        decrease_nb_loop();
         break;
     default:
         break;
