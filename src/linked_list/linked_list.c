@@ -41,6 +41,19 @@ size_t list_size(struct linked_list *list)
     return len;
 }
 
+void *list_next(struct linked_list *list)
+{
+    if (!list)
+        return NULL;
+
+    struct linked_node *node = list->head;
+
+    if (!node || !node->next)
+        return NULL;
+
+    return node->next->data;
+}
+
 static struct linked_node *new_node(void *data, struct linked_node *next)
 {
     struct linked_node *node = mem_malloc(sizeof(struct linked_node));

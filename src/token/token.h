@@ -19,6 +19,7 @@ enum token_type
     OPEN_BRACE,
     CLOSE_BRACE,
     OPEN_PARENTHESE,
+    DOLL_OPEN_PARENTHESE,
     CLOSE_PARENTHESE,
     FOR,
     IN,
@@ -58,6 +59,7 @@ enum token_type
         [OPEN_BRACE] = "{",                                                    \
         [CLOSE_BRACE] = "}",                                                   \
         [OPEN_PARENTHESE] = "(",                                               \
+        [DOLL_OPEN_PARENTHESE] = "$(",                                          \
         [CLOSE_PARENTHESE] = ")",                                              \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \

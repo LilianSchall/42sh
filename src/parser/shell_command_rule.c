@@ -14,10 +14,14 @@ struct AST *shell_command_rule(struct linked_list *token_list,
 
         struct AST *compound = compound_list_rule(token_list, trigger_warn);
         
+        if (!compound)
+            return NULL;
+
         token = list_head(token_list);
 
         if (token->type != CLOSE_BRACE)
         {
+            warnx("Missing CLOSE_BRACE at shell_command_rule");
             free_AST(compound);
             return NULL;
         }
@@ -25,7 +29,7 @@ struct AST *shell_command_rule(struct linked_list *token_list,
         list_pop(token_list);
         free_token(token);
 
-        return compound;
+        return root_sequence_if_needed(compound);
     }
     else if (token->type == IF)
         return rule_if_rule(token_list, trigger_warn);

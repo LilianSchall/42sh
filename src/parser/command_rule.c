@@ -53,15 +53,22 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     if (token->type == WORD || token->type == IO_NUMBER || is_redirect(token)
         || token->type == VARASSIGNMENT)
     {
-        struct AST *command_tree =
-            simple_command_rule(token_list, trigger_warn);
+        // THIS part of the parser is now LR(1)
+        // To know which rule to execute between simple_command_rule
+        // and funcdec_rule, which both have WORD as first,
+        // we need to resolve the conflict by making one look ahead
+        struct token *next = list_next(token_list);
 
-        if (!command_tree)
+        struct AST *child = !next || next->type != OPEN_PARENTHESE ?
+            simple_command_rule(token_list, trigger_warn) :
+            funcdec_rule(token_list, trigger_warn);
+
+        if (!child)
         {
-            free_AST(tree);
+            free_AST(child);
             return NULL;
         }
-        list_append(tree->linked_list, command_tree);
+        list_append(tree->linked_list, child);
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
              || token->type == FOR || token->type == OPEN_BRACE)
