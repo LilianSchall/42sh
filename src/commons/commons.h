@@ -42,24 +42,11 @@ char **new_argv(struct AST *tree, int *argc);
 // free argv
 void free_argv(char **argv);
 
-// return a linked list of all 'word' in our AST
-// it only takes the left child
-// example of usage : get echo words
-struct linked_list *get_linked_list_from_AST(struct AST *AST);
-
 // check if the string is a number
 // if yes, it returns its value
 // if not, it returns -1
 int my_itoa(char *string);
 
-
-// take a string in argument and return an ARGV that contains all words
-// used in subshell $(..)
-char **str_to_argv(char *str);
-
-
-// read the pipe and return the content in a string
-char *get_content_of_pipe(int pipefd[2]);
 
 #endif /* !COMMONS_H */
 

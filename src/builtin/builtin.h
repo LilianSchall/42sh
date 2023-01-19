@@ -38,22 +38,5 @@ int true_fn(int argc, char **argv);
 // return 1
 int false_fn(int argc, char **argv);
 
-// return the file descriptor
-// return the FD if tree as a token IO_NUMBER
-// return the FD of the file opened with the good option
-int get_fd_from_ast(struct AST *tree, enum token_type r_type);
-
-// close the file descriptor if tree has NOT a token IO_NUMBER
-void close_fd(int fd, struct AST *tree);
-
-// do the >& AST redirection
-int redirection_stderr_stdout(struct AST *tree, char *filename);
-
-// redirect fd_from file descriptor into into fd_to file descriptor
-int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to);
-
-// do the PIPE AST execution
-int execute_AST_pipe(struct AST *tree);
-
 #endif /* !BUILTIN_H */
 
