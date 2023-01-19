@@ -1,9 +1,10 @@
 #include "builtin/builtin.h"
+
 int exec_unset(int argc, char *argv[])
 {
     if (argc >= 2) 
     {
-         if (strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "-v") == 0 )
+         if (strcmp(argv[1], "-v") == 0)
          {
 	     for (int i = 2; i < argc; i++)
 	     {
@@ -14,6 +15,20 @@ int exec_unset(int argc, char *argv[])
 		 }
 	     }
 	 }
+	 /*
+	 else if (strcmp(argv[1], "-f") == 0)
+         {
+             for (int p = 2; p < argc; p++)
+             {
+                 if (HERE_FOR_REPLACE(argv[p]) != 0)
+                 {
+                     fprintf(stderr, "Invalid argument: %s\n", argv[p]);
+                     return 1;
+                 }
+             }
+
+	 }
+	 */
 	 else
 	 {
 	     for (int j = 1; j < argc; j++)
