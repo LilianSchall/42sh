@@ -160,7 +160,7 @@ char **split_string(char *str)
     char **result = mem_malloc(sizeof(char*) * 2);;
     char *p = str;
     int i = 0;
-    while (*p == ' ' || *p == "\n")
+    while (*p == ' ' || *p == '\n')
         p++;
     char *start = p;
     int quoted = 0;
