@@ -18,7 +18,7 @@ Test(parser, echo_foo_sup_file)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, COMMAND, ARG, ARG};
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, COMMAND, ARG, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 
@@ -34,7 +34,7 @@ Test(parser, if_true_then_echo_foo_fi_sup_file)
 
     struct AST *tree = build_shell_AST(token_list);
 
-    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, SEQUENCE, COMMAND, ARG, ARG};
+    enum AST_type types[] = { SEQUENCE, REDIRECTION, ARG, CONDITION, SEQUENCE, COMMAND, ARG, SEQUENCE, COMMAND, ARG, ARG, ARG};
 
     test_AST(tree, types, sizeof(types) / sizeof(enum AST_type));
 

@@ -48,7 +48,7 @@ int my_strdup(char *str, struct symbol *sym)
     }
 
     sym->value = symbol;
-    sym->is_expandable = type != SINGLE_QUOTE_MARKER;
+    sym->is_expandable = type != SINGLE_QUOTE_MARKER && type != DELIMITER_MARKER;
     sym->is_double_quoted = type == DOUBLE_QUOTE_MARKER;
     sym->is_single_quoted = type == SINGLE_QUOTE_MARKER;
 
@@ -189,11 +189,13 @@ char **split_string(char *str)
 		else
 			p++;
     }
+
     int len = p - start;
     result[i] = mem_malloc(len + 1);
     memcpy(result[i], start, len);
     result[i][len] = 0;
     result[i + 1] = NULL;
+
     return result;
 }
 

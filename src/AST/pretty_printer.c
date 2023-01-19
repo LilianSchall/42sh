@@ -30,7 +30,7 @@ static void print_sequence(struct AST *tree)
 
 static void print_command(struct AST *tree)
 {
-    printf("command %s ", tree->value->values[0]->value);
+    printf("command ");
     if (!tree->linked_list)
         return;
     for (struct linked_node *node = tree->linked_list->head; node;

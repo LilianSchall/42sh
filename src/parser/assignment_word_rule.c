@@ -14,8 +14,12 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
 
     list_pop(token_list);
 
-    char *name = strdup(strtok(token->values[0]->value, "="));
+    char *str = get_cat_symbols(token->values);
+
+    char *name = strdup(strtok(str, "="));
     char *value = strdup(strtok(NULL, "="));
+
+    mem_free(str);
 
     struct AST *tree = new_AST(NULL, ASSIGNMENT, new_list());
 

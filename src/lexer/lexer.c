@@ -68,13 +68,13 @@ struct token *create_token(char **word_begin_ptr, char **input,
 
     if (symbols[1] == NULL) // it means there is only one symbol
     {
-        if (strstr(symbols[0]->value, "="))
-            type = VARASSIGNMENT;
-        else if (index != -1)
+        if (index != -1 && symbols[0]->is_expandable)
             type = index;
         else
             type = WORD;
     }
+    else if (strstr(symbols[0]->value, "="))
+            type = VARASSIGNMENT;
     else
         type = WORD;
 
@@ -177,8 +177,6 @@ static bool is_chevron(char c)
 struct token *parse_double_quoted_word(char **word_begin_ptr,
                                        struct lexer_states states, char **input)
 {
-    static CREATE_DELIMITATORS(delims);
-
     if (!(*word_begin_ptr))
     {
         if (GETCHAR(input, 0) == '\"') // word is ""

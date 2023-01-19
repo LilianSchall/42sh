@@ -7,7 +7,27 @@ struct AST *shell_command_rule(struct linked_list *token_list,
 
     if (!token)
         goto shell_command_error;
-    if (token->type == IF)
+    if (token->type == OPEN_BRACE)
+    {
+        list_pop(token_list);
+        free_token(token);
+
+        struct AST *compound = compound_list_rule(token_list, trigger_warn);
+        
+        token = list_head(token_list);
+
+        if (token->type != CLOSE_BRACE)
+        {
+            free_AST(compound);
+            return NULL;
+        }
+        
+        list_pop(token_list);
+        free_token(token);
+
+        return compound;
+    }
+    else if (token->type == IF)
         return rule_if_rule(token_list, trigger_warn);
     else if (token->type == WHILE)
         return rule_while_rule(token_list, trigger_warn);

@@ -91,6 +91,11 @@ enum token_type
     char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`',          \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
+#define CREATE_NON_DELIMITATOR(Name) \
+    enum token_type Name[] = { WORD, OPEN_BRACE, CLOSE_BRACE, FOR, IN, DO,      \
+        DONE, WHILE, UNTIL, CASE, ESAC, IF, THEN, ELIF, ELSE, FI, \
+        VARASSIGNMENT, NEG }
+
 #define CREATE_REDIRECTIONS(Name)                                              \
     char *Name[] = { ">>", ">&", "<&", ">|", "<>", NULL }
 

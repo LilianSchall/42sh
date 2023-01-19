@@ -16,28 +16,28 @@ static void redirect(void)
 
 static struct AST * echo_a(void)
 {
-    struct AST *ast_hello = new_AST(new_token(copy_string("$a"), (enum token_type) ARG, true), (enum AST_type) ARG, NULL);   
+    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("$a"), true, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
 
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_hello);
     
-    struct AST *ast_foo_1 = new_AST(new_token(copy_string("echo"), (enum token_type) WORD, false), (enum AST_type) COMMAND, ll_ast);
+    struct AST *ast_foo_1 = new_AST(new_token(new_unique_symbols(copy_string("echo"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, ll_ast);
     
     return ast_foo_1;
 }
 
 static struct AST * set_a_5(void)
 {
-    struct AST *ast_hello = new_AST(new_token(copy_string("5"), (enum token_type) ARG, false), (enum AST_type) ARG, NULL);   
+    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("5"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
     
-    struct AST *ast_foo_1 = new_AST(new_token(copy_string("a"), (enum token_type) ARG, false), (enum AST_type) COMMAND, NULL);
+    struct AST *ast_foo_1 = new_AST(new_token(new_unique_symbols(copy_string("a"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, NULL);
 
 
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_foo_1);
     ll_ast = list_append(ll_ast, ast_hello);
 
-    struct AST *ast = new_AST(new_token(copy_string(""), (enum token_type) WORD, false), (enum AST_type) ASSIGNMENT, ll_ast);
+    struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) ASSIGNMENT, ll_ast);
 
   
 
@@ -46,16 +46,16 @@ static struct AST * set_a_5(void)
 
 static struct AST * set_a_10(void)
 {
-    struct AST *ast_hello = new_AST(new_token(copy_string("10"), (enum token_type) ARG, false), (enum AST_type) ARG, NULL);   
+    struct AST *ast_hello = new_AST(new_token(new_unique_symbols(copy_string("10"), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);   
     
-    struct AST *ast_foo_1 = new_AST(new_token(copy_string("a"), (enum token_type) ARG, false), (enum AST_type) COMMAND, NULL);
+    struct AST *ast_foo_1 = new_AST(new_token(new_unique_symbols(copy_string("a"), false, false, false), (enum token_type) WORD), (enum AST_type) COMMAND, NULL);
 
 
     struct linked_list *ll_ast = new_list();
     ll_ast = list_append(ll_ast, ast_foo_1);
     ll_ast = list_append(ll_ast, ast_hello);
 
-    struct AST *ast = new_AST(new_token(copy_string(""), (enum token_type) WORD, false), (enum AST_type) ASSIGNMENT, ll_ast);
+    struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), (enum AST_type) ASSIGNMENT, ll_ast);
 
   
 
@@ -80,14 +80,14 @@ Test(exec_subshell, exec_subshell_1, .init = redirect)
     ll_ast = list_append(ll_ast, e3);
     
 
-    struct AST *ast_seq = new_AST(new_token(copy_string(""), (enum token_type) COMMAND, false), 
+    struct AST *ast_seq = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), 
     (enum AST_type) SEQUENCE, ll_ast);
 
     struct linked_list *ll = new_list();
     ll = list_append(ll, ast_seq);
     
 
-    struct AST *ast_sub = new_AST(new_token(copy_string(""), (enum token_type) COMMAND, false), 
+    struct AST *ast_sub = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), 
     (enum AST_type) SUBSHELL, ll);
 
 
@@ -102,7 +102,7 @@ Test(exec_subshell, exec_subshell_1, .init = redirect)
     
 
    
-    struct AST *ast_final = new_AST(new_token(copy_string(""), (enum token_type) COMMAND, false), 
+    struct AST *ast_final = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) WORD), 
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
