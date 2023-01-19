@@ -50,8 +50,8 @@ struct token *create_token(char **word_begin_ptr, char **input,
     do
     {
         int offset = get_symbol(&begin, input, &sym);
-        struct symbol *new_sym = mem_malloc(sizeof(struct symbol *));
-        *new_sym = sym;
+        struct symbol *new_sym = mem_malloc(sizeof(struct symbol));
+        memcpy(new_sym, &sym, sizeof(struct symbol));
 
         add_sym_to_array(symbols, new_sym, &capacity);
         begin += offset;
