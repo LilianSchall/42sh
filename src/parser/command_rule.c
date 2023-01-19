@@ -58,17 +58,27 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         // and funcdec_rule, which both have WORD as first,
         // we need to resolve the conflict by making one look ahead
         struct token *next = list_next(token_list);
+        struct AST *child = NULL;
+        enum token_type type = ERROR;
 
-        struct AST *child = !next || next->type != OPEN_PARENTHESE ?
-            simple_command_rule(token_list, trigger_warn) :
-            funcdec_rule(token_list, trigger_warn);
+        if (!next)
+            child = simple_command_rule(token_list, trigger_warn);
+        else
+        {
+            type = next->type;
+            child = type != OPEN_PARENTHESE ?
+                simple_command_rule(token_list, trigger_warn) :
+                funcdec_rule(token_list, trigger_warn);
+        }
 
         if (!child)
         {
             free_AST(child);
             return NULL;
         }
-        list_append(tree->linked_list, child);
+        list_append(tree->linked_list, type == OPEN_PARENTHESE ?
+                handle_redirection(token_list, child, trigger_warn) :
+                child);
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
              || token->type == FOR || token->type == OPEN_BRACE)
@@ -83,7 +93,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         }
 
         // purge newline token
-        purge_newline_token(token_list);
+        // purge_newline_token(token_list);
 
         list_append(
             tree->linked_list,
