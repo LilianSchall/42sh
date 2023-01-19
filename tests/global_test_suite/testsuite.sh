@@ -13,14 +13,15 @@ do
      echo $line | $binary -c 2> 42sh_stderr   1> tmp
      echo $line | bash --posix 2> bash_stderr 1> tmp
      DIFF_STDERR=`diff 42sh_stderr bash_stderr`
-     a=$($binary -c $line > tmp 2>&1)
+     $binary -c "$line" > tmp 2>&1
      return_42=$?
-     b=$(bash --posix $line > tmp 2>&1)
+     bash --posix -c "$line" > tmp 2>&1
      bash_return=$?
      ((j++))
      if [ "$DIFF_STDOUT" != "" ] || [ "$DIFF_STDERR" != "" ] || [[ $return_42 != $bash_return ]]
      then
-         echo -e "test failed: $line \n" 
+         echo test failed: $line
+         echo -e "\n"	 
          echo 42sh_stdout: `cat 42sh_stdout` 
          echo -e "bash_stdout: `cat bash_stdout` \n"
 	 echo 42sh_stderr: `cat 42sh_stderr`
