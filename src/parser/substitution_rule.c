@@ -5,7 +5,8 @@ struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = list_head(token_list);
     
-    if (!token || !is_substitution_ruled(token->type))
+    if (!token || (!is_substitution_ruled(token->type) 
+        && !is_non_delimitator(token->type)))
         return NULL;
 
     list_pop(token_list);

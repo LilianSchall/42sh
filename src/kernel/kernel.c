@@ -6,8 +6,6 @@ static int launch_script_mode(int options, char *file_script);
 int launch_interactive_mode(int options)
 {
     char *content = NULL;
-    int status_code = 0;
-    int last_status_code = 0;
 
     do
     {
@@ -17,18 +15,13 @@ int launch_interactive_mode(int options)
         // get content from stdin
         content = get_interactive_content(true);
 
-        // execute given command
-        last_status_code = status_code;
-        status_code = execute_shell_command(options, content);
-
-        if (last_status_code == -1)
-            last_status_code = status_code; // first init of first command
+        execute_shell_command(options, content);
 
         // free and dereference processed content
         mem_free(content);
         content = NULL;
-    } while (status_code != -1);
-    return last_status_code;
+    } while (status->exit_bool != 1);
+    return status->exit_code;
 }
 
 int launch_script_mode(int options, char *file_script)
