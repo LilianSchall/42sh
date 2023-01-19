@@ -47,7 +47,7 @@ Test(exec_redirection, pipe_1, .init = redirect_pipe_1)
 
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL);
     free_AST(ast_final);
 
     

@@ -30,8 +30,6 @@ int parse_given_args(int argc, char **argv, char **filename, char **input)
             *filename = argv[i];
             options = options | SCRIPT_READING;
         }
-        else
-            return -1;
     }
 
     return options;

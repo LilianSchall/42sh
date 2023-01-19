@@ -53,7 +53,7 @@ char **split_string(char *str)
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL
-char **new_argv(struct AST *tree, int *argc)
+char **new_argv(struct AST *tree, int *argc, char **current_argv)
 {
     struct linked_list *temp = tree->linked_list;
 
@@ -73,7 +73,7 @@ char **new_argv(struct AST *tree, int *argc)
         struct AST *child = ln->data;
         char *str = NULL;
         if (child->type == D_SUBSHELL)
-            str = execute_AST_D_SUBSHELL(child);
+            str = execute_AST_D_SUBSHELL(child, current_argv);
         else
             str = expand_symbol_array(child->value->values);
         char **tmp = split_string(str);

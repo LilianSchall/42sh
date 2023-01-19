@@ -49,7 +49,7 @@ Test(exec_redirection, redirection_5, .init = redirect_5)
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL);
     free_AST(ast_final);
 
 
