@@ -27,7 +27,7 @@ char *get_content_of_pipe(int pipefd[2])
     return output;
 }
 
-char *execute_AST_D_SUBSHELL(struct AST *tree) 
+char *execute_AST_D_SUBSHELL(struct AST *tree, char **argv) 
 {
     int pipefd[2];
     pipe(pipefd);
@@ -42,7 +42,7 @@ char *execute_AST_D_SUBSHELL(struct AST *tree)
 
         dup2(pipefd[1], STDOUT_FILENO);
         struct AST *child = tree->linked_list->head->data;
-        execute_AST(child);
+        execute_AST_main(child, argv);
         fflush(stdout);
 
         close(pipefd[1]);
@@ -59,7 +59,7 @@ char *execute_AST_D_SUBSHELL(struct AST *tree)
     }
 }
 
-int execute_AST_subshell(struct AST *tree)
+int execute_AST_subshell(struct AST *tree, char **argv)
 {
     int ret_val = 0;
     int pid = fork();
@@ -67,7 +67,7 @@ int execute_AST_subshell(struct AST *tree)
     if (!pid) // child goes in
     {
         struct AST *child = tree->linked_list->head->data;
-        ret_val = execute_AST(child);
+        ret_val = execute_AST_main(child, argv);
         exit(ret_val);
 
     }

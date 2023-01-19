@@ -29,12 +29,12 @@ static int not_builtin_fn(int argc, char **argv)
     return WEXITSTATUS(ret_val);
 }
 
-static int execute_AST_cmd(struct AST *tree)
+static int execute_AST_cmd(struct AST *tree, char **current_argv)
 {
     int ret_val = 0;
 
     int argc = 0;
-    char **argv = new_argv(tree, &argc);
+    char **argv = new_argv(tree, &argc, current_argv);
 
     if (!strcmp("echo", argv[0])) // builtin command
     {
@@ -81,7 +81,7 @@ static int execute_AST_cmd(struct AST *tree)
 
 
 
-static int execute_AST_sequence(struct AST *tree)
+static int execute_AST_sequence(struct AST *tree, char **argv)
 {
     int ret_val = 0;
 
@@ -95,12 +95,12 @@ static int execute_AST_sequence(struct AST *tree)
             return ret_val;
 
         struct AST *child = node->data;
-        ret_val = execute_AST(child);
+        ret_val = execute_AST_main(child, argv);
     }
     return ret_val;
 }
 
-int execute_AST(struct AST *tree)
+int execute_AST_main(struct AST *tree, char **argv)
 {
     if (!tree)
         return 0;
@@ -110,28 +110,28 @@ int execute_AST(struct AST *tree)
     switch (tree->type)
     {
     case SEQUENCE:
-        ret_val = execute_AST_sequence(tree);
+        ret_val = execute_AST_sequence(tree, argv);
         break;
     case SUBSHELL:
-        ret_val = execute_AST_subshell(tree);
+        ret_val = execute_AST_subshell(tree, argv);
         break;
     case REDIRECTION:
-        ret_val = execute_AST_redirection(tree);
+        ret_val = execute_AST_redirection(tree, argv);
         break;
     case PIPE:
-        ret_val = execute_AST_pipe(tree);
+        ret_val = execute_AST_pipe(tree, argv);
         break;
     case COMMAND:
-        ret_val = execute_AST_cmd(tree);
+        ret_val = execute_AST_cmd(tree, argv);
         break;
     case OPERATOR:
-        ret_val = execute_AST_operator(tree);
+        ret_val = execute_AST_operator(tree, argv);
         break;
     case CONDITION:
-        ret_val = execute_AST_condition(tree);
+        ret_val = execute_AST_condition(tree, argv);
         break;
     case ASSIGNMENT:
-        ret_val = execute_AST_assignment(tree);
+        ret_val = execute_AST_assignment(tree, argv);
         break;
     default:
         break;
@@ -139,3 +139,10 @@ int execute_AST(struct AST *tree)
     return ret_val;
 }
 
+int execute_AST(struct AST *tree, char **argv)
+{
+    if(tree == NULL)
+        return 0;
+    
+    return execute_AST_main(tree, argv);
+}

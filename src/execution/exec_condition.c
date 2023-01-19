@@ -1,19 +1,19 @@
 #include "execution/execution.h"
 
-static int execute_AST_if(struct AST *tree)
+static int execute_AST_if(struct AST *tree, char **argv)
 {
     struct linked_node *child = tree->linked_list->head;
     struct AST *cond = child->data;
     child = child->next;
     struct AST *t = child->data;
-    if (execute_AST(cond) == 0) // cond is true, we execute the 'then'
+    if (execute_AST_main(cond, argv) == 0) // cond is true, we execute the 'then'
     {
-        return execute_AST(t);
+        return execute_AST_main(t, argv);
     }
     else
     {
         if (child->next) // cond is false, we execute the 'else'
-            return execute_AST(child->next->data);
+            return execute_AST_main(child->next->data, argv);
     }
     return 0;
 }
@@ -21,7 +21,7 @@ static int execute_AST_if(struct AST *tree)
 // exec a while or until command
 // if val_cond = 0 -> while
 // if val_cond = 1 -> until
-static int execute_AST_while_until(struct AST *tree, int val_cond)
+static int execute_AST_while_until(struct AST *tree, int val_cond, char **argv)
 {
     int return_val = 0;
     int while_cond = val_cond;
@@ -34,10 +34,10 @@ static int execute_AST_while_until(struct AST *tree, int val_cond)
 
     while (while_cond == val_cond && check_status())
     {
-        while_cond = execute_AST(cond); // check condition
+        while_cond = execute_AST_main(cond, argv); // check condition
 
         if (while_cond == val_cond)
-            return_val = execute_AST(bloc); // exec commands
+            return_val = execute_AST_main(bloc, argv); // exec commands
         
         if (status && status->continue_val > 0)
             status->continue_val -= 1;
@@ -49,7 +49,7 @@ static int execute_AST_while_until(struct AST *tree, int val_cond)
     return return_val;
 }
 
-static int execute_AST_for(struct AST *tree)
+static int execute_AST_for(struct AST *tree, char **argv)
 {
     int ret_val = 0;
     struct linked_node *child = tree->linked_list->head;
@@ -61,7 +61,7 @@ static int execute_AST_for(struct AST *tree)
 
     // create iter table, should expand var and subshells
     int argc = 0;
-    char **iter_args = new_argv(ast_iter, &argc); 
+    char **iter_args = new_argv(ast_iter, &argc, argv); 
 
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;
@@ -70,7 +70,7 @@ static int execute_AST_for(struct AST *tree)
     while (iter_args[i] && check_status())
     {
         setenv(var_name, iter_args[i], 1);
-        ret_val = execute_AST(ast_seq);
+        ret_val = execute_AST_main(ast_seq, argv);
         i++;
         if (status && status->continue_val > 0)
             status->continue_val -= 1;
@@ -83,27 +83,27 @@ static int execute_AST_for(struct AST *tree)
     return ret_val;
 }
 
-int execute_AST_condition(struct AST *tree)
+int execute_AST_condition(struct AST *tree, char **argv)
 {
     int ret_val = 0;
     switch (tree->value->type)
     {
     case IF:
-        ret_val = execute_AST_if(tree);
+        ret_val = execute_AST_if(tree, argv);
         break;
     case WHILE:
         increase_nb_loop();
-        ret_val = execute_AST_while_until(tree, 0); // while is true
+        ret_val = execute_AST_while_until(tree, 0, argv); // while is true
         decrease_nb_loop();
         break;
     case UNTIL:
         increase_nb_loop();
-        ret_val = execute_AST_while_until(tree, 1); // until is true
+        ret_val = execute_AST_while_until(tree, 1, argv); // until is true
         decrease_nb_loop();
         break;
     case FOR:
         increase_nb_loop();
-        ret_val = execute_AST_for(tree);
+        ret_val = execute_AST_for(tree, argv);
         decrease_nb_loop();
         break;
     default:

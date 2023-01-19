@@ -1,7 +1,11 @@
 #include "execution/execution.h"
 
-int execute_AST_assignment(struct AST *tree)
+int execute_AST_assignment(struct AST *tree, char **argv)
 {
+    /* do things */
+    if(argv == NULL)
+        argv = NULL;
+
     int ret_val = 1;
     struct linked_node *child = tree->linked_list->head;
     struct AST *var_name_ast = child->data;

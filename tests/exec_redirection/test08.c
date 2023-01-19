@@ -63,7 +63,7 @@ Test(exec_redirection, redirection_8, .init = redirect_8)
 
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL);
 
     free_AST(ast_final);
 
