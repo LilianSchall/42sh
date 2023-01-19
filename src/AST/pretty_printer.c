@@ -2,6 +2,24 @@
 
 static void __pretty_printer(struct AST *tree);
 
+static void print_subshell(struct AST *tree, bool is_redirected)
+{
+    return;
+}
+
+static void print_function(struct AST *tree)
+{
+    struct AST *name_AST = tree->linked_list->head->data;
+    char *name = get_cat_symbols(name_AST->value->values);
+
+    printf("function [%s]:", name);
+    tree = tree->linked_list->head->next->data;
+
+    __pretty_printer(tree);
+
+    mem_free(name);
+}
+
 static void print_redirection(struct AST *tree)
 {
     struct linked_node *node = tree->linked_list->head;
@@ -98,8 +116,11 @@ static void __pretty_printer(struct AST *tree)
         return;
 
     printf("{");
-
-    if (tree->type == REDIRECTION)
+    if (tree->type == D_SUBSHELL || tree->type == SUBSHELL)
+        print_subshell(tree, tree->type == D_SUBSHELL);
+    else if (tree->type == FUNCTION)
+        print_function(tree);
+    else if (tree->type == REDIRECTION)
         print_redirection(tree);
     else if (tree->type == SEQUENCE)
         print_sequence(tree);
