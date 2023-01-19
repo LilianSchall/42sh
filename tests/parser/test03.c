@@ -28,7 +28,7 @@ Test(parser, echo_foo_sup_file)
 
 Test(parser, if_true_then_echo_foo_fi_sup_file)
 {
-    char input[] = "if true\nthen\necho foo;\nfi\n> file";
+    char input[] = "if true\nthen\necho foo;\nfi> file";
 
     struct linked_list *token_list = build_token_list(input);
 

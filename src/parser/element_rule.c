@@ -12,12 +12,8 @@ struct AST *element_rule(struct linked_list *token_list, bool trigger_warn)
         return tree;
     }
 
-    if (is_non_delimitator(token->type))
-    {
-        tree = new_AST(token, ARG, NULL);
-        list_pop(token_list);
-        return tree;
-    }
+    if (is_non_delimitator(token->type) || is_substitution_ruled(token->type))
+        return substitution_rule(token_list, trigger_warn);
     else
         return redirection_rule(token_list, trigger_warn);
     return tree;

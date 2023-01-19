@@ -28,7 +28,7 @@ Test(parser, while_echo_foo_semicolon_do_echo_prout_echo_file_done)
 
 Test(parser, while_true_do_echo_foo_done_sup_file)
 {
-    char input[] = "while true\ndo\necho foo; done\n> file";
+    char input[] = "while true\ndo\necho foo; done> file";
 
     struct linked_list *token_list = build_token_list(input);
 
