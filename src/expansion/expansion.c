@@ -1,6 +1,5 @@
 #include "expansion.h"
 
-#if 0
 struct var spec_var = {.argc = 0, .argv = NULL};
 
 void set_spec_var(int argc, char **argv)
@@ -18,7 +17,7 @@ char *get_var_pid(void)
 
 char *get_all_unquoted()
 {
-
+    return NULL; 
 }
 
 char *get_var_aro(int quoted)
@@ -27,13 +26,38 @@ char *get_var_aro(int quoted)
         return get_all_unquoted();
     for (int i = 0; i < spec_var.argc; i++)
     {
-
+        
     }
+    return NULL;
 }
 
 char *get_var_star(int quoted)
 {
-    return NULL;
+    if (!spec_var.argc)
+        return NULL;
+    if (!quoted)
+        return get_all_unquoted();
+    
+    int len = 0;
+    int i = 0;
+    while (spec_var.argv[i])
+    {
+        len += strlen(spec_var.argv[i]) + 1;
+        i++;
+    }
+    char *result = mem_malloc(len + 2);
+    i = 0;
+    result[0] = '"';
+    result[1] = 0;
+    while (spec_var.argv[i])
+    {
+        strcat(result, spec_var.argv[i]);
+        strcat(result, " ");
+        i++;
+        printf("%s\n", result);
+    }
+    result[len] = '"';
+    return result;
 }
 
 char *get_var_sharp(void)
@@ -61,7 +85,7 @@ char *get_var_n(const char *name)
     return NULL;
 }
 
-char *get_spec_var(char ***res, const char *name, int quoted)
+char *get_spec_var(const char *name, int quoted)
 {
     if (strlen(name) == 1)
     {
@@ -92,7 +116,6 @@ char *get_spec_var(char ***res, const char *name, int quoted)
         return get_var_n(name);
     return NULL;
 }
-#endif
 
 char *expand_var(const char *str, int quoted)
 {
@@ -135,8 +158,8 @@ char *expand_var(const char *str, int quoted)
             char *var = getenv(tmp);
             mem_free(tmp);
 
-			//if (!var)
-			//	var = get_spec_var(var_name, quoted);            
+			if (!var)
+				var = get_spec_var(var_name, quoted);            
 
 			if (var)
             {
@@ -171,7 +194,6 @@ char *expand_symbol_array(struct symbol **values)
 {
     char *result = mem_malloc(strlen(values[0]->value) + 1);
 	char *p = result;
-    int index = 0;
     for (int i = 0; values[i] != NULL; i++)
 	{
 		char * expanded = NULL;
