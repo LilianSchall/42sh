@@ -25,4 +25,3 @@ int launch_shell(int options, char *file_script, char *input,
 int execute_shell_command(int options, char *input, char **argv);
 
 #endif /* !KERNEL_H */
-

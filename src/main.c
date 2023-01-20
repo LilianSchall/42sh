@@ -38,10 +38,6 @@ int main(int argc, char **argv)
             new_argv[j++] = argv[i];
     }
 
-    printf("printing args\n");
-    for (int i = 0; new_argv[i]; i++)
-        printf("%s\n", new_argv[i]);
-
     int status_code = launch_shell(options, filename, input, argv);
     
     if (new_argv)
@@ -49,4 +45,3 @@ int main(int argc, char **argv)
     
     return status_code;
 }
-

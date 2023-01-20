@@ -16,7 +16,9 @@
 #include "garbage_collector/garbage_collector.h"
 #include "io_backend/io_backend.h"
 #include "linked_list/linked_list.h"
+#include "lexer/lexer.h"
 #include "token/token.h"
+#include "parser/parser.h"
 
 // struct to stock echo option
 struct echo_option
@@ -43,6 +45,8 @@ int true_fn(int argc, char **argv);
 int false_fn(int argc, char **argv);
 
 int cd_fun(int argc, char **argv);
+
+int dot_fn(int argc, char **argv);
 
 #endif /* !BUILTIN_H */
 

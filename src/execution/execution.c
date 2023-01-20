@@ -39,6 +39,10 @@ static int execute_AST_cmd(struct AST *tree, char **current_argv)
     {
         ret_val = echo_fn(argc, argv);
     }
+    else if (!strcmp(".", argv[0])) // dot command
+    {
+        ret_val = dot_fn(argc, argv);
+    }
     else if (!strcmp("cd", argv[0])) // builtin command
     {
         ret_val = cd_fun(argc, argv);

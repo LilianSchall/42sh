@@ -96,4 +96,3 @@ int execute_shell_command(int options, char *input, char **argv)
 
     return status_code;
 }
-
