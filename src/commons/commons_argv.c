@@ -13,13 +13,12 @@ char **split_string(char *str)
     int quoted = 0;
     while (*p)
     {
+        //printf("char: %c, quoted: %d\n", *p, quoted);
         if (*p == '"')
         {
             quoted = !quoted;
             int len = strlen(p+1);
-            memmove(p, p+1, len);
-            *(p + len) = 0;
-            p++;
+            memmove(p, p+1, len + 1);
         }
         else if (!quoted && (*p == ' ' || *p == '\n'))
         {
@@ -75,7 +74,7 @@ char **new_argv(struct AST *tree, int *argc, char **current_argv)
         if (child->type == D_SUBSHELL)
             str = execute_AST_D_SUBSHELL(child, current_argv);
         else
-            str = expand_symbol_array(child->value->values);
+            str = expand_symbol_array(child->value->values, current_argv);
         char **tmp = split_string(str);
         mem_free(str);
         int j = 0;

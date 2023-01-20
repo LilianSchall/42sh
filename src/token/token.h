@@ -90,11 +90,11 @@ enum token_type
     }
 
 #define CREATE_DELIMITATORS(Name)                                              \
-    char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`',          \
+    char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`', '}',     \
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
 #define CREATE_NON_DELIMITATOR(Name) \
-    enum token_type Name[] = { WORD, OPEN_BRACE, CLOSE_BRACE, FOR, IN, DO,      \
+    enum token_type Name[] = { WORD, OPEN_BRACE, FOR, IN, DO,      \
         DONE, WHILE, UNTIL, CASE, ESAC, IF, THEN, ELIF, ELSE, FI, \
         VARASSIGNMENT, NEG }
 

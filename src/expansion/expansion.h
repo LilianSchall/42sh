@@ -15,9 +15,8 @@ struct var
     char **argv;
 };
 
-void set_spec_var(int argc, char **argv);
-char *expand_var(const char *str, int quoted);
-char *expand_symbol_array(struct symbol **values);
+char *expand_var(const char *str, char **argv, int quoted);
+char *expand_symbol_array(struct symbol **values, char **argv);
 
 #endif /* !EXPANSION_H */
 
