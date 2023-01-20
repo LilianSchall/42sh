@@ -13,6 +13,7 @@
 #include "commons/commons.h"
 #include "execution/execution.h"
 #include "expansion/expansion.h"
+#include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 #include "io_backend/io_backend.h"
 #include "linked_list/linked_list.h"

@@ -15,20 +15,18 @@ int exec_unset(int argc, char *argv[])
 		 }
 	     }
 	 }
-	 /*
 	 else if (strcmp(argv[1], "-f") == 0)
          {
              for (int p = 2; p < argc; p++)
              {
-                 if (HERE_FOR_REPLACE(argv[p]) != 0)
+                 if (remove_function(argv[p]) != 0)
                  {
                      fprintf(stderr, "Invalid argument: %s\n", argv[p]);
                      return 1;
                  }
              }
 
-	 }
-	 */
+	 }	 
 	 else
 	 {
 	     for (int j = 1; j < argc; j++)
