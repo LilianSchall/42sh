@@ -48,7 +48,7 @@ int call_function(char **argv, int *ret_val)
         struct function *function = fun->data;
         if (!strcmp(function->name, argv[0]))
         {
-            *ret_val = execute_AST_main(function->ast);
+            *ret_val = execute_AST_main(function->ast, argv);
             return 1;
         }
     }
