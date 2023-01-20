@@ -238,7 +238,7 @@ char *expand_symbol_array(struct symbol **values, char **argv)
         }
         else
 		{
-			expanded = strdup(values[i]->value);
+			expanded = gc_strdup(values[i]->value);
     	}
 #if 0
 		printf("%d\n", i);

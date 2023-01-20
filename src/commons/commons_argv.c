@@ -80,7 +80,7 @@ char **new_argv(struct AST *tree, int *argc, char **current_argv)
         int j = 0;
         while (tmp[j])
         {
-            argv[i] = strdup(tmp[j]);
+            argv[i] = gc_strdup(tmp[j]);
             i++;
             j++;
             argv = mem_realloc(argv, sizeof(char*) * (i + 1));

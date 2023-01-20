@@ -11,7 +11,7 @@ struct linked_list *functions = NULL;
 struct function *new_function(char *name, struct AST *ast)
 {
     struct function *fct = mem_malloc(sizeof(struct function));
-    fct->name = strdup(name);
+    fct->name = gc_strdup(name);
     fct->ast = ast;
     return fct;
 }

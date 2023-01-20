@@ -4,6 +4,7 @@
 #include <err.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct garbage_list
 {
@@ -19,6 +20,10 @@ void *mem_realloc(void *ptr, size_t size);
 void mem_free(void *ptr);
 
 void free_garbage_collector(void);
+
+// wrapped allocating functions
+
+char *gc_strdup(char *str);
 
 #endif /* GARBAGE_COLLECTOR_H */
 
