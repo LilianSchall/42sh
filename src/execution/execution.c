@@ -7,7 +7,6 @@ int continue_val = 0;
 // used to know the number of loop that we are in (the outermost enclosing loop)
 int nb_loop = 0;
 
-
 static int not_builtin_fn(int argc, char **argv)
 {
     if (argc == 0)
@@ -59,6 +58,10 @@ static int execute_AST_cmd(struct AST *tree)
     else if (!strcmp("continue", argv[0])) 
     {
         ret_val = exec_break_continue(argc, argv, &(status->continue_val));
+    }
+    else if (call_function(argv, &ret_val))
+    {
+
     }
     else
     {
@@ -129,6 +132,8 @@ int execute_AST(struct AST *tree)
     case ASSIGNMENT:
         ret_val = execute_AST_assignment(tree);
         break;
+    case FUNCTION:
+        ret_val = execute_AST_function(tree);
     default:
         break;
     }

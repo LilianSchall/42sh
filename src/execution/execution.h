@@ -8,6 +8,7 @@
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"
+#include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 
 // used to know the value of break command and how many loop we need to skip
@@ -42,6 +43,8 @@ int execute_AST_operator(struct AST *tree);
 // do the PIPE AST execution
 int execute_AST_pipe(struct AST *tree);
 
+// assign the function
+int execute_AST_function(struct AST *tree);
 
 // execute the given AST
 // returns the status code after executing the AST

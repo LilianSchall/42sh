@@ -20,7 +20,7 @@ struct AST *funcdec_rule(struct linked_list *token_list, bool trigger_warn)
     }
     free_token(token);
     infos.sym = ")";
-    if (!(token = consume_token(token_list, OPEN_PARENTHESE, infos)))
+    if (!(token = consume_token(token_list, CLOSE_PARENTHESE, infos)))
     {
         free_token(name);
         return NULL;
