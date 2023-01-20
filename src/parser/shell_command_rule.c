@@ -14,7 +14,7 @@ static struct AST *command_block_subrule(struct linked_list *token_list,
 
     token = list_head(token_list);
 
-    if (token->type != CLOSE_BRACE)
+    if (!token || token->type != CLOSE_BRACE)
     {
         warnx("Missing CLOSE_BRACE at shell_command_rule");
         free_AST(compound);
