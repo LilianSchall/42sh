@@ -16,8 +16,8 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
 
     char *str = get_cat_symbols(token->values);
 
-    char *name = strdup(strtok(str, "="));
-    char *value = strdup(strtok(NULL, "="));
+    char *name = gc_strdup(strtok(str, "="));
+    char *value = gc_strdup(strtok(NULL, "="));
 
     mem_free(str);
 
