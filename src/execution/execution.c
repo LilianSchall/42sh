@@ -1,12 +1,5 @@
 #include "execution.h"
 
-// used to know the value of break command and how many loop we need to skip
-int break_val = 0;
-// used to know the value of continue command and how many loop we need to skip
-int continue_val = 0;
-// used to know the number of loop that we are in (the outermost enclosing loop)
-int nb_loop = 0;
-
 static int not_builtin_fn(int argc, char **argv)
 {
     if (argc == 0)

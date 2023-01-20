@@ -11,13 +11,6 @@
 #include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 
-// used to know the value of break command and how many loop we need to skip
-extern int break_val;
-// used to know the value of continue command and how many loop we need to skip
-extern int continue_val;
-// used to know the number of loop that we are in (the outermost enclosing loop)
-extern int nb_loop;
-
 // execute ast d_subshell
 // return the string printed in stdout of the subshell
 char *execute_AST_D_SUBSHELL(struct AST *tree, char **argv);
