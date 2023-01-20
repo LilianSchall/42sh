@@ -68,6 +68,13 @@ int launch_shell(int options, char *file_script, char *input,
 
 int execute_shell_command(int options, char *input, char **argv)
 {
+    // if verbose mode activated, print:
+    // - the input
+    // - the token_list
+    // - the AST to execute
+    if (is_option_activated(options, VERBOSE))
+        pretty_print_input(input);
+
     // get token_list based on given input
 
     struct linked_list *token_list = build_token_list(input);
