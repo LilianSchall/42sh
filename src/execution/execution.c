@@ -64,9 +64,7 @@ static int execute_AST_cmd(struct AST *tree, char **current_argv)
         ret_val = exec_break_continue(argc, argv, &(status->continue_val));
     }
     else if (call_function(argv, &ret_val))
-    {
-
-    }
+    {}
     else
     {
         ret_val = not_builtin_fn(argc, argv); // not a builtin command
