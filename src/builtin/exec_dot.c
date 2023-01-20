@@ -8,6 +8,7 @@ int check_slash(char *str)
     {
         if(str[i] == '/')
             return 1;
+        i++;
     }
 
     return 0;
@@ -17,25 +18,35 @@ char *get_filename_dot(char *str)
 {
 
     char *env_path = getenv("PATH");
-    
-    char *result = mem_malloc(sizeof(char) * (strlen(env_path) + strlen(str) + 1));
+    char *result;
 
-    sprintf(result, "%s%s", env_path, str);
-
+    if(env_path[strlen(env_path)-1] == '/')
+    {
+        result = mem_malloc(sizeof(char) * (strlen(env_path) + strlen(str) + 1));
+        sprintf(result, "%s%s", env_path, str);
+    }
+    else
+    {
+        result = mem_malloc(sizeof(char) * (strlen(env_path) + strlen(str) + 2));
+        sprintf(result, "%s/%s", env_path, str);
+    }
     return result;
 }
 
 char **create_new_argv(int argc, char **argv)
 {
-    char **result = malloc(sizeof(char *) * argc);
+    char **result = mem_malloc(sizeof(char *) * (argc));
 
     int i = 1;
 
-    while(argv[i] != NULL)
+    while(i < argc)
     {
-        result[i-1] = copy_string(argv[i]);
+        result[i-1] = mem_malloc(sizeof(char) * (strlen(argv[i]) + 1));
+        sprintf(result[i-1],"%s",argv[i]);
         i++;
     }
+    result[i-1] = NULL;
+
     return result;
 }
 
@@ -52,7 +63,7 @@ int dot_fn(int argc, char **argv)
 
     // check if the filename contains a '/'
     // if not, we take it from PATH
-    if(check_slash(argv[0]))
+    if(check_slash(argv[1]))
         input = get_file_content(argv[1]);
     else
     {
@@ -60,11 +71,16 @@ int dot_fn(int argc, char **argv)
         input = get_file_content(filename);
         mem_free(filename);
     }
+
     
     if(input == NULL)
+    {  
+        fprintf(stderr,"42sh: file not found\n");
         return 2;
+    }
 
     struct linked_list *tokens = build_token_list(input);
+
     
     if(tokens == NULL)
     {
@@ -73,6 +89,7 @@ int dot_fn(int argc, char **argv)
     }
 
     struct AST *tree = build_shell_AST(tokens);
+
 
     if(tree == NULL)
     {

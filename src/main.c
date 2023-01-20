@@ -12,8 +12,36 @@ int main(int argc, char **argv)
 
     if (options == -1
         || (input && !is_option_activated(options, INPUT_READING)))
-        errx(1, "Usage: ./42sh [options] [script]");
+        errx(1, "Usage: ./42sh [options] [script] [args]");
 
-    return launch_shell(options, filename, input);
+    if (!filename)
+        return launch_shell(options, filename, input, NULL);
+
+    // search for the first token where it is equal to filename
+    int begin = 0;
+
+    while (strcmp(argv[begin], filename))
+        begin++;
+
+    int end = begin;
+
+    while (argv[end])
+        end++;
+
+    char **new_argv = NULL;
+
+    if (end != begin)
+    {
+        new_argv = calloc(end - begin + 1, sizeof(char *));
+        int j = 0;
+        for (int i = begin; i < end; i++)
+            new_argv[j++] = argv[i];
+    }
+
+    int status_code = launch_shell(options, filename, input, argv);
+    
+    if (new_argv)
+        free(new_argv);
+    
+    return status_code;
 }
-
