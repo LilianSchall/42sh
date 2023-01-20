@@ -79,7 +79,7 @@ static int execute_AST_cmd(struct AST *tree, char **current_argv)
 
 
 
-static int execute_AST_sequence(struct AST *tree, char **argv)
+static int execute_AST_sequence(struct AST *tree, struct env *env)
 {
     int ret_val = 0;
 
@@ -98,7 +98,7 @@ static int execute_AST_sequence(struct AST *tree, char **argv)
     return ret_val;
 }
 
-int execute_AST_main(struct AST *tree, char **argv)
+int execute_AST_main(struct AST *tree, struct env *env)
 {
     if (!tree)
         return 0;
@@ -139,10 +139,12 @@ int execute_AST_main(struct AST *tree, char **argv)
     return ret_val;
 }
 
-int execute_AST(struct AST *tree, char **argv)
+int execute_AST(struct AST *tree, char **argv, char **envp)
 {
     if(tree == NULL)
         return 0;
     
-    return execute_AST_main(tree, argv);
+    struct env env = {.argv = argv, .envp = envp, .functions = new_list()};
+
+    return execute_AST_main(tree, &env);
 }

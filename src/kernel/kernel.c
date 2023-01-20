@@ -96,7 +96,7 @@ int execute_shell_command(int options, char *input, char **argv)
     }
 
     // execute tree
-    int status_code = execute_AST(tree, argv);
+    int status_code = execute_AST(tree, argv, NULL);
 
     deep_free_list(token_list, free_token);
     free_AST(tree);

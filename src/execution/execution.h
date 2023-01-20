@@ -11,6 +11,13 @@
 #include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 
+struct env
+{
+    char **argv;
+    char **envp;
+    linked_list *functions;
+};
+
 // execute ast d_subshell
 // return the string printed in stdout of the subshell
 char *execute_AST_D_SUBSHELL(struct AST *tree, char **argv);
@@ -49,7 +56,7 @@ int execute_AST_main(struct AST *tree, char **argv);
 // returns the status code after executing the AST
 // returns 127 if a command is unknown
 // suffixe traversal
-int execute_AST(struct AST *tree, char **argv);
+int execute_AST(struct AST *tree, char **argv, char **envp);
 
 #endif /* !EXECUTION_H */
 
