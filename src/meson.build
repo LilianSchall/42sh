@@ -41,6 +41,7 @@ src = files(
 	'commons/commons_status.c',
 	'AST/AST.c',
     'AST/pretty_printer.c',
+    'input_printer/input_printer.c',
 	'lexer/lexer.c',
     'symbol/symbol.c',
 	'builtin/exec_bool.c',
