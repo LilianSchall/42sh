@@ -1,10 +1,5 @@
-#include <fcntl.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include "builtin/builtin.h"
+
 int exec_export(int argc, char *argv[], char **envp)
 {
    if (argc >= 2)
@@ -40,11 +35,5 @@ int exec_export(int argc, char *argv[], char **envp)
       }
    
    }
-   return 0;
-}
-
-int main(int argc, char **argv, char **envp)
-{
-   exec_export(argc, argv, envp);
    return 0;
 }
