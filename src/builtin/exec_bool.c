@@ -15,4 +15,3 @@ int false_fn(int argc, char **argv)
     else
         return 1;
 }
-

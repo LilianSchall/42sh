@@ -10,12 +10,12 @@ char *get_content_of_pipe(int pipefd[2])
 
     size_t nb_read = read(pipefd[0], buffer, sizeof(buffer));
 
-    while (nb_read > 0) 
+    while (nb_read > 0)
     {
         size += nb_read;
         output = realloc(output, sizeof(char) * (size + 1));
-        
-        for(size_t j = 0; j < nb_read; j++)
+
+        for (size_t j = 0; j < nb_read; j++)
         {
             output[i] = buffer[j];
             i++;
@@ -27,13 +27,13 @@ char *get_content_of_pipe(int pipefd[2])
     return output;
 }
 
-char *execute_AST_D_SUBSHELL(struct AST *tree, struct env *env) 
+char *execute_AST_D_SUBSHELL(struct AST *tree, struct env *env)
 {
     int pipefd[2];
     pipe(pipefd);
 
     int pid = fork();
-    if (pid == 0) 
+    if (pid == 0)
     {
         // child process
         close(pipefd[0]);
@@ -49,11 +49,11 @@ char *execute_AST_D_SUBSHELL(struct AST *tree, struct env *env)
         dup2(save1, STDOUT_FILENO);
         close(save1);
         exit(0);
-    } 
-    else 
+    }
+    else
     {
         // parent process
-        char * result = get_content_of_pipe(pipefd);
+        char *result = get_content_of_pipe(pipefd);
         wait(NULL);
         return result;
     }
@@ -69,10 +69,9 @@ int execute_AST_subshell(struct AST *tree, struct env *env)
         struct AST *child = tree->linked_list->head->data;
         ret_val = execute_AST_main(child, env);
         exit(ret_val);
-
     }
     wait(&ret_val);
-    if(WIFEXITED(ret_val))
+    if (WIFEXITED(ret_val))
         return WEXITSTATUS(ret_val);
     return 0;
 }

@@ -59,4 +59,3 @@ struct AST *rule_if_rule(struct linked_list *token_list, bool trigger_warn)
 
     return tree;
 }
-

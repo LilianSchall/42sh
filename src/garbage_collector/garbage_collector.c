@@ -148,4 +148,3 @@ void free_garbage_collector(void)
         head = next;
     }
 }
-

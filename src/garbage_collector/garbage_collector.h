@@ -26,4 +26,3 @@ void free_garbage_collector(void);
 char *gc_strdup(char *str);
 
 #endif /* GARBAGE_COLLECTOR_H */
-

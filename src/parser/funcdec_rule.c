@@ -10,8 +10,9 @@ struct AST *funcdec_rule(struct linked_list *token_list, bool trigger_warn)
     list_pop(token_list);
 
     struct token *token = NULL;
-    struct log_info infos = {
-        .sym = "(", .rulename = "funcdec_rule", .trigger_warn = trigger_warn };
+    struct log_info infos = { .sym = "(",
+                              .rulename = "funcdec_rule",
+                              .trigger_warn = trigger_warn };
 
     if (!(token = consume_token(token_list, OPEN_PARENTHESE, infos)))
     {
@@ -42,7 +43,6 @@ struct AST *funcdec_rule(struct linked_list *token_list, bool trigger_warn)
     list_append(tree->linked_list, shell_command);
 
     return tree;
-
 
 funcdec_error:
     if (trigger_warn)

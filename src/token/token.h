@@ -59,7 +59,7 @@ enum token_type
         [OPEN_BRACE] = "{",                                                    \
         [CLOSE_BRACE] = "}",                                                   \
         [OPEN_PARENTHESE] = "(",                                               \
-        [DOLL_OPEN_PARENTHESE] = "$(",                                          \
+        [DOLL_OPEN_PARENTHESE] = "$(",                                         \
         [CLOSE_PARENTHESE] = ")",                                              \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \
@@ -90,13 +90,14 @@ enum token_type
     }
 
 #define CREATE_DELIMITATORS(Name)                                              \
-    char Name[] = { '!', '|',  '&',  ';',  '<', '>',  '(',  ')', '`', '}',     \
-                    '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
+    char Name[] = { '!', '|', '&',  ';',  '<',  '>', '(',  ')',  '`',          \
+                    '}', '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
-#define CREATE_NON_DELIMITATOR(Name) \
-    enum token_type Name[] = { WORD, OPEN_BRACE, FOR, IN, DO,      \
-        DONE, WHILE, UNTIL, CASE, ESAC, IF, THEN, ELIF, ELSE, FI, \
-        VARASSIGNMENT, NEG }
+#define CREATE_NON_DELIMITATOR(Name)                                           \
+    enum token_type Name[] = {                                                 \
+        WORD, OPEN_BRACE, FOR,  IN,   DO,   DONE, WHILE,         UNTIL, CASE,  \
+        ESAC, IF,         THEN, ELIF, ELSE, FI,   VARASSIGNMENT, NEG           \
+    }
 
 #define CREATE_REDIRECTIONS(Name)                                              \
     char *Name[] = { ">>", ">&", "<&", ">|", "<>", NULL }
@@ -124,4 +125,3 @@ void print_token_list(struct linked_list *list);
 bool is_redirect(struct token *token);
 
 #endif /* !TOKEN_H */
-

@@ -56,4 +56,3 @@ void remove_AST(struct AST *tree, enum AST_type type)
 
     free_list(tmp_interface);
 }
-

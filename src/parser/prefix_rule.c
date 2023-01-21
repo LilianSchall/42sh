@@ -11,4 +11,3 @@ struct AST *prefix_rule(struct linked_list *token_list, bool trigger_warn)
     else
         return NULL;
 }
-

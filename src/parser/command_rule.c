@@ -50,8 +50,8 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         return NULL;
     }
 
-    if (is_substitution_ruled(token->type) || token->type == IO_NUMBER || is_redirect(token)
-        || token->type == VARASSIGNMENT)
+    if (is_substitution_ruled(token->type) || token->type == IO_NUMBER
+        || is_redirect(token) || token->type == VARASSIGNMENT)
     {
         // THIS part of the parser is now LR(1)
         // To know which rule to execute between simple_command_rule
@@ -66,9 +66,9 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
         else
         {
             type = next->type;
-            child = type != OPEN_PARENTHESE ?
-                simple_command_rule(token_list, trigger_warn) :
-                funcdec_rule(token_list, trigger_warn);
+            child = type != OPEN_PARENTHESE
+                ? simple_command_rule(token_list, trigger_warn)
+                : funcdec_rule(token_list, trigger_warn);
         }
 
         if (!child)
@@ -76,9 +76,10 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
             free_AST(child);
             return NULL;
         }
-        list_append(tree->linked_list, type == OPEN_PARENTHESE ?
-                handle_redirection(token_list, child, trigger_warn) :
-                child);
+        list_append(tree->linked_list,
+                    type == OPEN_PARENTHESE
+                        ? handle_redirection(token_list, child, trigger_warn)
+                        : child);
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
              || token->type == FOR || token->type == OPEN_BRACE
@@ -110,4 +111,3 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
 
     return tree;
 }
-

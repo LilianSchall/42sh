@@ -34,7 +34,8 @@ static void print_redirection(struct AST *tree)
     node = node->next;
     struct AST *to = node->data;
 
-    printf("redirect %s to %s: ", io->value->values[0]->value, to->value->values[0]->value);
+    printf("redirect %s to %s: ", io->value->values[0]->value,
+           to->value->values[0]->value);
     __pretty_printer(exec);
 }
 
@@ -100,7 +101,8 @@ static void print_assignment(struct AST *tree)
 {
     struct AST *name = tree->linked_list->head->data;
     struct AST *value = tree->linked_list->head->next->data;
-    printf("assign: %s = %s", name->value->values[0]->value, value->value->values[0]->value);
+    printf("assign: %s = %s", name->value->values[0]->value,
+           value->value->values[0]->value);
 }
 
 static void print_operator(struct AST *tree)
@@ -160,4 +162,3 @@ void pretty_printer(struct AST *tree)
     __pretty_printer(tree);
     printf("\n");
 }
-

@@ -66,4 +66,3 @@ bool is_redirect(struct token *token)
 
     return false;
 }
-

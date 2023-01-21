@@ -1,4 +1,4 @@
-#include "builtin/builtin.h" 
+#include "builtin/builtin.h"
 
 int cd_fn(int argc, char *argv[])
 {
@@ -10,32 +10,32 @@ int cd_fn(int argc, char *argv[])
     getcwd(cwd, 1024);
     if (argc == 1)
     {
-	    dir_to_go = home;
+        dir_to_go = home;
     }
     else if (argc == 2)
     {
-         if(strcmp(argv[1], "-") == 0)
-	 {
-	    if (old_cwd == NULL)
-	    {
-	        fprintf(stderr, "42sh: No previous directory\n");
-		return 1;
-	    }
-	    else
+        if (strcmp(argv[1], "-") == 0)
+        {
+            if (old_cwd == NULL)
             {
-	        dir_to_go = old_cwd;
-	        printf("%s\n", old_cwd);
-	    }
-	 }
-    } 
+                fprintf(stderr, "42sh: No previous directory\n");
+                return 1;
+            }
+            else
+            {
+                dir_to_go = old_cwd;
+                printf("%s\n", old_cwd);
+            }
+        }
+    }
     else
     {
-       fprintf(stderr, "42sh: syntax error\n");
-       return 1;
+        fprintf(stderr, "42sh: syntax error\n");
+        return 1;
     }
     if (chdir(dir_to_go) != 0)
     {
-        fprintf(stderr,"42sh: cd failed\n");
+        fprintf(stderr, "42sh: cd failed\n");
         return 1;
     }
     getcwd(new_cwd, 1024);

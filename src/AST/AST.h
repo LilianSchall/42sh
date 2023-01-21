@@ -51,4 +51,3 @@ void remove_AST(struct AST *tree, enum AST_type type);
 void pretty_printer(struct AST *tree);
 
 #endif /* !AST_H */
-

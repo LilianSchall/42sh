@@ -24,7 +24,7 @@ void free_function(void *data)
 void add_function(struct linked_list *functions, char *name, struct AST *ast)
 {
     struct linked_node *fun = functions->head;
-    for (; fun; fun=fun->next)
+    for (; fun; fun = fun->next)
     {
         struct function *function = fun->data;
         if (!strcmp(function->name, name))

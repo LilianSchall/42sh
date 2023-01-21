@@ -5,7 +5,7 @@ static size_t my_strlen(char *str, int type)
     // this function will only count the chars between 0 and 128
     size_t i = 0;
     size_t len = 0;
-    
+
     if (type != 0)
         i++;
 
@@ -48,7 +48,8 @@ int my_strdup(char *str, struct symbol *sym)
     }
 
     sym->value = symbol;
-    sym->is_expandable = type != SINGLE_QUOTE_MARKER && type != DELIMITER_MARKER;
+    sym->is_expandable =
+        type != SINGLE_QUOTE_MARKER && type != DELIMITER_MARKER;
     sym->is_double_quoted = type == DOUBLE_QUOTE_MARKER;
     sym->is_single_quoted = type == SINGLE_QUOTE_MARKER;
 
@@ -153,7 +154,6 @@ char *copy_string(char *src)
     return strcpy(dest, src);
 }
 
-
 int my_itoa(char *string)
 {
     int val = 0;
@@ -168,4 +168,3 @@ int my_itoa(char *string)
     }
     return val;
 }
-

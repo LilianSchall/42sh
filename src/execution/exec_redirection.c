@@ -1,7 +1,8 @@
 #include "execution/execution.h"
 
 // redirect fd_from file descriptor into into fd_to file descriptor
-int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to, struct env *env)
+int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to,
+                         struct env *env)
 {
     // duplicate fd_from file descriptor
 

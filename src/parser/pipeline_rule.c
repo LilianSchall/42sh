@@ -73,4 +73,3 @@ pipeline_error:
     free_AST(neg_tree);
     return NULL;
 }
-

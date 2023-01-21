@@ -42,7 +42,7 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
     }
     else if (!strcmp("export", argv[0])) // builtin command
     {
-        ret_val = export_fn(argc, argv);    
+        ret_val = export_fn(argc, argv);
     }
     else if (!strcmp("unset", argv[0])) // builtin command
     {
@@ -64,7 +64,7 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
     {
         ret_val = exec_break_continue(argc, argv, &(status->break_val));
     }
-    else if (!strcmp("continue", argv[0])) 
+    else if (!strcmp("continue", argv[0]))
     {
         ret_val = exec_break_continue(argc, argv, &(status->continue_val));
     }
@@ -85,8 +85,6 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
     return ret_val;
 }
 
-
-
 static int execute_AST_sequence(struct AST *tree, struct env *env)
 {
     int ret_val = 0;
@@ -97,7 +95,7 @@ static int execute_AST_sequence(struct AST *tree, struct env *env)
     for (struct linked_node *node = tree->linked_list->head; node;
          node = node->next)
     {
-        if(!check_status() || (status && status->exit_bool == 1))
+        if (!check_status() || (status && status->exit_bool == 1))
             return ret_val;
 
         struct AST *child = node->data;
@@ -149,16 +147,17 @@ int execute_AST_main(struct AST *tree, struct env *env)
 
 int execute_AST(struct AST *tree, char **argv, struct linked_list *functions)
 {
-    if(tree == NULL)
+    if (tree == NULL)
         return 0;
-   
+
     if (!functions)
         srand(time(NULL));
 
-    struct env env = {.argv = argv, .functions = functions ? functions : new_list()};
- 
-    int ret_val =  execute_AST_main(tree, &env);
-    
+    struct env env = { .argv = argv,
+                       .functions = functions ? functions : new_list() };
+
+    int ret_val = execute_AST_main(tree, &env);
+
     if (!functions)
         deep_free_list(env.functions, free_function);
 

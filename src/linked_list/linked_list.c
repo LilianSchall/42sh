@@ -188,4 +188,3 @@ void free_list(struct linked_list *list)
 {
     __list_deep_free(list, NULL);
 }
-
