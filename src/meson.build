@@ -50,8 +50,8 @@ src = files(
 	'builtin/exec_exit.c',
 	'builtin/exec_dot.c',
 	'builtin/exec_break_continue.c',
-	'builtin/exec_unset.c'
-    'builtin/exec_export.c'
+	'builtin/exec_unset.c',
+    'builtin/exec_export.c',
     'io_backend/io_backend.c',
 	'token/token.c',
 )
