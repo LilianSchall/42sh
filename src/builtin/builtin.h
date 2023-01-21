@@ -13,6 +13,7 @@
 #include "commons/commons.h"
 #include "execution/execution.h"
 #include "expansion/expansion.h"
+#include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 #include "io_backend/io_backend.h"
 #include "linked_list/linked_list.h"
@@ -47,6 +48,9 @@ int false_fn(int argc, char **argv);
 int cd_fun(int argc, char **argv);
 
 int dot_fn(int argc, char **argv, struct linked_list *functions);
+
+// unset builtin function
+int exec_unset(int argc, char *argv[]);
 
 #endif /* !BUILTIN_H */
 
