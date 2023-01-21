@@ -43,7 +43,7 @@ int exec_while_1(void)
 
 
 
-    execute_AST(ast_final, NULL, NULL);
+    execute_AST(ast_seq, NULL, NULL);
 
     free_AST(ast_seq);
 
