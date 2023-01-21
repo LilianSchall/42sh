@@ -38,15 +38,15 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
     }
     else if (!strcmp("cd", argv[0])) // builtin command
     {
-        ret_val = cd_fun(argc, argv);
+        ret_val = cd_fn(argc, argv);
     }
     else if (!strcmp("export", argv[0])) // builtin command
     {
-        //ret_val = export_fun(argc, argv);    
+        ret_val = export_fn(argc, argv);    
     }
     else if (!strcmp("unset", argv[0])) // builtin command
     {
-        //ret_val = unset_fun(argc, argv, env->functions);
+        ret_val = unset_fn(argc, argv, env->functions);
     }
     else if (!strcmp("exit", argv[0])) // exit command
     {
@@ -156,8 +156,7 @@ int execute_AST(struct AST *tree, char **argv, struct linked_list *functions)
         srand(time(NULL));
 
     struct env env = {.argv = argv, .functions = functions ? functions : new_list()};
-
-    
+ 
     int ret_val =  execute_AST_main(tree, &env);
     
     if (!functions)

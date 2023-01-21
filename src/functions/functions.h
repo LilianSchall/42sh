@@ -8,6 +8,6 @@
 void free_function(void *data);
 void add_function(struct linked_list *functions, char *name, struct AST *ast);
 int call_function(struct linked_list *functions, char **argv, int *ret_val);
-void remove_function(struct linked_list *functions, char *name);
+int remove_function(struct linked_list *functions, char *name);
 
 #endif /* !FUNCTIONS_H */

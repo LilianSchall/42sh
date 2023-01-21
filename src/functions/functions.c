@@ -50,17 +50,38 @@ int call_function(struct linked_list *functions, char **argv, int *ret_val)
     return 0;
 }
 
-void remove_function(struct linked_list *functions, char *name)
+int remove_function(struct linked_list *functions, char *name)
 {
     struct linked_node *fun = functions->head;
-    for (; fun; fun = fun->next)
+    if (!fun)
+        return 0;
+    struct function *function = fun->data;
+    if (!strcmp(function->name, name))
     {
-        struct function *function = fun->data;
+        free_function(function);
+        if (fun->next)
+            functions->head = fun->next;
+        else
+        {
+            mem_free(fun);
+            functions->head = NULL;
+        }
+        return 1;
+    }
+    for (; fun->next; fun = fun->next)
+    {
+        function = fun->next->data;
         if (!strcmp(function->name, name))
         {
+            struct linked_node *tmp = fun->next;
             free_function(function);
-            fun->next = fun->next->next;
-            return;
+            if (fun->next)
+                fun->next = fun->next->next;
+            else
+                fun->next = NULL;
+            mem_free(tmp);
+            return 1;
         }
     }
+    return 0;
 }

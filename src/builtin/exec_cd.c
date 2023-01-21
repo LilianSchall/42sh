@@ -1,6 +1,6 @@
 #include "builtin/builtin.h" 
 
-int cd_fun(int argc, char *argv[])
+int cd_fn(int argc, char *argv[])
 {
     char *old_cwd = getenv("OLD_PWD");
     char *home = getenv("HOME");
