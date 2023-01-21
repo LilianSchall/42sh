@@ -52,5 +52,7 @@ int dot_fn(int argc, char **argv, struct linked_list *functions);
 // unset builtin function
 int exec_unset(int argc, char *argv[]);
 
+int exec_export(int argc, char *argv[]);
+
 #endif /* !BUILTIN_H */
 
