@@ -7,6 +7,12 @@
 #include "linked_list/linked_list.h"
 #include "token/token.h"
 
+struct env
+{
+    char **argv;
+    struct linked_list *functions;
+};
+
 enum AST_type
 {
     D_SUBSHELL, // $(..)

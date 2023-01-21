@@ -6,6 +6,7 @@
 #include "commons/commons.h"
 #include "execution/execution.h"
 #include "garbage_collector/garbage_collector.h"
+#include "input_printer/input_printer.h"
 #include "io_backend/io_backend.h"
 #include "launch_options.h"
 #include "lexer/lexer.h"
@@ -16,12 +17,12 @@
 // launches the shell with the defined options in launch_options.h
 // if launched in interactive mode, file_script = NULL
 // returns 1 if an error occurred, else 0
-int launch_shell(int options, char *file_script, char *input);
+int launch_shell(int options, char *file_script, char *input,
+        char **argv);
 
 // function that will call each individual functions from the other modules
 // in order to execute a shell command
 // returns the status code of the execution of the command
-int execute_shell_command(int options, char *input);
+int execute_shell_command(int options, char *input, char **argv);
 
 #endif /* !KERNEL_H */
-

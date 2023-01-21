@@ -1,6 +1,6 @@
 #include "builtin/builtin.h"
 
-int execute_AST_pipe(struct AST *tree)
+int execute_AST_pipe(struct AST *tree, struct env *env)
 {
     // création de la pipe
     int fd[2];
@@ -21,7 +21,7 @@ int execute_AST_pipe(struct AST *tree)
         dup2(fd[1], STDOUT_FILENO);
 
         // execute la commande
-        execute_AST(child); 
+        execute_AST_main(child, env); 
 
         dup2(save, STDOUT_FILENO);
         // redirige stdin vers la sortie de la pipe
@@ -36,7 +36,7 @@ int execute_AST_pipe(struct AST *tree)
     }
 
     // execute la dernière commande (sera écrite dans stdout)
-    int result = execute_AST(child);
+    int result = execute_AST_main(child, env);
 
     // on retablie les FD
     dup2(save2, STDIN_FILENO);

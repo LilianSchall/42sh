@@ -1,13 +1,5 @@
 #include "expansion.h"
 
-struct var spec_var = {.argc = 0, .argv = NULL};
-
-void set_spec_var(int argc, char **argv)
-{
-    spec_var.argc = argc;
-    spec_var.argv = argv;
-}
-
 char *get_var_pid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
@@ -15,109 +7,155 @@ char *get_var_pid(void)
     return res;
 }
 
-char *get_all_unquoted()
+char *get_all_unquoted(char **argv)
 {
-    return NULL; 
-}
-
-char *get_var_aro(int quoted)
-{
-    if (!quoted)
-        return get_all_unquoted();
-    for (int i = 0; i < spec_var.argc; i++)
+    int len = 0;
+    int i = 0;
+    while (argv[i])
     {
-        
+        len += strlen(argv[i]) + 1;
+        i++;
     }
-    return NULL;
+    char *result = mem_malloc(len+1);
+    i = 0;
+    result[0] = 0;
+    while (argv[i])
+    {
+        strcat(result, argv[i]);
+        if (argv[i+1])
+            strcat(result, " ");
+        i++;
+        //printf("%s\n", result);
+    }
+    result[len] = 0;
+    return result;
 }
 
-char *get_var_star(int quoted)
+char *get_var_aro(char **argv, int quoted)
 {
-    if (!spec_var.argc)
+    if (!argv)
         return NULL;
     if (!quoted)
-        return get_all_unquoted();
+        return get_all_unquoted(argv);
     
     int len = 0;
     int i = 0;
-    while (spec_var.argv[i])
+    while (argv[i])
     {
-        len += strlen(spec_var.argv[i]) + 1;
+        len += strlen(argv[i]) + 3;
+        i++;
+    }
+
+    char *result = mem_malloc(len);
+    result[0] = 0;
+    i = 0;
+    while (argv[i])
+    {
+        strcat(result, "\"");
+        strcat(result, argv[i]);
+        if (argv[i + 1])
+            strcat(result, "\" ");
+        i++;
+        //printf("%s\n", result);
+    }
+    result[len - 2] = '\"';
+    result[len - 1] = 0;
+    return result;
+}
+
+char *get_var_star(char **argv, int quoted)
+{
+    if (!argv)
+        return NULL;
+    if (!quoted)
+        return get_all_unquoted(argv);
+    
+    int len = 0;
+    int i = 0;
+    while (argv[i])
+    {
+        len += strlen(argv[i]) + 1;
         i++;
     }
     char *result = mem_malloc(len + 2);
     i = 0;
     result[0] = '"';
     result[1] = 0;
-    while (spec_var.argv[i])
+    while (argv[i])
     {
-        strcat(result, spec_var.argv[i]);
+        strcat(result, argv[i]);
         strcat(result, " ");
         i++;
-        printf("%s\n", result);
+        //printf("%s\n", result);
     }
     result[len] = '"';
     return result;
 }
 
-char *get_var_sharp(void)
+char *get_var_sharp(char **argv)
 {
+    int i = 0;
+    if (argv)
+    {
+        while (argv[i])
+            i++;
+    }
     char *res = mem_malloc(sizeof(char) * 9);
-    sprintf(res, "%d", spec_var.argc);
+    sprintf(res, "%d", i - 1);
     return res;
 }
 
 char *get_var_random(void)
 {
-    return NULL;
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", rand() % 32767);
+    return res;
 }
 
 char *get_var_uid(void)
 {
-    return NULL;
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", getuid());
+    return res;
 }
 
-char *get_var_n(const char *name)
+char *get_var_n(const char *name, char **argv)
 {
+    if (!argv)
+        return NULL;
     int i = atoi(name);
-    if (i < spec_var.argc)
-        return spec_var.argv[i];
+    int index = 0;
+    while (argv[index])
+    {
+        if (i == index)
+            return argv[i];
+        index++;
+    }
     return NULL;
 }
 
-char *get_spec_var(const char *name, int quoted)
+char *get_spec_var(const char *name, char **argv, int quoted)
 {
-    if (strlen(name) == 1)
-    {
-        switch (name[0])
-        {
-            case '@':
-                return get_var_aro(quoted);
-                break;
-            case '*':
-                return get_var_star(quoted);
-                break;
-            case '$':
-                return get_var_pid();
-                break;
-            case '#':
-                return get_var_sharp();
-                break;
-            default:
-                return get_var_n(name);
-                break;
-        }
-    }
+    //printf("is quoted = %d\n", quoted);
+    //printf("special var name = %s\n", name);
+    if (!strcmp(name, "@"))
+        return get_var_aro(argv, quoted);
+    else if (!strcmp(name, "*"))
+        return get_var_star(argv, quoted);
+    else if (!strcmp(name, "$"))
+        return get_var_pid();
+    else if (!strcmp(name, "#"))
+        return get_var_sharp(argv);
     else if (!strcmp(name, "RANDOM"))
         return get_var_random();
     else if (!strcmp(name, "UID"))
         return get_var_uid();
     else
-        return get_var_n(name);
+        return get_var_n(name, argv);
     return NULL;
 }
 
-char *expand_var(const char *str, int quoted)
+char *expand_var(const char *str, char **argv, int quoted)
 {
     char *result = mem_malloc(strlen(str) + 1);
     char *p = result;
@@ -159,7 +197,7 @@ char *expand_var(const char *str, int quoted)
             mem_free(tmp);
 
 			if (!var)
-				var = get_spec_var(var_name, quoted);            
+				var = get_spec_var(var_name, argv, quoted);            
 
 			if (var)
             {
@@ -190,7 +228,7 @@ char *expand_var(const char *str, int quoted)
     return result;
 }
 
-char *expand_symbol_array(struct symbol **values)
+char *expand_symbol_array(struct symbol **values, char **argv)
 {
     char *result = mem_malloc(strlen(values[0]->value) + 1);
 	char *p = result;
@@ -199,11 +237,12 @@ char *expand_symbol_array(struct symbol **values)
 		char * expanded = NULL;
         if (values[i]->is_expandable)
 		{		
-            expanded = expand_var(values[i]->value, 0);
+            expanded = expand_var(values[i]->value, argv,
+                    values[i]->is_double_quoted);
         }
         else
 		{
-			expanded = strdup(values[i]->value);
+			expanded = gc_strdup(values[i]->value);
     	}
 #if 0
 		printf("%d\n", i);

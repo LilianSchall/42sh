@@ -49,7 +49,7 @@ Test(exec_redirection, redirection_9, .init = redirect_9)
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
 
     cr_assert_stdout_eq_str("hello\n");

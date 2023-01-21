@@ -1,7 +1,7 @@
 #include "kernel.h"
 
 static int launch_interactive_mode(int options);
-static int launch_script_mode(int options, char *file_script);
+static int launch_script_mode(int options, char *file_script, char **argv);
 
 int launch_interactive_mode(int options)
 {
@@ -15,7 +15,7 @@ int launch_interactive_mode(int options)
         // get content from stdin
         content = get_interactive_content(true);
 
-        execute_shell_command(options, content);
+        execute_shell_command(options, content, NULL);
 
         // free and dereference processed content
         mem_free(content);
@@ -24,19 +24,20 @@ int launch_interactive_mode(int options)
     return status->exit_code;
 }
 
-int launch_script_mode(int options, char *file_script)
+int launch_script_mode(int options, char *file_script, char **argv)
 {
     // get commands from script
     char *input = get_file_content(file_script);
 
     // execute input
-    int status_code = execute_shell_command(options, input);
+    int status_code = execute_shell_command(options, input, argv);
     mem_free(input);
 
     return status_code;
 }
 
-int launch_shell(int options, char *file_script, char *input)
+int launch_shell(int options, char *file_script, char *input,
+        char **argv)
 {
     int status_code = 0;
 
@@ -44,7 +45,7 @@ int launch_shell(int options, char *file_script, char *input)
     new_status();
 
     if (input)
-        status_code = execute_shell_command(options, input);
+        status_code = execute_shell_command(options, input, NULL);
     else if (!file_script)
     {
         if (isatty(STDIN_FILENO))
@@ -52,12 +53,12 @@ int launch_shell(int options, char *file_script, char *input)
         else
         {
             char *content = get_interactive_content(false);
-            status_code = execute_shell_command(options, content);
+            status_code = execute_shell_command(options, content, NULL);
             mem_free(content);
         }
     }
     else
-        status_code = launch_script_mode(options, file_script);
+        status_code = launch_script_mode(options, file_script, argv);
 
     free_status();
     free_garbage_collector();
@@ -65,8 +66,15 @@ int launch_shell(int options, char *file_script, char *input)
     return status_code;
 }
 
-int execute_shell_command(int options, char *input)
+int execute_shell_command(int options, char *input, char **argv)
 {
+    // if verbose mode activated, print:
+    // - the input
+    // - the token_list
+    // - the AST to execute
+    if (is_option_activated(options, VERBOSE))
+        pretty_print_input(input);
+
     // get token_list based on given input
 
     struct linked_list *token_list = build_token_list(input);
@@ -88,11 +96,10 @@ int execute_shell_command(int options, char *input)
     }
 
     // execute tree
-    int status_code = execute_AST(tree);
+    int status_code = execute_AST(tree, argv, NULL);
 
     deep_free_list(token_list, free_token);
     free_AST(tree);
 
     return status_code;
 }
-

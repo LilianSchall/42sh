@@ -47,7 +47,7 @@ Test(exec_redirection, redirection_4, .init = redirect_4)
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
 
      

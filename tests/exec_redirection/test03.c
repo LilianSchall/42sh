@@ -43,7 +43,7 @@ int exec_redirection_3(void)
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
     return 0;
 }

@@ -2,7 +2,7 @@
 
 struct garbage_list *garbage_collector = NULL;
 
-static struct garbage_list *new_item(void *ptr, struct garbage_list *next)
+struct garbage_list *new_item(void *ptr, struct garbage_list *next)
 {
     struct garbage_list *item = malloc(sizeof(struct garbage_list));
 

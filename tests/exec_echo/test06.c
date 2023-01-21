@@ -15,7 +15,7 @@ int exec6(void)
 
     struct AST *ast_final = new_AST_COMMAND("cat", "-e", "README.md");
 
-    execute_AST(ast_final);
+    execute_AST(ast_final, NULL, NULL);
 
     free_AST(ast_final);
 
