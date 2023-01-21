@@ -9,8 +9,6 @@
 #include "symbol/symbol.h"
 #include "garbage_collector/garbage_collector.h"
 
-#define RAND_MAX 32767
-
 struct var
 {
     int argc;
