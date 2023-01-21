@@ -45,20 +45,25 @@ char *get_var_aro(char **argv, int quoted)
         len += strlen(argv[i]) + 3;
         i++;
     }
-
+    
     char *result = mem_malloc(len);
     result[0] = 0;
     i = 0;
+    char *delim = mem_malloc(2 * sizeof(char));
+    delim[0] = -1;
+    delim[1] = 0;
     while (argv[i])
     {
-        strcat(result, "\"");
+        strcat(result, delim);
         strcat(result, argv[i]);
+        strcat(result, delim);
         if (argv[i + 1])
-            strcat(result, "\" ");
+            strcat(result, " ");
         i++;
         // printf("%s\n", result);
     }
-    result[len - 2] = '\"';
+    mem_free(delim);
+    result[len - 2] = -1;
     result[len - 1] = 0;
     return result;
 }
@@ -79,7 +84,7 @@ char *get_var_star(char **argv, int quoted)
     }
     char *result = mem_malloc(len + 2);
     i = 0;
-    result[0] = '"';
+    result[0] = -1;
     result[1] = 0;
     while (argv[i])
     {
@@ -88,7 +93,7 @@ char *get_var_star(char **argv, int quoted)
         i++;
         // printf("%s\n", result);
     }
-    result[len] = '"';
+    result[len] = -1;
     return result;
 }
 

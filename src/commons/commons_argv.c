@@ -15,7 +15,7 @@ char **split_string(char *str)
     while (*p)
     {
         // printf("char: %c, quoted: %d\n", *p, quoted);
-        if (*p == '"')
+        if (*p == -1)
         {
             quoted = !quoted;
             int len = strlen(p + 1);
