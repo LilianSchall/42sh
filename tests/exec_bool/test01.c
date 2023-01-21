@@ -17,7 +17,7 @@ int exec_bool(void)
 
   struct AST *ast = new_AST_COMMAND("true", NULL, NULL);
 
-  int result = execute_AST(ast, NULL);
+  int result = execute_AST(ast_final, NULL, NULL);
 
   free_AST(ast);
 

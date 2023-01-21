@@ -47,7 +47,7 @@ Test(exec_redirection, redirection_7, .init = redirect_7)
     (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final, NULL);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
     cr_assert_stdout_eq_str("# 42sh");
      

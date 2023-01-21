@@ -52,7 +52,7 @@ Test(exec_redirection, redir_pipe_1)
         (enum AST_type) SEQUENCE, ll_ast_2);
 
 
-    execute_AST(ast_final, NULL);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
     
     char * result_1 = get_file_content("file11.txt");

@@ -107,7 +107,7 @@ Test(exec_subshell, exec_subshell_1, .init = redirect)
 
 
 
-    execute_AST(ast_final, NULL);
+    execute_AST(ast_final, NULL, NULL);
     free_AST(ast_final);
 
 
