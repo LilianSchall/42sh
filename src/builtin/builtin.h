@@ -44,6 +44,6 @@ int false_fn(int argc, char **argv);
 
 int cd_fun(int argc, char **argv);
 
-int exec_export(int argc, char *argv[], char **envp);
+int exec_export(int argc, char *argv[]);
 #endif /* !BUILTIN_H */
 
