@@ -51,7 +51,7 @@ char **create_new_argv(int argc, char **argv)
 }
 
 
-int dot_fn(int argc, char **argv)
+int dot_fn(int argc, char **argv, struct linked_list *functions)
 {
     // check if a file is specified
     if(argc == 1)
@@ -102,7 +102,7 @@ int dot_fn(int argc, char **argv)
     //create new argv
     char **new_argv = create_new_argv(argc, argv);
 
-    int ret_val = execute_AST(tree, new_argv);
+    int ret_val = execute_AST(tree, new_argv, functions);
 
     deep_free_list(tokens, free_token);
     free_AST(tree);

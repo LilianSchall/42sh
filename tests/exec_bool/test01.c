@@ -15,11 +15,11 @@ extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 int exec_bool(void) 
 {
 
-  struct AST *ast = new_AST_COMMAND("true", NULL, NULL);
+  struct AST *ast_final = new_AST_COMMAND("true", NULL, NULL);
 
-  int result = execute_AST(ast, NULL);
+  int result = execute_AST(ast_final, NULL, NULL);
 
-  free_AST(ast);
+  free_AST(ast_final);
 
   return result;
 }

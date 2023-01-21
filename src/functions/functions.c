@@ -6,8 +6,6 @@ struct function
     struct AST *ast;
 };
 
-struct linked_list *functions = NULL;
-
 struct function *new_function(char *name, struct AST *ast)
 {
     struct function *fct = mem_malloc(sizeof(struct function));
@@ -16,16 +14,15 @@ struct function *new_function(char *name, struct AST *ast)
     return fct;
 }
 
-void free_function(struct function *fct)
+void free_function(void *data)
 {
+    struct function *fct = data;
     mem_free(fct->name);
     mem_free(fct);
 }
 
-void add_function(char *name, struct AST *ast)
+void add_function(struct linked_list *functions, char *name, struct AST *ast)
 {
-    if (!functions)
-        functions = new_list();
     struct linked_node *fun = functions->head;
     for (; fun; fun=fun->next)
     {
@@ -38,27 +35,23 @@ void add_function(char *name, struct AST *ast)
     functions = list_append(functions, new_function(name, ast));
 }
 
-int call_function(char **argv, int *ret_val)
+int call_function(struct linked_list *functions, char **argv, int *ret_val)
 {
-    if (!functions)
-        return 0;
     struct linked_node *fun = functions->head;
     for (; fun; fun = fun->next)
     {
         struct function *function = fun->data;
         if (!strcmp(function->name, argv[0]))
         {
-            *ret_val = execute_AST_main(function->ast, argv);
+            *ret_val = execute_AST(function->ast, argv, functions);
             return 1;
         }
     }
     return 0;
 }
 
-void remove_function(char *name)
+void remove_function(struct linked_list *functions, char *name)
 {
-    if (!functions)
-        return;
     struct linked_node *fun = functions->head;
     for (; fun; fun = fun->next)
     {

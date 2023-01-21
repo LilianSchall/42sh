@@ -26,7 +26,7 @@ int exec_var(void)
 
     struct AST *ast_seq = new_AST(NULL, (enum AST_type) SEQUENCE, ll_ast_seq);
 
-    execute_AST(ast_seq, NULL);
+    execute_AST(ast_seq, NULL, NULL);
 
     cr_expect_str_eq(getenv("test"), "prout");
     

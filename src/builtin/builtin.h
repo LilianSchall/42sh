@@ -46,7 +46,7 @@ int false_fn(int argc, char **argv);
 
 int cd_fun(int argc, char **argv);
 
-int dot_fn(int argc, char **argv);
+int dot_fn(int argc, char **argv, struct linked_list *functions);
 
 #endif /* !BUILTIN_H */
 

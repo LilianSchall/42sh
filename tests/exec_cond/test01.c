@@ -29,7 +29,7 @@ int exec_cond_1(void)
     
     struct AST *ast = new_AST(new_token(new_unique_symbols(copy_string(""), false, false, false), (enum token_type) COMMAND), (enum AST_type) SEQUENCE, ll_seq);
 
-    int val = execute_AST(ast, NULL);
+    int val = execute_AST(ast, NULL, NULL);
 
     free_AST(ast);
 

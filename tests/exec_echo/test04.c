@@ -15,7 +15,7 @@ int exec4(void)
     
     struct AST *ast_final = new_AST_COMMAND("echo", "-neE", "test \\n test");
 
-    execute_AST(ast_final, NULL);
+    execute_AST(ast_final, NULL, NULL);
 
     free_AST(ast_final);
     
