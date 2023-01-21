@@ -154,8 +154,11 @@ int execute_AST(struct AST *tree, char **argv, struct linked_list *functions)
     
     struct env env = {.argv = argv, .functions = functions ? functions : new_list()};
 
+    
+    int ret_val =  execute_AST_main(tree, &env);
+    
     if (!functions)
         deep_free_list(env.functions, free_function);
-    
-    return execute_AST_main(tree, &env);
+
+    return ret_val;
 }
