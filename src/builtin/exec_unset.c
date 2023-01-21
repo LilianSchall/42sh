@@ -8,7 +8,7 @@ int exec_unset(int argc, char *argv[])
         {
 	        for (int i = 2; i < argc; i++)
 	        {
-	            if (unsetenv(argv[i]))
+	            unsetenv(argv[i]);
 	        }
 	    }
 	    else if (strcmp(argv[1], "-f") == 0)
@@ -20,7 +20,7 @@ int exec_unset(int argc, char *argv[])
 	    {
 	        for (int j = 1; j < argc; j++)
 	        {
-		        unsetenv(argv[i]);
+		        unsetenv(argv[j]);
             }
         }
     }
