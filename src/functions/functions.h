@@ -5,8 +5,9 @@
 #include "execution/execution.h"
 #include "linked_list/linked_list.h"
 
-void add_function(char *name, struct AST *ast);
-int call_function(char **argv, int *ret_val);
-void remove_function(char *name);
+void free_function(void *data);
+void add_function(struct linked_list *functions, char *name, struct AST *ast);
+int call_function(struct linked_list *functions, char **argv, int *ret_val);
+void remove_function(struct linked_list *functions, char *name);
 
 #endif /* !FUNCTIONS_H */

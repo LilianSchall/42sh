@@ -52,16 +52,16 @@ char **split_string(char *str)
 // transform a linked list into a argc (char **)
 // argc is a pointer (it will be updated with the length of argv)
 // last elem of argv is NULL
-char **new_argv(struct AST *tree, int *argc, char **current_argv)
+char **new_argv(struct AST *tree, int *argc, struct env *env)
 {
     struct linked_list *temp = tree->linked_list;
 
-    char **argv = mem_malloc(sizeof(char *));
+    char **argv_res = mem_malloc(sizeof(char *));
 
     if (!temp)
     {
-        argv[0] = NULL;
-        return argv;
+        argv_res[0] = NULL;
+        return argv_res;
     }
 
     struct linked_node *ln = temp->head;
@@ -72,25 +72,25 @@ char **new_argv(struct AST *tree, int *argc, char **current_argv)
         struct AST *child = ln->data;
         char *str = NULL;
         if (child->type == D_SUBSHELL)
-            str = execute_AST_D_SUBSHELL(child, current_argv);
+            str = execute_AST_D_SUBSHELL(child, env);
         else
-            str = expand_symbol_array(child->value->values, current_argv);
+            str = expand_symbol_array(child->value->values, env->argv);
         char **tmp = split_string(str);
         mem_free(str);
         int j = 0;
         while (tmp[j])
         {
-            argv[i] = gc_strdup(tmp[j]);
+            argv_res[i] = gc_strdup(tmp[j]);
             i++;
             j++;
-            argv = mem_realloc(argv, sizeof(char*) * (i + 1));
+            argv_res = mem_realloc(argv_res, sizeof(char*) * (i + 1));
         }
         free_argv(tmp);
         ln = ln->next;
     }
-    argv[i] = NULL;
+    argv_res[i] = NULL;
     *argc = i;
-    return argv;
+    return argv_res;
 }
 
 // free argc (char **)

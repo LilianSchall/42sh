@@ -1,7 +1,7 @@
 #include "execution/execution.h"
 
 // redirect fd_from file descriptor into into fd_to file descriptor
-int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to, char **argv)
+int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to, struct env *env)
 {
     // duplicate fd_from file descriptor
 
@@ -24,7 +24,7 @@ int redirection_fd_to_fd(struct AST *tree, int fd_from, int fd_to, char **argv)
     }
 
     // excute the SEQUENCE or REDIRECTION  AST
-    int return_val = execute_AST_main(tree, argv);
+    int return_val = execute_AST_main(tree, env);
 
     // restore fd
     dup2(from_dup, fd_from);
@@ -113,7 +113,7 @@ void close_fd(int fd, struct AST *tree)
         close(fd);
 }
 
-int execute_AST_redirection(struct AST *tree, char **argv)
+int execute_AST_redirection(struct AST *tree, struct env *env)
 {
     int return_val = 0;
     enum token_type r_type = tree->value->type;
@@ -135,7 +135,7 @@ int execute_AST_redirection(struct AST *tree, char **argv)
         return 2;
     }
 
-    return_val = redirection_fd_to_fd(ast_exec, fd_from, fd_to, argv);
+    return_val = redirection_fd_to_fd(ast_exec, fd_from, fd_to, env);
 
     close_fd(fd_from, ast_from);
     close_fd(fd_to, ast_to);

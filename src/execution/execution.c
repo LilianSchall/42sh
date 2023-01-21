@@ -21,12 +21,12 @@ static int not_builtin_fn(int argc, char **argv)
     return WEXITSTATUS(ret_val);
 }
 
-static int execute_AST_cmd(struct AST *tree, char **current_argv)
+static int execute_AST_cmd(struct AST *tree, struct env *env)
 {
     int ret_val = 0;
 
     int argc = 0;
-    char **argv = new_argv(tree, &argc, current_argv);
+    char **argv = new_argv(tree, &argc, env);
 
     if (!strcmp("echo", argv[0])) // builtin command
     {
@@ -34,11 +34,19 @@ static int execute_AST_cmd(struct AST *tree, char **current_argv)
     }
     else if (!strcmp(".", argv[0])) // dot command
     {
-        ret_val = dot_fn(argc, argv);
+        ret_val = dot_fn(argc, argv, env->functions);
     }
     else if (!strcmp("cd", argv[0])) // builtin command
     {
         ret_val = cd_fun(argc, argv);
+    }
+    else if (!strcmp("export", argv[0])) // builtin command
+    {
+        //ret_val = export_fun(argc, argv);    
+    }
+    else if (!strcmp("unset", argv[0])) // builtin command
+    {
+        //ret_val = unset_fun(argc, argv, env->functions);
     }
     else if (!strcmp("exit", argv[0])) // exit command
     {
@@ -60,7 +68,7 @@ static int execute_AST_cmd(struct AST *tree, char **current_argv)
     {
         ret_val = exec_break_continue(argc, argv, &(status->continue_val));
     }
-    else if (call_function(argv, &ret_val))
+    else if (call_function(env->functions, argv, &ret_val))
     {}
     else
     {
@@ -93,7 +101,7 @@ static int execute_AST_sequence(struct AST *tree, struct env *env)
             return ret_val;
 
         struct AST *child = node->data;
-        ret_val = execute_AST_main(child, argv);
+        ret_val = execute_AST_main(child, env);
     }
     return ret_val;
 }
@@ -108,43 +116,46 @@ int execute_AST_main(struct AST *tree, struct env *env)
     switch (tree->type)
     {
     case SEQUENCE:
-        ret_val = execute_AST_sequence(tree, argv);
+        ret_val = execute_AST_sequence(tree, env);
         break;
     case SUBSHELL:
-        ret_val = execute_AST_subshell(tree, argv);
+        ret_val = execute_AST_subshell(tree, env);
         break;
     case REDIRECTION:
-        ret_val = execute_AST_redirection(tree, argv);
+        ret_val = execute_AST_redirection(tree, env);
         break;
     case PIPE:
-        ret_val = execute_AST_pipe(tree, argv);
+        ret_val = execute_AST_pipe(tree, env);
         break;
     case COMMAND:
-        ret_val = execute_AST_cmd(tree, argv);
+        ret_val = execute_AST_cmd(tree, env);
         break;
     case OPERATOR:
-        ret_val = execute_AST_operator(tree, argv);
+        ret_val = execute_AST_operator(tree, env);
         break;
     case CONDITION:
-        ret_val = execute_AST_condition(tree, argv);
+        ret_val = execute_AST_condition(tree, env);
         break;
     case ASSIGNMENT:
-        ret_val = execute_AST_assignment(tree, argv);
+        ret_val = execute_AST_assignment(tree, env);
         break;
     case FUNCTION:
-        ret_val = execute_AST_function(tree);
+        ret_val = execute_AST_function(tree, env);
     default:
         break;
     }
     return ret_val;
 }
 
-int execute_AST(struct AST *tree, char **argv, char **envp)
+int execute_AST(struct AST *tree, char **argv, struct linked_list *functions)
 {
     if(tree == NULL)
         return 0;
     
-    struct env env = {.argv = argv, .envp = envp, .functions = new_list()};
+    struct env env = {.argv = argv, .functions = functions ? functions : new_list()};
 
+    if (!functions)
+        deep_free_list(env.functions, free_function);
+    
     return execute_AST_main(tree, &env);
 }

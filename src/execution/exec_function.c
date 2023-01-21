@@ -1,6 +1,6 @@
 #include "execution.h"
 
-int execute_AST_function(struct AST *tree)
+int execute_AST_function(struct AST *tree, struct env *env)
 {
     struct linked_node *child = tree->linked_list->head;
     
@@ -10,7 +10,7 @@ int execute_AST_function(struct AST *tree)
     child = child->next;
     struct AST *ast_fun = child->data;
     
-    add_function(fun_name, ast_fun);
+    add_function(env->functions, fun_name, ast_fun);
 
     return 0;
 }
