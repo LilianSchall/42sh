@@ -107,12 +107,16 @@ char *get_var_sharp(char **argv)
 
 char *get_var_random(void)
 {
-    return NULL;
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", rand() % 32767);
+    return res;
 }
 
 char *get_var_uid(void)
 {
-    return NULL;
+    char *res = mem_malloc(sizeof(char) * 9);
+    sprintf(res, "%d", getuid());
+    return res;
 }
 
 char *get_var_n(const char *name, char **argv)
