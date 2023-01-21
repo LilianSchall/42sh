@@ -4,7 +4,7 @@ struct status *status = NULL;
 
 void new_status(void)
 {
-    if(status != NULL)
+    if (status != NULL)
         return;
     status = mem_malloc(sizeof(struct status));
 
@@ -17,7 +17,7 @@ void new_status(void)
 
 void free_status(void)
 {
-    if(status == NULL)
+    if (status == NULL)
         return;
 
     mem_free(status);
@@ -30,18 +30,18 @@ int check_status(void)
     if (status == NULL)
         return 1;
 
-    return (status->continue_val == 0 && status->break_val == 0 && 
-        status->exit_bool == 0);
+    return (status->continue_val == 0 && status->break_val == 0
+            && status->exit_bool == 0);
 }
 
 void increase_nb_loop(void)
 {
-    if(status)  
+    if (status)
         status->nb_loop += 1;
 }
 
 void decrease_nb_loop(void)
 {
-    if(status)  
+    if (status)
         status->nb_loop -= 1;
 }

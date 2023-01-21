@@ -1,14 +1,14 @@
 #include "parser.h"
 
 static struct AST *command_block_subrule(struct linked_list *token_list,
-        bool trigger_warn)
+                                         bool trigger_warn)
 {
     struct token *token = list_head(token_list);
     list_pop(token_list);
     free_token(token);
 
     struct AST *compound = compound_list_rule(token_list, trigger_warn);
-        
+
     if (!compound)
         return NULL;
 
@@ -20,7 +20,7 @@ static struct AST *command_block_subrule(struct linked_list *token_list,
         free_AST(compound);
         return NULL;
     }
-        
+
     list_pop(token_list);
     free_token(token);
 
@@ -28,7 +28,7 @@ static struct AST *command_block_subrule(struct linked_list *token_list,
 }
 
 static struct AST *subshell_subrule(struct linked_list *token_list,
-        bool trigger_warn)
+                                    bool trigger_warn)
 {
     struct token *token = list_head(token_list);
     list_pop(token_list);
@@ -57,7 +57,6 @@ static struct AST *subshell_subrule(struct linked_list *token_list,
     return tree;
 }
 
-
 struct AST *shell_command_rule(struct linked_list *token_list,
                                bool trigger_warn)
 {
@@ -83,4 +82,3 @@ shell_command_error:
         warnx("Missing word at shell_command_rule");
     return NULL;
 }
-

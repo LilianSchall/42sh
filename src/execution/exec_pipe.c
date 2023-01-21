@@ -21,11 +21,11 @@ int execute_AST_pipe(struct AST *tree, struct env *env)
         dup2(fd[1], STDOUT_FILENO);
 
         // execute la commande
-        execute_AST_main(child, env); 
+        execute_AST_main(child, env);
 
         dup2(save, STDOUT_FILENO);
         // redirige stdin vers la sortie de la pipe
-        
+
         dup2(fd[0], STDIN_FILENO);
         close(fd[0]);
         close(fd[1]);
@@ -44,7 +44,6 @@ int execute_AST_pipe(struct AST *tree, struct env *env)
 
     close(save2);
     close(save);
-    
+
     return result;
 }
-

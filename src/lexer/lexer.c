@@ -15,10 +15,10 @@ static int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym);
 static struct token *create_token(char **word_begin_ptr, char **input,
                                   char **token_value);
 static void execute_lexing(struct linked_list *token_list,
-                            char **word_begin_ptr, char **input,
-                            struct lexer_states states);
+                           char **word_begin_ptr, char **input,
+                           struct lexer_states states);
 static void add_sym_to_array(struct symbol **symbols, struct symbol *sym,
-        int *capacity)
+                             int *capacity)
 {
     int len = 0;
 
@@ -37,15 +37,14 @@ static void add_sym_to_array(struct symbol **symbols, struct symbol *sym,
     symbols[len++] = sym;
 }
 
-
 struct token *create_token(char **word_begin_ptr, char **input,
                            char **token_value)
 {
     struct symbol sym = { 0 };
     int capacity = DEFAULT_NB_SYMBOLS;
-    struct symbol **symbols = mem_calloc(DEFAULT_NB_SYMBOLS, 
-            sizeof(struct symbol *));
-    
+    struct symbol **symbols =
+        mem_calloc(DEFAULT_NB_SYMBOLS, sizeof(struct symbol *));
+
     char *begin = *word_begin_ptr;
     do
     {
@@ -103,7 +102,7 @@ int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
     // this offset is used to correctly parse delimitors and operators
     // that are less then 3 char
     int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
-    
+
     // the char that we will temporarily replace
     char tmp = GETCHAR(input, offset);
     GETCHAR(input, offset) = '\0';
@@ -261,8 +260,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         struct token *token = NULL;
         char *offset_input = *input + 1;
         if (*word_begin_ptr + 1 < *input)
-            token =
-                create_token(word_begin_ptr, &offset_input, token_value);
+            token = create_token(word_begin_ptr, &offset_input, token_value);
         else
             token = create_token(word_begin_ptr, input, token_value);
         token->type = IO_NUMBER;
@@ -285,11 +283,10 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     if (GETCHAR(input, 0) == '\\')
     {
         // we escape it
-        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0,\
-                DELIMITER_MARKER);
+        skip_char(input, !isspace(GETCHAR(input, 1)) ? 1 : 0, DELIMITER_MARKER);
         return NULL;
     }
-    
+
     // if the token is like foo#foo
     // then it is a whole token and not a comment after the #
     if (GETCHAR(input, 0) == '#' && !isspace(GETCHAR(input, 1)))
@@ -361,14 +358,15 @@ struct token *parse_comment(char **input, struct lexer_states states)
     if (GETCHAR(input, 0) == '\n')
     {
         *states.reading_comm = false;
-        return new_token(new_unique_symbols(gc_strdup("\n"), false, false, false), NEWLINE);
+        return new_token(
+            new_unique_symbols(gc_strdup("\n"), false, false, false), NEWLINE);
     }
 
     return NULL;
 }
 
 void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
-                     char **input, struct lexer_states states)
+                    char **input, struct lexer_states states)
 {
     struct token *current_token = NULL;
     if (*states.reading_comm)
@@ -438,4 +436,3 @@ struct linked_list *build_token_list(char *input)
 
     return token_list;
 }
-

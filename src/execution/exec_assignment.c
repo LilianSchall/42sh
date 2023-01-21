@@ -3,7 +3,7 @@
 int execute_AST_assignment(struct AST *tree, struct env *env)
 {
     /* do things */
-    if(env == NULL)
+    if (env == NULL)
         env = NULL;
 
     int ret_val = 1;

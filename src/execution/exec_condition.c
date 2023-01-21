@@ -21,7 +21,8 @@ static int execute_AST_if(struct AST *tree, struct env *env)
 // exec a while or until command
 // if val_cond = 0 -> while
 // if val_cond = 1 -> until
-static int execute_AST_while_until(struct AST *tree, int val_cond, struct env *env)
+static int execute_AST_while_until(struct AST *tree, int val_cond,
+                                   struct env *env)
 {
     int return_val = 0;
     int while_cond = val_cond;
@@ -38,13 +39,13 @@ static int execute_AST_while_until(struct AST *tree, int val_cond, struct env *e
 
         if (while_cond == val_cond)
             return_val = execute_AST_main(bloc, env); // exec commands
-        
+
         if (status && status->continue_val > 0)
             status->continue_val -= 1;
     }
 
     if (status && status->break_val > 0)
-        status->break_val -=1;
+        status->break_val -= 1;
 
     return return_val;
 }
@@ -55,13 +56,13 @@ static int execute_AST_for(struct AST *tree, struct env *env)
     struct linked_node *child = tree->linked_list->head;
     struct AST *ast_arg = child->data;
     char *var_name = ast_arg->value->values[0]->value;
-    
+
     child = child->next; // should not be NULL (check here if error occurs)
     struct AST *ast_iter = child->data;
 
     // create iter table, should expand var and subshells
     int argc = 0;
-    char **iter_args = new_argv(ast_iter, &argc, env); 
+    char **iter_args = new_argv(ast_iter, &argc, env);
 
     child = child->next; // should not be NULL either
     struct AST *ast_seq = child->data;

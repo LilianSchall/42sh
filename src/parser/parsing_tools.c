@@ -15,8 +15,7 @@ struct token *consume_token(struct linked_list *token_list,
     if (token->type != type)
     {
         if (info.trigger_warn)
-            warnx("%s missmatch at %s", info.sym,
-                  info.rulename);
+            warnx("%s missmatch at %s", info.sym, info.rulename);
         return NULL;
     }
 
@@ -86,7 +85,6 @@ bool is_non_delimitator(enum token_type type)
 {
     static CREATE_NON_DELIMITATOR(types);
     size_t len = sizeof(types) / sizeof(enum token_type);
-    
 
     for (size_t i = 0; i < len; i++)
     {

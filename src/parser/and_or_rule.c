@@ -1,7 +1,7 @@
 #include "parser.h"
 
-static struct AST *and_or_subrule(struct linked_list *token_list, bool trigger_warn,
-        struct AST *operator)
+static struct AST *and_or_subrule(struct linked_list *token_list,
+                                  bool trigger_warn, struct AST *operator)
 {
     struct AST *pipeline = pipeline_rule(token_list, trigger_warn);
     struct AST *tree = NULL;
@@ -34,7 +34,7 @@ static struct AST *and_or_subrule(struct linked_list *token_list, bool trigger_w
     if (operator)
     {
         list_append(operator->linked_list, pipeline);
-        operator = root_sequence_if_needed(operator);
+        operator= root_sequence_if_needed(operator);
         list_append(tree->linked_list, operator);
     }
     else
@@ -55,4 +55,3 @@ struct AST *and_or_rule(struct linked_list *token_list, bool trigger_warn)
 {
     return and_or_subrule(token_list, trigger_warn, NULL);
 }
-

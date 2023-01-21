@@ -29,7 +29,6 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
                                  bool trigger_warn);
 struct AST *funcdec_rule(struct linked_list *token_list, bool trigger_warn);
 struct AST *substitution_rule(struct linked_list *token_list,
-        bool trigger_warn);
+                              bool trigger_warn);
 
 #endif /* !RULES_H */
-

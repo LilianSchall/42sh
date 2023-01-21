@@ -16,4 +16,3 @@ struct AST *build_shell_AST(struct linked_list *token_list)
 
     return sequence;
 }
-

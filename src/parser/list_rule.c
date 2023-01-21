@@ -16,7 +16,8 @@ struct AST *list_rule(struct linked_list *token_list)
         tree = child;
 
     struct token *token = list_head(token_list);
-    while (token != NULL && (token->type == SEMICOLON || token->type == NEWLINE))
+    while (token != NULL
+           && (token->type == SEMICOLON || token->type == NEWLINE))
     {
         free_token(token);
         list_pop(token_list);
@@ -37,4 +38,3 @@ struct AST *list_rule(struct linked_list *token_list)
 
     return tree;
 }
-

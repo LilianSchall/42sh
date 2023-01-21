@@ -1,7 +1,7 @@
 #include "input_printer.h"
 
-static void replace_chars(char *command, const char *input,
-        const char *newline, const char space_replace)
+static void replace_chars(char *command, const char *input, const char *newline,
+                          const char space_replace)
 {
     size_t j = 0;
     for (size_t i = 0; input[i]; i++)
@@ -13,7 +13,7 @@ static void replace_chars(char *command, const char *input,
         else
         {
             for (size_t k = 0; newline[k]; k++)
-                command[j++] = newline[k];            
+                command[j++] = newline[k];
         }
     }
 }
@@ -21,7 +21,7 @@ static void replace_chars(char *command, const char *input,
 static size_t my_strcount(char *str, char c)
 {
     size_t count = 0;
-    
+
     for (size_t i = 0; str[i]; i++)
     {
         if (str[i] == c)
@@ -44,7 +44,7 @@ void pretty_print_input(char *input)
     replace_chars(command, input, newline, '%');
 
     puts("BEGIN COMMAND");
-    
+
     printf("%s\n", command);
 
     puts("END COMMAND");

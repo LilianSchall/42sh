@@ -16,16 +16,16 @@ char *get_all_unquoted(char **argv)
         len += strlen(argv[i]) + 1;
         i++;
     }
-    char *result = mem_malloc(len+1);
+    char *result = mem_malloc(len + 1);
     i = 0;
     result[0] = 0;
     while (argv[i])
     {
         strcat(result, argv[i]);
-        if (argv[i+1])
+        if (argv[i + 1])
             strcat(result, " ");
         i++;
-        //printf("%s\n", result);
+        // printf("%s\n", result);
     }
     result[len] = 0;
     return result;
@@ -37,7 +37,7 @@ char *get_var_aro(char **argv, int quoted)
         return NULL;
     if (!quoted)
         return get_all_unquoted(argv);
-    
+
     int len = 0;
     int i = 0;
     while (argv[i])
@@ -56,7 +56,7 @@ char *get_var_aro(char **argv, int quoted)
         if (argv[i + 1])
             strcat(result, "\" ");
         i++;
-        //printf("%s\n", result);
+        // printf("%s\n", result);
     }
     result[len - 2] = '\"';
     result[len - 1] = 0;
@@ -69,7 +69,7 @@ char *get_var_star(char **argv, int quoted)
         return NULL;
     if (!quoted)
         return get_all_unquoted(argv);
-    
+
     int len = 0;
     int i = 0;
     while (argv[i])
@@ -86,7 +86,7 @@ char *get_var_star(char **argv, int quoted)
         strcat(result, argv[i]);
         strcat(result, " ");
         i++;
-        //printf("%s\n", result);
+        // printf("%s\n", result);
     }
     result[len] = '"';
     return result;
@@ -136,8 +136,8 @@ char *get_var_n(const char *name, char **argv)
 
 char *get_spec_var(const char *name, char **argv, int quoted)
 {
-    //printf("is quoted = %d\n", quoted);
-    //printf("special var name = %s\n", name);
+    // printf("is quoted = %d\n", quoted);
+    // printf("special var name = %s\n", name);
     if (!strcmp(name, "@"))
         return get_var_aro(argv, quoted);
     else if (!strcmp(name, "*"))
@@ -196,10 +196,10 @@ char *expand_var(const char *str, char **argv, int quoted)
             char *var = getenv(tmp);
             mem_free(tmp);
 
-			if (!var)
-				var = get_spec_var(var_name, argv, quoted);            
+            if (!var)
+                var = get_spec_var(var_name, argv, quoted);
 
-			if (var)
+            if (var)
             {
                 // Replace the variable with its value
                 int len = strlen(var);
@@ -231,32 +231,32 @@ char *expand_var(const char *str, char **argv, int quoted)
 char *expand_symbol_array(struct symbol **values, char **argv)
 {
     char *result = mem_malloc(strlen(values[0]->value) + 1);
-	char *p = result;
+    char *p = result;
     for (int i = 0; values[i] != NULL; i++)
-	{
-		char * expanded = NULL;
+    {
+        char *expanded = NULL;
         if (values[i]->is_expandable)
-		{		
-            expanded = expand_var(values[i]->value, argv,
-                    values[i]->is_double_quoted);
+        {
+            expanded =
+                expand_var(values[i]->value, argv, values[i]->is_double_quoted);
         }
         else
-		{
-			expanded = gc_strdup(values[i]->value);
-    	}
+        {
+            expanded = gc_strdup(values[i]->value);
+        }
 #if 0
 		printf("%d\n", i);
 		printf("%s\n", values[i]->value);
 		printf("%s\n", expanded);
 #endif
-		int len = strlen(expanded);
+        int len = strlen(expanded);
         int cur_len = p - result;
         result = mem_realloc(result, cur_len + len + 1);
         p = result + cur_len;
         memcpy(p, expanded, len);
         p += len;
-		mem_free(expanded);
-	}
-	*p = '\0';
+        mem_free(expanded);
+    }
+    *p = '\0';
     return result;
 }

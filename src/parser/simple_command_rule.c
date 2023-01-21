@@ -96,11 +96,12 @@ struct AST *simple_command_rule(struct linked_list *token_list,
     // the name is now transformed as arg of command AST
 
     token = list_head(token_list);
-    
+
     // parsing arguments
-    while (token != NULL && (is_non_delimitator(token->type) 
-           || is_substitution_ruled(token->type) || token->type == IO_NUMBER
-           || is_redirect(token)))
+    while (token != NULL
+           && (is_non_delimitator(token->type)
+               || is_substitution_ruled(token->type) || token->type == IO_NUMBER
+               || is_redirect(token)))
     {
         struct AST *child = element_rule(token_list, trigger_warn);
 
@@ -137,4 +138,3 @@ struct AST *simple_command_rule(struct linked_list *token_list,
 simple_command_end:
     return tree;
 }
-

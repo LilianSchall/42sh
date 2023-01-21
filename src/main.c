@@ -39,9 +39,9 @@ int main(int argc, char **argv)
     }
 
     int status_code = launch_shell(options, filename, input, new_argv);
-    
+
     if (new_argv)
         free(new_argv);
-    
+
     return status_code;
 }

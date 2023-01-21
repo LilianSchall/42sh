@@ -36,8 +36,7 @@ int launch_script_mode(int options, char *file_script, char **argv)
     return status_code;
 }
 
-int launch_shell(int options, char *file_script, char *input,
-        char **argv)
+int launch_shell(int options, char *file_script, char *input, char **argv)
 {
     int status_code = 0;
 

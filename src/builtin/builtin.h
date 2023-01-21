@@ -16,10 +16,10 @@
 #include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 #include "io_backend/io_backend.h"
-#include "linked_list/linked_list.h"
 #include "lexer/lexer.h"
-#include "token/token.h"
+#include "linked_list/linked_list.h"
 #include "parser/parser.h"
+#include "token/token.h"
 
 // struct to stock echo option
 struct echo_option
@@ -55,4 +55,3 @@ int unset_fn(int argc, char *argv[], struct linked_list *functions);
 int export_fn(int argc, char *argv[]);
 
 #endif /* !BUILTIN_H */
-

@@ -58,4 +58,3 @@ struct AST *compound_list_rule(struct linked_list *token_list,
 
     return tree;
 }
-

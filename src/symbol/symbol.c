@@ -1,7 +1,7 @@
 #include "symbol.h"
 
 struct symbol *new_symbol(char *value, bool is_expandable,
-        bool is_single_quoted, bool is_double_quoted)
+                          bool is_single_quoted, bool is_double_quoted)
 {
     struct symbol *sym = mem_malloc(sizeof(struct symbol));
 
@@ -29,9 +29,10 @@ void free_symbol(void *data)
 
 // this function returns an array with one symbol element
 struct symbol **new_unique_symbols(char *value, bool is_expandable,
-        bool is_single_quoted, bool is_double_quoted)
+                                   bool is_single_quoted, bool is_double_quoted)
 {
-    struct symbol *sym = new_symbol(value, is_expandable, is_single_quoted, is_double_quoted);
+    struct symbol *sym =
+        new_symbol(value, is_expandable, is_single_quoted, is_double_quoted);
 
     if (!sym)
         return NULL;
@@ -71,7 +72,7 @@ void print_symbols(struct symbol **symbols)
 
         printf("%s, ", sym->value);
         printf("is_expandable: %d, ", sym->is_expandable);
-    } 
+    }
 }
 
 char *get_cat_symbols(struct symbol **values)

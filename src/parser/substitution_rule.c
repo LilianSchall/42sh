@@ -1,16 +1,16 @@
 #include "parser.h"
 
-
 struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = list_head(token_list);
-    
-    if (!token || (!is_substitution_ruled(token->type) 
-        && !is_non_delimitator(token->type)))
+
+    if (!token
+        || (!is_substitution_ruled(token->type)
+            && !is_non_delimitator(token->type)))
         return NULL;
 
     list_pop(token_list);
-    
+
     // we return an ARG AST
     if (is_non_delimitator(token->type))
         return new_AST(token, ARG, NULL);

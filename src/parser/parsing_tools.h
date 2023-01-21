@@ -29,4 +29,3 @@ bool is_non_delimitator(enum token_type type);
 bool is_substitution_ruled(enum token_type type);
 
 #endif /* !PARSING_TOOLS_H */
-

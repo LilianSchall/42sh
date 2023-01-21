@@ -3,7 +3,7 @@
 char *get_file_content(char *filename)
 {
     FILE *file = fopen(filename, "r");
-    if(file == NULL)
+    if (file == NULL)
         return NULL;
     char buffer[MAX_LENGTH];
     fseek(file, 0, SEEK_END);
@@ -44,4 +44,3 @@ char *get_interactive_content(bool getline_mode)
     }
     return return_str;
 }
-
