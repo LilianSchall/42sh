@@ -13,15 +13,16 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
     char *var_name = var_name_ast->value->values[0]->value;
 
     // taking second child(cant be NULL)
-    struct AST *var_value_ast = child->next->data;
+    struct AST *value_ast = child->next->data;
 
-    if (var_value_ast->type == ARG)
+    if (value_ast->type == ARG)
     {
-        ret_val = setenv(var_name, var_value_ast->value->values[0]->value, 1);
+        ret_val = setenv(var_name, expand_symbol_array(value_ast->value->values,
+                    env->argv), 1);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {
-        // TODO in step 3 or 4
+        setenv(var_name, execute_AST_D_SUBSHELL(value_ast, env), 1); 
     }
     return ret_val;
 }
