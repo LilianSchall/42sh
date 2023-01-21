@@ -19,7 +19,7 @@ int exec_unset(int argc, char *argv[])
          {
              for (int p = 2; p < argc; p++)
              {
-                 if (remove_function(argv[p]) != 0)
+                 if (remove_function(NULL, argv[p]) != 0)
                  {
                      fprintf(stderr, "Invalid argument: %s\n", argv[p]);
                      return 1;
