@@ -1,33 +1,29 @@
 #include "builtin/builtin.h"
 
-int exec_unset(int argc, char *argv[])
+int unset_fn(int argc, char *argv[], struct linked_list *functions)
 {
-    if (argc >= 2) 
+    if (argc < 2) 
+        return 0;
+    if (strcmp(argv[1], "-v") == 0)
     {
-        if (strcmp(argv[1], "-v") == 0)
-        {
-	        for (int i = 2; i < argc; i++)
-	        {
-	            unsetenv(argv[i]);
-	        }
-	    }
-	    else if (strcmp(argv[1], "-f") == 0)
-        {
-            for (int p = 2; p < argc; p++)
-                remove_function(NULL, argv[p]);
-        }	 
-        else
+	    for (int i = 2; i < argc; i++)
 	    {
-	        for (int j = 1; j < argc; j++)
-	        {
-		        unsetenv(argv[j]);
-            }
+            unsetenv(argv[i]);
+	    }
+	}
+    else if (strcmp(argv[1], "-f") == 0)
+    {
+        for (int i = 2; i < argc; i++)
+        {
+            remove_function(functions, argv[i]);
         }
-    }
+    }	 
     else
     {
-        fprintf(stderr, "unset: not enough arguments");
-        return 1;
+        for (int i = 1; i < argc; i++)
+        {
+	        unsetenv(argv[i]);
+        }
     }
     return 0;
 }

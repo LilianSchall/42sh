@@ -1,6 +1,6 @@
 #include "builtin/builtin.h"
 
-int exec_export(int argc, char *argv[])
+int export_fn(int argc, char *argv[])
 {
     if (argc < 2)
        return 0;
@@ -11,7 +11,7 @@ int exec_export(int argc, char *argv[])
 	    char *value = strtok(NULL, "=");
         if (value == NULL)
         {
-	        if (setenv(var, "", 1) != 0)
+	        if (setenv(var, "", 0) != 0)
             {
     	        fprintf(stderr, "42sh: export failed");
 		        return 1;

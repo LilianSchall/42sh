@@ -45,14 +45,14 @@ int true_fn(int argc, char **argv);
 // return 1
 int false_fn(int argc, char **argv);
 
-int cd_fun(int argc, char **argv);
+int cd_fn(int argc, char **argv);
 
 int dot_fn(int argc, char **argv, struct linked_list *functions);
 
 // unset builtin function
-int exec_unset(int argc, char *argv[]);
+int unset_fn(int argc, char *argv[], struct linked_list *functions);
 
-int exec_export(int argc, char *argv[]);
+int export_fn(int argc, char *argv[]);
 
 #endif /* !BUILTIN_H */
 
