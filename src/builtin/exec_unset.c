@@ -14,7 +14,7 @@ int exec_unset(int argc, char *argv[])
 	    else if (strcmp(argv[1], "-f") == 0)
         {
             for (int p = 2; p < argc; p++)
-                remove_variable(NULL, argv[p]);
+                remove_function(NULL, argv[p]);
         }	 
         else
 	    {
