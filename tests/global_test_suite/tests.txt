@@ -1,0 +1,122 @@
+echo salut
+echo "defef"
+echo coucou \; \;
+echo coucou\ c\'est\ moi
+echo \\ \\ \\ \\
+echo c\o\u\co\u
+echo coucou\" les\ "amise"
+echo "'coucou'"
+echo \"coucou\"
+echo "ca"" cest" vraiment toi"       """
+echo
+echo coucou les amis
+for i in 1 2 3; do echo $i; done
+for i in "1 2" 3; do echo $i; done
+echo foo >& 2
+echo 'coucou'
+'echo' coucou
+echo '' coucou
+'ec'ho 'c'o'u'c'o'u
+'''''echo' 'coucou'
+echo "\ coucou \ls \amis"
+echo coucou; cd .. ; cd - ; ls ;
+exit 10; echo coucou; ls
+echo coucou;ls;ls
+echo coucou; echo cest moi;
+echo coucou; ls; ls; ls
+echo coucou;
+cd -
+cd ..
+cd
+cd ../../../../../../../../../../../../../
+cd /
+# This is a comment
+#
+echo \# This is not a comment
+# This is a comment ls#
+echo coucou \\# coucou
+echo coucou \\# coucou\
+exit 1000
+exit 5
+exit 1
+exit 0
+exit -1
+echo $UID
+echo cocuo $RANDOM ---
+echo $
+echo $IF\S
+echo \$OLDPWD
+echo $HO
+echo "$HO"ME
+echo "$"OLDPWD
+echo "$PWD"
+if false; then echo PERDU; else echo GAGNE; fi > k.tmp; cat k.tmp
+cat k.tmp || echo lol; echo k.tmp || echo lol
+echo lol && echo pouet && echo truc; cat k.tmp && echo lol; false && echo pouet
+echo a||echo b&&echo c&&echo d;cat k.tmp &&cat k.tmp
+echo lol | cat -e ;echo lol > k.tmp && cat k.tmp;cat < k.tmp
+(false)&&echo a&&echo b
+echo abc -- deif;echo -- ghi;echo zzz ---;echo -- -n abc
+echo "a" "" "" "b" | cat -e
+echo | cat -e
+echo -n | cat -e
+echo aaa;exit 256;echo bbb
+true;false; exit
+echo aaa;exit;echo bbb
+echo aaa;exit 0 && echo bbb
+echo a | echo b | echo b | exit 0 | echo end
+echo aaa; (echo bbb; exit 8) && exit 4
+echo aaa;exit 42;echo bbb
+echo a&&echo b;echo c||echo d;
+echo a&&echo b;echo c||echo d
+echo #a
+echo a#b
+echo ##
+echo \#\#
+echo \#aa
+echo # aa#
+echo 	#a
+echo #?
+echo "Single Quote"
+echo 'foobar'
+echo 'foobar'
+echo 'foo\bar'
+echo "Double Quote"
+echo "foobar"
+echo "foobar"
+echo "foo\bar"
+echo "Double Quote Single Quote"
+echo "echo 'foobar'"
+echo "echo 'foobar'"
+echo "echo 'foo\bar'"
+echo "Unusuel bytes"
+echo 'uv		wx'
+echo "Escaping"
+echo "\'abcd\'"
+echo "\\'abcd\\'"
+echo "'"
+echo \'
+echo "'\''"
+echo "'\'abcd\''"
+echo "{test//str/"dddd"}"
+echo "{test//str/'}"   # hangs
+echo "one cat"
+echo aaa | (echo bbb 1; cat -e ;echo ccc 1) | (echo bbb 2; cat -e ;echo ccc 2) | (echo bbb 3; cat -e ;echo ccc 3) | (echo bbb 4; cat -e ;echo ccc 4) | (echo bbb 5; cat -e ;echo ccc 5) | (echo bbb 6; cat -e ;echo ccc 6) | (echo bbb 7; cat -e ;echo ccc 7) | (echo bbb 8; cat -e ;echo ccc 8) | (echo bbb 9; cat -e ;echo ccc 9)
+echo "start";exit 21 | exit 42 | exit 84;echo "end"
+echo abc | cat | cat | cat -e | cat -e
+echo lol | wc -l | xargs echo; echo lol | wc -l | xargs echo | cat -e
+echo aaa > k.tmp;echo bbb >> k.tmp;echo ccc >> k.tmp; cat -e < k.tmp
+echo merde > k.tmp;cat 3< k.tmp <&3
+echo 'abc' > k.tmp; echo 'def' <&- < k.tmp; cat -e k.tmp
+(echo abc;);(echo 123; echo 456|cat -e;);(echo a;echo b;echo c;)
+(echo foo; echo bar; ls k.tmp) > k.tmp;echo -------;cat k.tmp;echo -------
+(echo abc)
+(echo abc; echo "eor" >&2)
+echo "\n"
+echo \n
+echo '\n'
+echo "fdeffe\ngredgre"
+echo -n lol
+echo -E "lol\njju\tjd"
+if ! false;then echo lol;fi
+for var in 10 9 8 7 6 5 4 3 2 1 0; do echo "$var"; done; exit 0
