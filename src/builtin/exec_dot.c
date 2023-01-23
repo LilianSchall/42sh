@@ -74,7 +74,10 @@ int dot_fn(int argc, char **argv, struct linked_list *functions)
     }
 
     if(strlen(input) == 0)
-        return 0;
+    {
+        mem_free(input);
+        return 0;   
+    }
 
     if (input == NULL)
     {
