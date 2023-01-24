@@ -15,6 +15,7 @@ struct env
 
 enum AST_type
 {
+    CASE_C,
     D_SUBSHELL, // $(..)
     SUBSHELL, // (..)
     FUNCTION,

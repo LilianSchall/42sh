@@ -29,6 +29,7 @@ src = files(
 	'execution/execution.c',
 	'execution/exec_condition.c',
 	'execution/exec_subshell.c',
+	'execution/exec_case.c',
 	'execution/exec_assignment.c',
 	'execution/exec_operator.c',
 	'execution/exec_redirection.c',
