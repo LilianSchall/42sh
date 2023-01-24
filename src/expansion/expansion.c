@@ -10,14 +10,14 @@ char *get_var_pid(void)
 char *get_all_unquoted(char **argv)
 {
     int len = 0;
-    int i = 0;
+    int i = 1;
     while (argv[i])
     {
         len += strlen(argv[i]) + 1;
         i++;
     }
     char *result = mem_malloc(len + 1);
-    i = 0;
+    i = 1;
     result[0] = 0;
     while (argv[i])
     {
@@ -39,7 +39,7 @@ char *get_var_aro(char **argv, int quoted)
         return get_all_unquoted(argv);
 
     int len = 0;
-    int i = 0;
+    int i = 1;
     while (argv[i])
     {
         len += strlen(argv[i]) + 3;
@@ -48,7 +48,7 @@ char *get_var_aro(char **argv, int quoted)
     
     char *result = mem_malloc(len);
     result[0] = 0;
-    i = 0;
+    i = 1;
     char *delim = mem_malloc(2 * sizeof(char));
     delim[0] = -1;
     delim[1] = 0;
@@ -76,14 +76,14 @@ char *get_var_star(char **argv, int quoted)
         return get_all_unquoted(argv);
 
     int len = 0;
-    int i = 0;
+    int i = 1;
     while (argv[i])
     {
         len += strlen(argv[i]) + 1;
         i++;
     }
     char *result = mem_malloc(len);
-    i = 0;
+    i = 1;
     result[0] = 0;
     while (argv[i])
     {
