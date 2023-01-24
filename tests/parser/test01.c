@@ -39,7 +39,7 @@ Test(parser, parse_echo_foo)
 {
     char input[] = "echo foo";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -55,7 +55,7 @@ Test(parser, parse_echo_foo_foo)
 {
     char input[] = "echo foo foo";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 

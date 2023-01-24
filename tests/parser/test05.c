@@ -14,7 +14,7 @@ Test(parser, while_echo_foo_semicolon_do_echo_prout_echo_file_done)
 {
     char input[] = "while 'echo' \"foo\"\ndo echo prout\necho 'file';done";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -30,7 +30,7 @@ Test(parser, while_true_do_echo_foo_done_sup_file)
 {
     char input[] = "while true\ndo\necho foo; done> file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -46,7 +46,7 @@ Test(parser, for_i_semicolon_do_echo_foo_done)
 {
     char input[] = "for i ;\n\n do echo foo; done";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -62,7 +62,7 @@ Test(parser, for_i_in_do_echo_foo_done)
 {
     char input[] = "for i in; do echo foo; done";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 

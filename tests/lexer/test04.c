@@ -9,7 +9,7 @@ Test(lexer, echo_foo_pipe_cat_zero_inf_file)
 {
     char input[] = "echo foo | cat 0< file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -29,7 +29,7 @@ Test(lexer, echo_foo_pipe_cat_inf_file)
 {
     char input[] = "echo foo | cat < file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -48,7 +48,7 @@ Test(lexer, echo_foo_pipe_cat_zero_space_inf_file)
 {
     char input[] = "echo foo | cat 0 < file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     

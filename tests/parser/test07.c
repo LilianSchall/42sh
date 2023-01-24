@@ -14,7 +14,7 @@ Test(parser, echo_foo_and_echo_baz)
 {
     char input[] = "echo foo && echo baz";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -30,7 +30,7 @@ Test(parser, echo_foo_or_echo_baz)
 {
     char input[] = "echo foo || echo baz";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -46,7 +46,7 @@ Test(parser, echo_foo_and_echo_baz_and_hello)
 {
     char input[] = "echo foo && echo baz && echo hello";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -62,7 +62,7 @@ Test(parser, echo_foo_and_echo_baz_or_hello)
 {
     char input[] = "echo foo && echo baz || echo hello";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 

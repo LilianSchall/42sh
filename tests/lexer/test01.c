@@ -43,7 +43,7 @@ Test(lexer, test_echo_foo)
 {
     char input[] = "echo foo";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -58,7 +58,7 @@ Test(lexer, test_echo_foo_semicolon)
 {
     char input[] = "echo foo;";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -74,7 +74,7 @@ Test(lexer, if_echo_true_then_echo_foo_fi)
 {
     char input[] = "if echo a\n then echo foo; fi";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -96,7 +96,7 @@ Test(lexer, if_cond_and_cond_then_echo_else_echo_fi)
 {
     char input[] = "if echo true&& false;then echo foo; else echo fada ; fi";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -124,7 +124,7 @@ Test(lexer, test_echo_foo_semicolon_quoted)
 {
     char input[] = "echo 'foo ;'";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -139,7 +139,7 @@ Test(lexer, test_echo_foo_semicolon_quoted_followed)
 {
     char input[] = "'echo' 'foo ;'baz";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     

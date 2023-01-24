@@ -14,7 +14,7 @@ Test(parser, parse_if_true_then_baba_else_boo)
 {
     char input[] = "if true; then echo baba; else echo boo; fi";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
