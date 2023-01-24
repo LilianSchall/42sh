@@ -42,7 +42,6 @@ exit 1
 exit 0
 exit -1
 echo $UID
-echo cocuo $RANDOM ---
 echo $
 echo $IF\S
 echo \$OLDPWD

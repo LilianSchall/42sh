@@ -3,9 +3,8 @@
 // take a string in parameter and return a argv of all words
 char **split_string(char *str)
 {
-    // fprintf(stderr, "%s\n\n", str);
+    //fprintf(stderr, "%s\n\n", str);
     char **result = mem_malloc(sizeof(char *) * 2);
-    ;
     char *p = str;
     int i = 0;
     while (*p == ' ' || *p == '\n')
@@ -14,14 +13,20 @@ char **split_string(char *str)
     int quoted = 0;
     while (*p)
     {
-        // printf("char: %c, quoted: %d\n", *p, quoted);
+        // printf("char: %c(%d), quoted: %d\n", *p, *p, quoted);
         if (*p == -1)
         {
             quoted = !quoted;
             int len = strlen(p + 1);
-            memmove(p, p + 1, len + 1);
+            if (*(p + 1) == -1)
+            {
+                quoted = !quoted;
+                memmove(p, p + 2, len);
+            }
+            else
+                memmove(p, p + 1, len + 1);
         }
-        else if (!quoted && (*p == ' ' || *p == '\n'))
+        else if (!quoted && isspace(*p))
         {
             int len = p - start;
             result[i] = mem_malloc(len + 1);
@@ -36,7 +41,7 @@ char **split_string(char *str)
         else
             p++;
     }
-    if (*(p - 1) == ' ' || *(p - 1) == '\n')
+    if (isspace(*(p - 1)))
     {
         result[i] = NULL;
         return result;
