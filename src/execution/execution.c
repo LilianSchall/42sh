@@ -116,6 +116,9 @@ int execute_AST_main(struct AST *tree, struct env *env)
     case SEQUENCE:
         ret_val = execute_AST_sequence(tree, env);
         break;
+    case CASE_C:
+        ret_val = execute_AST_case(tree, env);
+        break;
     case SUBSHELL:
         ret_val = execute_AST_subshell(tree, env);
         break;

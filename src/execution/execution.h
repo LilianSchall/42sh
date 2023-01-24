@@ -17,6 +17,9 @@
 // return the string printed in stdout of the subshell
 char *execute_AST_D_SUBSHELL(struct AST *tree, struct env *env);
 
+// execute AST case
+int execute_AST_case(struct AST *tree, struct env *env);
+
 // execute D_SUBSHELL ast $(..)
 char *execute_AST_D_SUBSHELL(struct AST *tree, struct env *env);
 
