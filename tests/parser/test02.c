@@ -14,7 +14,7 @@ Test(parser, parse_echo_foo_semicolon)
 {
     char input[] = "echo foo;";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -30,7 +30,7 @@ Test(parser, parse_echo_foo_echo_foo)
 {
     char input[] = "echo foo; echo foo;";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -46,7 +46,7 @@ Test(parser, echo_foo_newline_echo_foo_newline_echo_fada)
 {
     char input[] = "echo foo;\n echo foo;\necho fada fato";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 

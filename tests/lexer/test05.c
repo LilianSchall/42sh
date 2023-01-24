@@ -9,7 +9,7 @@ Test(lexer, echo_quote_double_quote)
 {
     char input[] = "echo \"'coucou'\"";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -24,7 +24,7 @@ Test(lexer, until_true_do_echo_dollar_foo)
 {
     char input[] = "until true; do echo $foo \";\" ; done";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     

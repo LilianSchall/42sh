@@ -41,6 +41,7 @@ char *get_interactive_content(bool getline_mode)
             capacity += MAX_LENGTH;
         }
         strcat(return_str, buffer);
+        size += len;
     }
     return return_str;
 }

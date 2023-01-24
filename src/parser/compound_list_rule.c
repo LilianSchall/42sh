@@ -35,7 +35,11 @@ struct AST *compound_list_rule(struct linked_list *token_list,
             tmp = consume_token(token_list, NEWLINE, info);
 
             if (!tmp)
-                break;
+            {
+                warnx("Missing NEWLINE or SEMICOLON at end of compound_list rule");
+                free_AST(tree);
+                return NULL;
+            }
         }
         free_token(tmp);
         purge_newline_token(token_list);
@@ -47,12 +51,6 @@ struct AST *compound_list_rule(struct linked_list *token_list,
 
         blend_sequence_AST(tree, command);
     }
-
-    info.sym = ";";
-    struct token *tmp = consume_token(token_list, SEMICOLON, info);
-
-    if (tmp)
-        free_token(tmp);
 
     purge_newline_token(token_list);
 

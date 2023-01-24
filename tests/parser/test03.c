@@ -14,7 +14,7 @@ Test(parser, echo_foo_sup_file)
 {
     char input[] = "echo foo > file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 
@@ -30,7 +30,7 @@ Test(parser, if_true_then_echo_foo_fi_sup_file)
 {
     char input[] = "if true\nthen\necho foo;\nfi> file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct AST *tree = build_shell_AST(token_list);
 

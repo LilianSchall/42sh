@@ -19,13 +19,13 @@ struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
     free_token(token);
 
     struct AST *compound = compound_list_rule(token_list, trigger_warn);
-
+    pretty_printer(compound);
     if (!compound)
         return NULL;
 
     token = list_head(token_list);
 
-    if (token->type != CLOSE_PARENTHESE)
+    if (!token || token->type != CLOSE_PARENTHESE || token->type != BACKQUOTE)
     {
         warnx("Missing CLOSE_PARENTHESE at substitution_rule");
         free_AST(compound);

@@ -17,8 +17,8 @@ static struct token *create_token(char **word_begin_ptr, char **input,
 static void execute_lexing(struct linked_list *token_list,
                            char **word_begin_ptr, char **input,
                            struct lexer_states states);
-static void add_sym_to_array(struct symbol **symbols, struct symbol *sym,
-                             int *capacity)
+static struct symbol **add_sym_to_array(struct symbol **symbols,
+        struct symbol *sym, int *capacity)
 {
     int len = 0;
 
@@ -35,6 +35,8 @@ static void add_sym_to_array(struct symbol **symbols, struct symbol *sym,
     }
 
     symbols[len++] = sym;
+
+    return symbols;
 }
 
 struct token *create_token(char **word_begin_ptr, char **input,
@@ -49,10 +51,15 @@ struct token *create_token(char **word_begin_ptr, char **input,
     do
     {
         int offset = get_symbol(&begin, input, &sym);
-        struct symbol *new_sym = mem_malloc(sizeof(struct symbol));
-        memcpy(new_sym, &sym, sizeof(struct symbol));
+        if (!strlen(sym.value))
+            mem_free(sym.value);
+        else
+        {
+            struct symbol *new_sym = mem_malloc(sizeof(struct symbol));
+            memcpy(new_sym, &sym, sizeof(struct symbol));
 
-        add_sym_to_array(symbols, new_sym, &capacity);
+            symbols = add_sym_to_array(symbols, new_sym, &capacity);
+        }
         begin += offset;
     } while (begin < *input);
 
@@ -176,6 +183,7 @@ static bool is_chevron(char c)
 struct token *parse_double_quoted_word(char **word_begin_ptr,
                                        struct lexer_states states, char **input)
 {
+    static CREATE_DELIMITATORS(delims);
     if (!(*word_begin_ptr))
     {
         if (GETCHAR(input, 0) == '\"') // word is ""
@@ -206,7 +214,8 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     {
         // if we are not at the end and the next char is not a space
         // and it isn't a delimitator
-        if (!my_isspace(GETCHAR(input, 1)))
+        if (!my_isspace(GETCHAR(input, 1))
+            && (find_delims(GETCHAR(input, 1), delims) == -1))
         {
             // we haven't finished reading our whole token,
             // so we skip the the quote and continue reading
@@ -292,6 +301,18 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     if (GETCHAR(input, 0) == '#' && !isspace(GETCHAR(input, 1)))
         return NULL;
 
+    // if we encounter a single quote while already parsing a word
+    // we omit the quote by putting its slot to SINGLE_QUOTE_MARKER
+    // and juste continue reading the word but this time in quoted mode
+    // when we will create the token, we will read the whole word again
+    // and delete the -1 from the token
+    if (GETCHAR(input, 0) == '\'')
+    {
+        skip_char(input, 0, SINGLE_QUOTE_MARKER);
+        *states.reading_quote = true;
+        return NULL;
+    }
+
     char tmp[3];
     tmp[0] = GETCHAR(input, 0);
     tmp[1] = GETCHAR(input, 1);
@@ -308,17 +329,6 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
         return NULL;
     }
 
-    // if we encounter a single quote while already parsing a word
-    // we omit the quote by putting its slot to SINGLE_QUOTE_MARKER
-    // and juste continue reading the word but this time in quoted mode
-    // when we will create the token, we will read the whole word again
-    // and delete the -1 from the token
-    if (GETCHAR(input, 0) == '\'')
-    {
-        skip_char(input, 0, SINGLE_QUOTE_MARKER);
-        *states.reading_quote = true;
-        return NULL;
-    }
     // same thing for double quote, we skip the double quote and enter
     // double_quoted mode
     // the omitted quote will be replaced by a DOUBLE_QUOTE_MARKER
@@ -402,7 +412,7 @@ void clean_token_list(struct linked_list *token_list)
     }
 }
 
-struct linked_list *build_token_list(char *input)
+struct linked_list *build_token_list(char *input, int *err)
 {
     if (strlen(input) == 0)
         return NULL;
@@ -426,6 +436,8 @@ struct linked_list *build_token_list(char *input)
     if (reading_quote || reading_double_quote) // quote missmatch
     {
         deep_free_list(token_list, free_token);
+        if (err)
+            *err = 1;
         return NULL;
     }
 

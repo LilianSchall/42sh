@@ -85,7 +85,7 @@ int dot_fn(int argc, char **argv, struct linked_list *functions)
         return 2;
     }
 
-    struct linked_list *tokens = build_token_list(input);
+    struct linked_list *tokens = build_token_list(input, NULL);
 
     if (tokens == NULL)
     {

@@ -9,7 +9,7 @@ Test(lexer, while_true_semicolon_do_echo_prout_done)
 {
     char input[] = "while true; do echo prout done";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -29,7 +29,7 @@ Test(lexer, test_equal_thomas_semicolon_echo_dollar_tes)
 {
     char input[] = "test=thomas;echo $test";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     

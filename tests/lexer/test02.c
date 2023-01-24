@@ -9,7 +9,7 @@ Test(lexer, test_echo_sup_file)
 {
     char input[] = "echo foo > file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -26,7 +26,7 @@ Test(lexer, test_echo_sup_sup_file)
 {
     char input[] = "echo foo >> file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -43,7 +43,7 @@ Test(lexer, test_echo_two_sup_file)
 {
     char input[] = "echo foo 2> file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -61,7 +61,7 @@ Test(lexer, test_echo_two_1024_file)
 {
     char input[] = "echo foo 1024> file";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     
@@ -79,7 +79,7 @@ Test(lexer, test_echo_two_sup_file_one_inf_test)
 {
     char input[] = "echo foo 2> file 1< test";
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, NULL);
 
     struct linked_node *node = token_list->head;
     

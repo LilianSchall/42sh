@@ -166,7 +166,6 @@ free_tree:
     free_AST(seq);
 
 for_error:
-    free_token(do_token);
     free_token(word);
     free_token(for_token);
     return NULL;
