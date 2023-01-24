@@ -73,6 +73,12 @@ int dot_fn(int argc, char **argv, struct linked_list *functions)
         mem_free(filename);
     }
 
+    if(strlen(input) == 0)
+    {
+        mem_free(input);
+        return 0;   
+    }
+
     if (input == NULL)
     {
         fprintf(stderr, "42sh: file not found\n");
