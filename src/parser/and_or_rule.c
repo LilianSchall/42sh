@@ -44,7 +44,7 @@ static struct AST *and_or_subrule(struct linked_list *token_list,
 
     if (command == NULL)
     {
-        free_AST(token);
+        free_AST(tree);
         return NULL;
     }
 

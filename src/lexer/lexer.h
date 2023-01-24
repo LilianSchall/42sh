@@ -23,6 +23,6 @@ struct lexer_states
 // returns NULL if input is NULL (wrong execution)
 // omits shell commands and shebangs
 // interpret every element between single quotes as words
-struct linked_list *build_token_list(char *input);
+struct linked_list *build_token_list(char *input, int *err);
 
 #endif /* !LEXER_H */

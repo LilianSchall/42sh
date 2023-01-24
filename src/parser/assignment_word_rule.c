@@ -16,22 +16,29 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
 
     char *str = get_cat_symbols(token->values);
 
-    char *name = gc_strdup(strtok(str, "="));
-    char *value = gc_strdup(strtok(NULL, "="));
+    if (!strcmp(str, "="))
+    {
+        mem_free(str);
+        free_token(token);
+        return NULL;
+    }
 
-    mem_free(str);
+    char *name = strtok(str, "=");
+    char *value = strtok(NULL, "\0");
+
 
     struct AST *tree = new_AST(NULL, ASSIGNMENT, new_list());
 
     list_append(
         tree->linked_list,
-        new_AST(new_token(new_unique_symbols(name, false, false, false), WORD),
+        new_AST(new_token(new_unique_symbols(gc_strdup(name), false, false, false), WORD),
                 ARG, NULL));
     list_append(
         tree->linked_list,
-        new_AST(new_token(new_unique_symbols(value, false, false, false), WORD),
+        new_AST(new_token(new_unique_symbols(gc_strdup(value ? value : ""), false, false, false), WORD),
                 ARG, NULL));
 
+    mem_free(str);
     free_token(token);
 
     return tree;

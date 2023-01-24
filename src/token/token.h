@@ -21,6 +21,7 @@ enum token_type
     OPEN_PARENTHESE,
     DOLL_OPEN_PARENTHESE,
     CLOSE_PARENTHESE,
+    BACKQUOTE,
     FOR,
     IN,
     DO,
@@ -61,6 +62,7 @@ enum token_type
         [OPEN_PARENTHESE] = "(",                                               \
         [DOLL_OPEN_PARENTHESE] = "$(",                                         \
         [CLOSE_PARENTHESE] = ")",                                              \
+        [BACKQUOTE] = "`",                                                     \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \
         [DO] = "do",                                                           \
@@ -90,13 +92,14 @@ enum token_type
     }
 
 #define CREATE_DELIMITATORS(Name)                                              \
-    char Name[] = { '!', '|', '&',  ';',  '<',  '>', '(',  ')',  '`',          \
-                    '}', '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
+    char Name[] = { '|', '&',  ';',  '<',  '>', '(',  ')',  '`',               \
+                    '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
 #define CREATE_NON_DELIMITATOR(Name)                                           \
     enum token_type Name[] = {                                                 \
         WORD, OPEN_BRACE, FOR,  IN,   DO,   DONE, WHILE,         UNTIL, CASE,  \
-        ESAC, IF,         THEN, ELIF, ELSE, FI,   VARASSIGNMENT, NEG           \
+        ESAC, IF,         THEN, ELIF, ELSE, FI,   VARASSIGNMENT, NEG, \
+        CLOSE_BRACE \
     }
 
 #define CREATE_REDIRECTIONS(Name)                                              \

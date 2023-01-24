@@ -67,6 +67,9 @@ int launch_shell(int options, char *file_script, char *input, char **argv)
 
 int execute_shell_command(int options, char *input, char **argv)
 {
+    int err = 0;
+    if (!strlen(input))
+        return 0;
     // if verbose mode activated, print:
     // - the input
     // - the token_list
@@ -76,7 +79,16 @@ int execute_shell_command(int options, char *input, char **argv)
 
     // get token_list based on given input
 
-    struct linked_list *token_list = build_token_list(input);
+    struct linked_list *token_list = build_token_list(input, &err);
+    
+    if (err)
+    {
+        warnx("Missing a token to lex");
+        return 2;
+    }
+
+    if (!token_list)
+        return 0;
 
     if (is_option_activated(options, VERBOSE))
         print_token_list(token_list);
