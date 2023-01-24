@@ -28,7 +28,9 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
     int argc = 0;
     char **argv = new_argv(tree, &argc, env);
 
-    if (!strcmp("echo", argv[0])) // builtin command
+    if (!argv[0])
+        ret_val = 0;
+    else if (!strcmp("echo", argv[0])) // builtin command
     {
         ret_val = echo_fn(argc, argv);
     }
@@ -77,7 +79,7 @@ static int execute_AST_cmd(struct AST *tree, struct env *env)
 
     free_argv(argv);
 
-    char *tmp = mem_malloc(sizeof(char) * 4);
+    char *tmp = mem_malloc(sizeof(char) * 7);
     sprintf(tmp, "%d", ret_val);
     setenv("?", tmp, 1);
     mem_free(tmp);

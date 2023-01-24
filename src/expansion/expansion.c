@@ -63,8 +63,8 @@ char *get_var_aro(char **argv, int quoted)
         // printf("%s\n", result);
     }
     mem_free(delim);
-    result[len - 2] = -1;
-    result[len - 1] = 0;
+    result[len - 2] = 0;
+    memmove(result, result + 1, len - 1);
     return result;
 }
 
@@ -82,10 +82,9 @@ char *get_var_star(char **argv, int quoted)
         len += strlen(argv[i]) + 1;
         i++;
     }
-    char *result = mem_malloc(len + 2);
+    char *result = mem_malloc(len);
     i = 0;
-    result[0] = -1;
-    result[1] = 0;
+    result[0] = 0;
     while (argv[i])
     {
         strcat(result, argv[i]);
@@ -93,7 +92,7 @@ char *get_var_star(char **argv, int quoted)
         i++;
         // printf("%s\n", result);
     }
-    result[len] = -1;
+    result[len - 1] = 0;
     return result;
 }
 
@@ -166,7 +165,7 @@ char *expand_var(const char *str, char **argv, int quoted)
     char *p = result;
     while (*str)
     {
-        if (*str == '$')
+        if (*str == '$' && *(str + 1) && !isspace(*(str + 1)))
         {
             str++;
             // Find the variable name and end
@@ -195,15 +194,16 @@ char *expand_var(const char *str, char **argv, int quoted)
             {
                 while (*end && *end != ' ' && *end != '$')
                     end++;
-            }
-
+                if (*(end) == '$')
+                    end++;
+            } 
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
-            mem_free(tmp);
 
             if (!var)
-                var = get_spec_var(var_name, argv, quoted);
+                var = get_spec_var(tmp, argv, quoted);
 
+            mem_free(tmp);
             if (var)
             {
                 // Replace the variable with its value
@@ -249,12 +249,24 @@ char *expand_symbol_array(struct symbol **values, char **argv)
         {
             expanded = gc_strdup(values[i]->value);
         }
+        int len = strlen(expanded);
+        if (values[i]->is_double_quoted || values[i]->is_single_quoted)
+        {
+            len += 2;
+            char *tmp = mem_malloc(len + 1);
+            tmp[0] = -1;
+            tmp[1] = 0;
+            strcat(tmp, expanded);
+            tmp[len - 1] = -1;
+            tmp[len] = 0;
+            mem_free(expanded);
+            expanded = tmp;
+        }
 #if 0
 		printf("%d\n", i);
 		printf("%s\n", values[i]->value);
 		printf("%s\n", expanded);
 #endif
-        int len = strlen(expanded);
         int cur_len = p - result;
         result = mem_realloc(result, cur_len + len + 1);
         p = result + cur_len;
