@@ -127,6 +127,11 @@ char *get_var_n(const char *name, char **argv)
 {
     if (!argv)
         return NULL;
+    for (int i = 0; name[i]; i++)
+    {
+        if (name[i] < '0' || name [i] > '9')
+            return NULL;
+    }
     int i = atoi(name);
     int index = 0;
     while (argv[index])

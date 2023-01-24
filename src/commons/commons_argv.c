@@ -3,7 +3,7 @@
 // take a string in parameter and return a argv of all words
 char **split_string(char *str)
 {
-    //fprintf(stderr, "%s\n\n", str);
+    // fprintf(stderr, "%s$\n", str);
     char **result = mem_malloc(sizeof(char *) * 2);
     char *p = str;
     int i = 0;
@@ -41,7 +41,7 @@ char **split_string(char *str)
         else
             p++;
     }
-    if (isspace(*(p - 1)))
+    if (p == str || isspace(*(p - 1)))
     {
         result[i] = NULL;
         return result;
