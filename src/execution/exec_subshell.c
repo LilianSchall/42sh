@@ -4,7 +4,7 @@ char *get_content_of_pipe(int pipefd[2])
 {
     close(pipefd[1]);
     char buffer[1024];
-    char *output = malloc(sizeof(char));
+    char *output = mem_malloc(sizeof(char));
     size_t size = 0;
     size_t i = 0;
 
@@ -13,7 +13,7 @@ char *get_content_of_pipe(int pipefd[2])
     while (nb_read > 0)
     {
         size += nb_read;
-        output = realloc(output, sizeof(char) * (size + 1));
+        output = mem_realloc(output, sizeof(char) * (size + 1));
 
         for (size_t j = 0; j < nb_read; j++)
         {
