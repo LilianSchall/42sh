@@ -5,6 +5,12 @@ int check_case(char *word, struct AST *ast_case, struct env *env)
     int argc = 0;
     char **temp_argv = new_argv(ast_case, &argc, env);
 
+    if (temp_argv[0] == NULL)
+    {
+        free_argv(temp_argv);
+        return 1;
+    }
+
     int ret_val = 0;
     int i = 0;
 
