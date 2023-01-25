@@ -2,7 +2,6 @@ echo salut
 echo "defef"
 echo coucou \; \;
 echo coucou\ c\'est\ moi
-echo \\ \\ \\ \\
 echo c\o\u\co\u
 echo coucou\" les\ "amise"
 echo "'coucou'"
@@ -119,3 +118,7 @@ echo -n lol
 echo -E "lol\njju\tjd"
 if ! false;then echo lol;fi
 for var in 10 9 8 7 6 5 4 3 2 1 0; do echo "$var"; done; exit 0
+IFS=, ; for i in 1,2,3; do echo $i; done
+IFS=, ; for i in 1 2 3; do echo $i; done
+IFS=,;for i in 1 2,3; do echo $i; done
+IFS=,; a="1 2,3";for i in $a; do echo $i; done

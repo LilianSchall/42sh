@@ -19,14 +19,17 @@ char *get_all_unquoted(char **argv)
     char *result = mem_malloc(len + 1);
     i = 1;
     result[0] = 0;
+    char *delim = mem_calloc(sizeof(char), 2);
+    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
         if (argv[i + 1])
-            strcat(result, " ");
+            strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
+    mem_free(delim);
     result[len] = 0;
     return result;
 }
@@ -49,19 +52,22 @@ char *get_var_aro(char **argv, int quoted)
     char *result = mem_malloc(len);
     result[0] = 0;
     i = 1;
-    char *delim = mem_malloc(2 * sizeof(char));
-    delim[0] = -1;
-    delim[1] = 0;
+    char *quot = mem_calloc(sizeof(char), 2);
+    quot[0] = -1;
+    char *delim = mem_calloc(sizeof(char), 2);
+    quot[0] = -2;
+
     while (argv[i])
     {
-        strcat(result, delim);
+        strcat(result, quot);
         strcat(result, argv[i]);
-        strcat(result, delim);
+        strcat(result, quot);
         if (argv[i + 1])
-            strcat(result, " ");
+            strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
+    mem_free(quot);
     mem_free(delim);
     result[len - 2] = 0;
     memmove(result, result + 1, len - 1);
@@ -85,10 +91,12 @@ char *get_var_star(char **argv, int quoted)
     char *result = mem_malloc(len);
     i = 1;
     result[0] = 0;
+    char *delim = mem_calloc(sizeof(char), 2);
+    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
-        strcat(result, " ");
+        strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
@@ -197,7 +205,7 @@ char *expand_var(const char *str, char **argv, int quoted)
             }
             else
             {
-                while (*end && *end != ' ' && *end != '$')
+                while (*end && !is_ifs(*end) && !isspace(*end) && *end != '$')
                     end++;
                 if (*(end) == '$')
                     end++;

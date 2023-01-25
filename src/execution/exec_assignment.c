@@ -18,6 +18,11 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
     if (value_ast->type == ARG)
     {
         char *tmp = expand_symbol_array(value_ast->value->values, env->argv);
+        for (int i = 0; tmp[i]; i++)
+        {
+            if (is_ifs(tmp[i]))
+                    tmp[i] = -2;
+        }
         setenv(var_name, tmp, 1);
         mem_free(tmp);
     }
