@@ -35,7 +35,7 @@ struct AST *assignment_word_rule(struct linked_list *token_list,
                 ARG, NULL));
     list_append(
         tree->linked_list,
-        new_AST(new_token(new_unique_symbols(gc_strdup(value ? value : ""), false, false, false), WORD),
+        new_AST(new_token(new_unique_symbols(gc_strdup(value ? value : ""), true, false, false), WORD),
                 ARG, NULL));
 
     mem_free(str);

@@ -267,11 +267,6 @@ char *expand_symbol_array(struct symbol **values, char **argv)
             mem_free(expanded);
             expanded = tmp;
         }
-#if 0
-		printf("%d\n", i);
-		printf("%s\n", values[i]->value);
-		printf("%s\n", expanded);
-#endif
         int cur_len = p - result;
         result = mem_realloc(result, cur_len + len + 1);
         p = result + cur_len;

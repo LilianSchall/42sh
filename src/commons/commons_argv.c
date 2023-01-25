@@ -25,6 +25,8 @@ char **split_string(char *str)
             }
             else
                 memmove(p, p + 1, len + 1);
+            if (*p == 0)
+                quoted = !quoted;
         }
         else if (!quoted && isspace(*p))
         {
@@ -41,7 +43,7 @@ char **split_string(char *str)
         else
             p++;
     }
-    if (p == str || isspace(*(p - 1)))
+    if (p == str || (!quoted && isspace(*(p - 1))))
     {
         result[i] = NULL;
         return result;
