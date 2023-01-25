@@ -1,22 +1,5 @@
 #include "lexer.h"
 
-static struct token *parse_quoted_word(char **word_begin_ptr,
-                                       struct lexer_states states,
-                                       char **input);
-static struct token *parse_unquoted_word(char **word_begin_ptr,
-                                         struct lexer_states states,
-                                         char **input);
-struct token *parse_double_quoted_word(char **word_begin_ptr,
-                                       struct lexer_states states,
-                                       char **input);
-static void skip_char(char **stream, int offset, int replace_value);
-static void offset_char(char **stream, int offset);
-static int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym);
-static struct token *create_token(char **word_begin_ptr, char **input,
-                                  char **token_value);
-static void execute_lexing(struct linked_list *token_list,
-                           char **word_begin_ptr, char **input,
-                           struct lexer_states states);
 static struct symbol **add_sym_to_array(struct symbol **symbols,
         struct symbol *sym, int *capacity)
 {
@@ -39,7 +22,45 @@ static struct symbol **add_sym_to_array(struct symbol **symbols,
     return symbols;
 }
 
-struct token *create_token(char **word_begin_ptr, char **input,
+// this function makes an offset to the right of the given value
+static void offset_char(char **stream, int offset)
+{
+    *stream += offset;
+}
+
+// this function skips a char by replacing it by -1
+// and goes by offset char to the right
+static void skip_char(char **stream, int offset, int replace_value)
+{
+    **stream = replace_value;
+    offset_char(stream, offset);
+}
+
+// this function makes the neccesary operations to create a new symbol
+// based on the string enclosed by the two pointers
+// it returns the nb of char read
+static int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
+{
+    // this offset is used to correctly parse delimitors and operators
+    // that are less then 3 char
+    int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
+
+    // the char that we will temporarily replace
+    char tmp = GETCHAR(input, offset);
+    GETCHAR(input, offset) = '\0';
+    int char_read = my_strdup(*word_begin_ptr, sym);
+    // we replace the temp char
+    GETCHAR(input, offset) = tmp;
+
+    return char_read;
+}
+
+static bool my_isspace(char c)
+{
+    return c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == '\f';
+}
+
+static struct token *create_token(char **word_begin_ptr, char **input,
                            char **token_value)
 {
     struct symbol sym = { 0 };
@@ -87,45 +108,7 @@ struct token *create_token(char **word_begin_ptr, char **input,
     return new_token(symbols, type);
 }
 
-// this function skips a char by replacing it by -1
-// and goes by offset char to the right
-void skip_char(char **stream, int offset, int replace_value)
-{
-    **stream = replace_value;
-    offset_char(stream, offset);
-}
-
-// this function makes an offset to the right of the given value
-void offset_char(char **stream, int offset)
-{
-    *stream += offset;
-}
-
-// this function makes the neccesary operations to create a new symbol
-// based on the string enclosed by the two pointers
-// it returns the nb of char read
-int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
-{
-    // this offset is used to correctly parse delimitors and operators
-    // that are less then 3 char
-    int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
-
-    // the char that we will temporarily replace
-    char tmp = GETCHAR(input, offset);
-    GETCHAR(input, offset) = '\0';
-    int char_read = my_strdup(*word_begin_ptr, sym);
-    // we replace the temp char
-    GETCHAR(input, offset) = tmp;
-
-    return char_read;
-}
-
-static bool my_isspace(char c)
-{
-    return c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == '\f';
-}
-
-struct token *parse_quoted_word(char **word_begin_ptr,
+static struct token *parse_quoted_word(char **word_begin_ptr,
                                 struct lexer_states states, char **input)
 {
     static CREATE_DELIMITATORS(delims);
@@ -180,7 +163,7 @@ static bool is_chevron(char c)
     return c == '>' || c == '<';
 }
 
-struct token *parse_double_quoted_word(char **word_begin_ptr,
+static struct token *parse_double_quoted_word(char **word_begin_ptr,
                                        struct lexer_states states, char **input)
 {
     static CREATE_DELIMITATORS(delims);
@@ -240,7 +223,7 @@ struct token *parse_double_quoted_word(char **word_begin_ptr,
     return NULL;
 }
 
-struct token *parse_unquoted_word(char **word_begin_ptr,
+static struct token *parse_unquoted_word(char **word_begin_ptr,
                                   struct lexer_states states, char **input)
 {
     static CREATE_DICO(token_value);
@@ -363,7 +346,7 @@ struct token *parse_unquoted_word(char **word_begin_ptr,
     return token;
 }
 
-struct token *parse_comment(char **input, struct lexer_states states)
+static struct token *parse_comment(char **input, struct lexer_states states)
 {
     if (GETCHAR(input, 0) == '\n')
     {
@@ -375,7 +358,7 @@ struct token *parse_comment(char **input, struct lexer_states states)
     return NULL;
 }
 
-void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
+static void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
                     char **input, struct lexer_states states)
 {
     struct token *current_token = NULL;
@@ -404,7 +387,7 @@ void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
     }
 }
 
-void clean_token_list(struct linked_list *token_list)
+static void clean_token_list(struct linked_list *token_list)
 {
     if (token_list == NULL || token_list->head == NULL)
         return;

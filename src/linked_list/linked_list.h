@@ -32,6 +32,8 @@ struct linked_list *list_append(struct linked_list *list, void *data);
 struct linked_list *list_pop(struct linked_list *list);
 struct linked_list *list_pop_non_safe(struct linked_list *list);
 
+void list_concat(struct linked_list *a, struct linked_list *b);
+
 void deep_free_list(struct linked_list *list, void (*free_fct)(void *));
 void free_list(struct linked_list *list);
 
