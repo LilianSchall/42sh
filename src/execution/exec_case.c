@@ -1,6 +1,5 @@
 #include "execution/execution.h"
 
-
 int check_case(char *word, struct AST *ast_case, struct env *env)
 {
     int argc = 0;
@@ -9,7 +8,7 @@ int check_case(char *word, struct AST *ast_case, struct env *env)
     int ret_val = 0;
     int i = 0;
 
-    while(temp_argv[i] != NULL && ret_val == 0)
+    while (temp_argv[i] != NULL && ret_val == 0)
     {
         ret_val = !strcmp(word, temp_argv[i]);
         i++;
@@ -18,7 +17,6 @@ int check_case(char *word, struct AST *ast_case, struct env *env)
     free_argv(temp_argv);
     return ret_val;
 }
-
 
 int execute_AST_case(struct AST *tree, struct env *env)
 {
@@ -33,7 +31,7 @@ int execute_AST_case(struct AST *tree, struct env *env)
 
     list = list->next;
 
-    while(list != NULL)
+    while (list != NULL)
     {
         ast_case = list->data;
         if (ast_case->type == SEQUENCE)
@@ -41,7 +39,7 @@ int execute_AST_case(struct AST *tree, struct env *env)
             ret_val = execute_AST_main(ast_case, env);
             break;
         }
-        if(check_case(word, ast_case, env))
+        if (check_case(word, ast_case, env))
         {
             list = list->next;
             ret_val = execute_AST_main(list->data, env);

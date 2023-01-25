@@ -36,7 +36,8 @@ struct AST *compound_list_rule(struct linked_list *token_list,
 
             if (!tmp)
             {
-                warnx("Missing NEWLINE or SEMICOLON at end of compound_list rule");
+                warnx("Missing NEWLINE or SEMICOLON at end of compound_list "
+                      "rule");
                 free_AST(tree);
                 return NULL;
             }

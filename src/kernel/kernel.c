@@ -80,7 +80,7 @@ int execute_shell_command(int options, char *input, char **argv)
     // get token_list based on given input
 
     struct linked_list *token_list = build_token_list(input, &err);
-    
+
     if (err)
     {
         warnx("Missing a token to lex");
