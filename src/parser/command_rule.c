@@ -83,7 +83,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
     }
     else if (token->type == IF || token->type == WHILE || token->type == UNTIL
              || token->type == FOR || token->type == OPEN_BRACE
-             || token->type == OPEN_PARENTHESE)
+             || token->type == OPEN_PARENTHESE || token->type == CASE)
     {
         struct AST *shell_com_tree =
             shell_command_rule(token_list, trigger_warn);

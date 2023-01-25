@@ -117,6 +117,18 @@ static void print_operator(struct AST *tree)
     }
 }
 
+static void print_case(struct AST *tree)
+{
+    printf("case: ");
+    if (!tree->linked_list)
+        return;
+    for (struct linked_node *node = tree->linked_list->head; node;
+         node = node->next)
+    {
+        __pretty_printer(node->data);
+    }
+}
+
 static void __pretty_printer(struct AST *tree)
 {
     if (tree == NULL)
@@ -147,6 +159,8 @@ static void __pretty_printer(struct AST *tree)
         print_assignment(tree);
     else if (tree->type == OPERATOR)
         print_operator(tree);
+    else if (tree->type == CASE_C)
+        print_case(tree);
 
     printf("}");
 }
