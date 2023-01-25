@@ -33,6 +33,8 @@ Test(exec_case, case_3, .init = redirect)
     ll_ast = list_append(ll_ast, seq_1);
     ll_ast = list_append(ll_ast, case_2);
     ll_ast = list_append(ll_ast, seq_2);
+    struct AST *empty = new_ITER_COMMAND(NULL, NULL, NULL);
+    ll_ast = list_append(ll_ast, empty);
     ll_ast = list_append(ll_ast, seq_3);
 
     
