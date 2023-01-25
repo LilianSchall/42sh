@@ -2,6 +2,11 @@
 
 struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
 {
+    if (trigger_warn)
+        trigger_warn = true;
+    else
+        trigger_warn = false;
+
     struct token *token = list_head(token_list);
 
     if (!token
