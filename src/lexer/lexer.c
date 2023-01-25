@@ -18,7 +18,7 @@ static void execute_lexing(struct linked_list *token_list,
                            char **word_begin_ptr, char **input,
                            struct lexer_states states);
 static struct symbol **add_sym_to_array(struct symbol **symbols,
-        struct symbol *sym, int *capacity)
+                                        struct symbol *sym, int *capacity)
 {
     int len = 0;
 
@@ -396,7 +396,7 @@ void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
         {
             if (*states.reading_backquote)
                 current_token->type = ENDBACKQUOTE;
-            *states.reading_backquote = ! *states.reading_backquote;
+            *states.reading_backquote = !*states.reading_backquote;
         }
         // we add it to list
         token_list = list_append(token_list, current_token);
@@ -428,10 +428,11 @@ struct linked_list *build_token_list(char *input, int *err)
     bool reading_double_quote = false;
     bool reading_backquote = false;
 
-    struct lexer_states states = { 
-        .reading_quote = &reading_quote, 
+    struct lexer_states states = {
+        .reading_quote = &reading_quote,
         .reading_double_quote = &reading_double_quote,
-        .reading_comm = &reading_comm, .reading_backquote = &reading_backquote,
+        .reading_comm = &reading_comm,
+        .reading_backquote = &reading_backquote,
     };
 
     char *word_begin_ptr = NULL;
@@ -441,7 +442,8 @@ struct linked_list *build_token_list(char *input, int *err)
     for (; *input != '\0'; input++)
         execute_lexing(token_list, &word_begin_ptr, &input, states);
 
-    if (reading_quote || reading_double_quote || reading_backquote) // quote missmatch
+    if (reading_quote || reading_double_quote
+        || reading_backquote) // quote missmatch
     {
         deep_free_list(token_list, free_token);
         if (err)

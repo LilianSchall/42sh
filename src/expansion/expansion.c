@@ -1,4 +1,4 @@
-#include "expansion.h"
+#include "expansion/expansion.h"
 
 char *get_var_pid(void)
 {
@@ -45,7 +45,7 @@ char *get_var_aro(char **argv, int quoted)
         len += strlen(argv[i]) + 3;
         i++;
     }
-    
+
     char *result = mem_malloc(len);
     result[0] = 0;
     i = 1;
@@ -129,7 +129,7 @@ char *get_var_n(const char *name, char **argv)
         return NULL;
     for (int i = 0; name[i]; i++)
     {
-        if (name[i] < '0' || name [i] > '9')
+        if (name[i] < '0' || name[i] > '9')
             return NULL;
     }
     int i = atoi(name);
@@ -201,7 +201,7 @@ char *expand_var(const char *str, char **argv, int quoted)
                     end++;
                 if (*(end) == '$')
                     end++;
-            } 
+            }
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
 
@@ -267,11 +267,7 @@ char *expand_symbol_array(struct symbol **values, char **argv)
             mem_free(expanded);
             expanded = tmp;
         }
-#if 0
-		printf("%d\n", i);
-		printf("%s\n", values[i]->value);
-		printf("%s\n", expanded);
-#endif
+        
         int cur_len = p - result;
         result = mem_realloc(result, cur_len + len + 1);
         p = result + cur_len;
