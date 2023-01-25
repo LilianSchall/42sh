@@ -17,9 +17,9 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
 
     if (value_ast->type == ARG)
     {
-        ret_val =
-            setenv(var_name,
-                   expand_symbol_array(value_ast->value->values, env->argv), 1);
+        char *tmp = expand_symbol_array(value_ast->value->values, env->argv);
+        setenv(var_name, tmp, 1);
+        mem_free(tmp);
     }
     else // the child is a sequence -> subshell and take stdout as value
     {

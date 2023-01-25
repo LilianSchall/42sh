@@ -267,7 +267,7 @@ char *expand_symbol_array(struct symbol **values, char **argv)
             mem_free(expanded);
             expanded = tmp;
         }
-        
+
         int cur_len = p - result;
         result = mem_realloc(result, cur_len + len + 1);
         p = result + cur_len;
