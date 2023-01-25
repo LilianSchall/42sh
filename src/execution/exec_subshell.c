@@ -4,7 +4,7 @@ char *get_content_of_pipe(int pipefd[2])
 {
     close(pipefd[1]);
     char buffer[1024];
-    char *output = mem_malloc(sizeof(char));
+    char *output = mem_calloc(sizeof(char), 1);
     size_t size = 0;
     size_t i = 0;
 
