@@ -15,6 +15,8 @@ def check_empty_line(file_path):
             print(f'Error: File {file_path}, does not end with newline')
 
 def check_function_length(file_path):
+    nbFunction = 0
+    nbStatic = 0
     with open(file_path, 'r') as f:
         lines = f.readlines()
         in_function = False
@@ -22,6 +24,8 @@ def check_function_length(file_path):
         open_bracket_count = 0
         closed_bracket_count = 0
         for line in lines:
+            if("static" in line):
+                nbStatic +=1
             # Ignore empty lines
             if not line.strip():
                 continue
@@ -31,6 +35,7 @@ def check_function_length(file_path):
             # check if the line start with a character
             if line[len(line)-2] in [')'] and not in_function:
                 in_function = True
+                nbFunction += 1
                 open_bracket_count = line.count('{')
                 closed_bracket_count = line.count('}')
             elif in_function:
@@ -45,6 +50,9 @@ def check_function_length(file_path):
                     function_line_count = 0
                     open_bracket_count = 0
                     closed_bracket_count = 0
+    
+    if(nbFunction - nbStatic > 10):
+        print(f'Error: too many functions in {file_path}')
 
 root_dir = '../../src'
 for subdir, dirs, files in os.walk(root_dir):

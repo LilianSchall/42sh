@@ -13,7 +13,7 @@ char *get_content_of_pipe(int pipefd[2])
     while (nb_read > 0)
     {
         size += nb_read;
-        output = realloc(output, sizeof(char) * (size + 1));
+        output = mem_realloc(output, sizeof(char) * (size + 1));
 
         for (size_t j = 0; j < nb_read; j++)
         {
