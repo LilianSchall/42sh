@@ -45,6 +45,10 @@ void print_token_list(struct linked_list *list)
             printf("newline");
         else if (token->type == VARASSIGNMENT)
             printf("varassignment");
+        else if (token->type == BACKQUOTE)
+            printf("backquote");
+        else if (token->type == ENDBACKQUOTE)
+            printf("endbackquote");
         else
             printf("%s", dico[token->type]);
         i++;

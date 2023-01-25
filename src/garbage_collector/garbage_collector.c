@@ -1,4 +1,5 @@
 #include "garbage_collector.h"
+
 #include <stdio.h>
 
 struct garbage_list *garbage_collector = NULL;

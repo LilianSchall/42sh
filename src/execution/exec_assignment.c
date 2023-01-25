@@ -23,7 +23,7 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
     }
     else // the child is a sequence -> subshell and take stdout as value
     {
-        setenv(var_name, execute_AST_D_SUBSHELL(value_ast, env), 1); 
+        setenv(var_name, execute_AST_D_SUBSHELL(value_ast, env), 1);
     }
     return ret_val;
 }

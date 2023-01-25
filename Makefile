@@ -22,7 +22,7 @@ build:
 	ninja -C build
 
 function: debug
-	bash ./tests/global_test_suite/testsuite.sh ./tests/global_test_suite/file_with_command.txt ./42sh
+	bash ./tests/global_test_suite/testsuite.sh ./tests/global_test_suite/tests.txt ./42sh
 
 $(EXE): $(SRC_OBJ) $(MAIN_OBJ)
 	$(CC) -o $(EXE) $^
@@ -37,4 +37,4 @@ $(TEST_SRC): %.o: %.c
 	$(CC) $(CFLAGS) -lcriterion $< -o $@
 
 clean:
-	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE) *.txt
+	$(RM) -rf build $(SRC_OBJ) $(TEST_OBJ) $(MAIN_OBJ) $(EXE) $(TEST_EXE) *.txt *.tmp .42sh_*

@@ -22,6 +22,7 @@ enum token_type
     DOLL_OPEN_PARENTHESE,
     CLOSE_PARENTHESE,
     BACKQUOTE,
+    ENDBACKQUOTE,
     FOR,
     IN,
     DO,
@@ -63,6 +64,7 @@ enum token_type
         [DOLL_OPEN_PARENTHESE] = "$(",                                         \
         [CLOSE_PARENTHESE] = ")",                                              \
         [BACKQUOTE] = "`",                                                     \
+        [ENDBACKQUOTE] = "`",                                                     \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \
         [DO] = "do",                                                           \

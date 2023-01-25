@@ -56,9 +56,9 @@ struct AST *simple_command_rule(struct linked_list *token_list,
             free_AST(redirect_tree);
             redirect_tree = NULL;
         }
-
-        stick_correctly_child(&tree, &redirect_tree, &last_redirect_tree,
-                              child);
+        else
+            stick_correctly_child(&tree, &redirect_tree, &last_redirect_tree,
+                                  child);
 
         token = list_head(token_list);
     }

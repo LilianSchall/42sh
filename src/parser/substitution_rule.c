@@ -2,6 +2,11 @@
 
 struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
 {
+    if (trigger_warn)
+        trigger_warn = true;
+    else
+        trigger_warn = false;
+
     struct token *token = list_head(token_list);
 
     if (!token
@@ -18,16 +23,22 @@ struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
     // it was '$(' so we free it
     free_token(token);
 
-    struct AST *compound = compound_list_rule(token_list, trigger_warn);
-    pretty_printer(compound);
+    token = list_head(token_list);
+
+    struct AST *compound =
+        token->type != CLOSE_PARENTHESE && token->type != ENDBACKQUOTE
+        ? list_rule(token_list)
+        : new_AST(NULL, SEQUENCE, new_list());
+
     if (!compound)
         return NULL;
 
     token = list_head(token_list);
 
-    if (!token || token->type != CLOSE_PARENTHESE || token->type != BACKQUOTE)
+    if (!token
+        || (token->type != CLOSE_PARENTHESE && token->type != ENDBACKQUOTE))
     {
-        warnx("Missing CLOSE_PARENTHESE at substitution_rule");
+        warnx("Missing CLOSE_PARENTHESE or ENDBACKQUOTE at substitution_rule");
         free_AST(compound);
         return NULL;
     }
