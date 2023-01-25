@@ -17,6 +17,7 @@ struct lexer_states
     bool *reading_quote;
     bool *reading_double_quote;
     bool *reading_comm;
+    bool *reading_backquote;
 };
 
 // this function builds the token_list based on the given input
