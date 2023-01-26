@@ -9,6 +9,7 @@
 
 #include "AST/AST.h"
 #include "builtin/builtin.h"
+#include "commons/commons.h"
 #include "functions/functions.h"
 #include "garbage_collector/garbage_collector.h"
 #include "linked_list/linked_list.h"

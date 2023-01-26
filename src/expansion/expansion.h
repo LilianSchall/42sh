@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "commons/commons.h"
 #include "garbage_collector/garbage_collector.h"
 #include "symbol/symbol.h"
 

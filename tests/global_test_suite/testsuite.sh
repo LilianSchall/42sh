@@ -15,14 +15,14 @@ do
     total=$((total + 1))
     if [ "$DIFF_STDOUT" != "" ] || [ "$DIFF_STDERR" != "" ] || [ $return_42 != $bash_return ]
     then
-        echo test $total failed: "$line"
-        echo "\n"
-        echo "42sh_stdout: `cat -e .42sh_stdout` \n"
-        echo "bash_stdout: `cat -e .bash_stdout` \n"
-	    echo "42sh_stderr: `cat -e .42sh_stderr` \n"
-	    echo "bash_stderr: `cat -e .bash_stderr` \n"
+        echo -e test $total failed: "$line"
+        echo -e "\n"
+        echo -e "42sh_stdout: `cat -e .42sh_stdout`\n"
+        echo -e "bash_stdout: `cat -e .bash_stdout`\n"
+	    echo -e "42sh_stderr: `cat -e .42sh_stderr`\n"
+	    echo -e "bash_stderr: `cat -e .bash_stderr`\n"
         echo 42sh_return_value: $return_42
-        echo "bash_return_value: $bash_return \n__________________________\n"
+        echo -e "bash_return_value: $bash_return \n__________________________"
     else
         passed=$((passed + 1))
     fi

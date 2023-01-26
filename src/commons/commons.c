@@ -168,3 +168,16 @@ int my_itoa(char *string)
     }
     return val;
 }
+
+int is_ifs(char c)
+{
+    char *ifs = getenv("IFS");
+    if (!ifs)
+        return 0;
+    for (int i = 0; ifs[i]; i++)
+    {
+       if (c == ifs[i])
+            return 1;
+    }
+    return 0;
+}
