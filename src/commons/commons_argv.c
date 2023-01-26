@@ -1,7 +1,7 @@
 #include "commons/commons.h"
 
 // take a string in parameter and return a argv of all words
-char **split_string(char *str)
+static char **split_string(char *str)
 {
     // fprintf(stderr, "%s$\n", str);
     char **result = mem_malloc(sizeof(char *) * 2);
@@ -28,7 +28,7 @@ char **split_string(char *str)
             if (*p == 0)
                 quoted = !quoted;
         }
-        else if (!quoted && is_ifs(*p))
+        else if (!quoted && isspace(*p))
         {
             int len = p - start;
             result[i] = mem_malloc(len + 1);
@@ -36,12 +36,16 @@ char **split_string(char *str)
             result[i][len] = 0;
             i++;
             result = mem_realloc(result, sizeof(char *) * (i + 2));
-            while (is_ifs(*p))
+            while (isspace(*p))
                 p++;
             start = p;
         }
         else
+        {
+            if (is_ifs(*p) && !isspace(*p))
+                *p = ' ';
             p++;
+        }
     }
     if (p == str || (!quoted && is_ifs(*(p - 1))))
     {
@@ -64,41 +68,42 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
 {
     struct linked_list *temp = tree->linked_list;
 
-    char **argv_res = mem_malloc(sizeof(char *));
-
     if (!temp)
     {
-        argv_res[0] = NULL;
-        return argv_res;
+        return mem_calloc(sizeof(char*), 1);
     }
 
     struct linked_node *ln = temp->head;
 
-    int i = 0;
+    int len = 0;
+    char *str = mem_calloc(sizeof(char*), 1);
     while (ln)
     {
         struct AST *child = ln->data;
-        char *str = NULL;
+        char *tmp = NULL;
         if (child->type == D_SUBSHELL)
-            str = execute_AST_D_SUBSHELL(child, env);
+            tmp = execute_AST_D_SUBSHELL(child, env);
         else
-            str = expand_symbol_array(child->value->values, env->argv);
-        char **tmp = split_string(str);
-        mem_free(str);
-        int j = 0;
-        while (tmp[j])
-        {
-            argv_res[i] = gc_strdup(tmp[j]);
-            i++;
-            j++;
-            argv_res = mem_realloc(argv_res, sizeof(char *) * (i + 1));
-        }
-        free_argv(tmp);
+            tmp = expand_symbol_array(child->value->values, env->argv);
+        
+        if (!tmp)
+            continue;
+        int l = len;
+        len = strlen(str) + strlen(tmp);
+        str = mem_realloc(str, len + 2);
+        strcat(str, tmp);
+        str[len] = ' ';
+        str[len + 1] = 0;
+
+        mem_free(tmp);
         ln = ln->next;
     }
-    argv_res[i] = NULL;
-    *argc = i;
-    return argv_res;
+    str[len] = 0;
+    // printf("%s\n", str);
+    char **argv = split_string(str);
+    mem_free(str);
+    for (*argc = 0; argv[*argc]; *argc += 1);
+    return argv;
 }
 
 // free argc (char **)

@@ -1,13 +1,13 @@
 #include "expansion/expansion.h"
 
-char *get_var_pid(void)
+static char *get_var_pid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", getpid());
     return res;
 }
 
-char *get_all_unquoted(char **argv)
+static char *get_all_unquoted(char **argv)
 {
     int len = 0;
     int i = 1;
@@ -34,7 +34,7 @@ char *get_all_unquoted(char **argv)
     return result;
 }
 
-char *get_var_aro(char **argv, int quoted)
+static char *get_var_aro(char **argv, int quoted)
 {
     if (!argv)
         return NULL;
@@ -74,7 +74,7 @@ char *get_var_aro(char **argv, int quoted)
     return result;
 }
 
-char *get_var_star(char **argv, int quoted)
+static char *get_var_star(char **argv, int quoted)
 {
     if (!argv)
         return NULL;
@@ -104,7 +104,7 @@ char *get_var_star(char **argv, int quoted)
     return result;
 }
 
-char *get_var_sharp(char **argv)
+static char *get_var_sharp(char **argv)
 {
     int i = 0;
     if (argv)
@@ -117,21 +117,21 @@ char *get_var_sharp(char **argv)
     return res;
 }
 
-char *get_var_random(void)
+static char *get_var_random(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", rand() % 32767);
     return res;
 }
 
-char *get_var_uid(void)
+static char *get_var_uid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", getuid());
     return res;
 }
 
-char *get_var_n(const char *name, char **argv)
+static char *get_var_n(const char *name, char **argv)
 {
     if (!argv)
         return NULL;
@@ -151,7 +151,7 @@ char *get_var_n(const char *name, char **argv)
     return NULL;
 }
 
-char *get_spec_var(const char *name, char **argv, int quoted)
+static char *get_spec_var(const char *name, char **argv, int quoted)
 {
     // printf("is quoted = %d\n", quoted);
     // printf("special var name = %s\n", name);

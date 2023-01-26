@@ -173,11 +173,11 @@ int is_ifs(char c)
 {
     char *ifs = getenv("IFS");
     if (!ifs)
-        return isspace(c) || c == -2;
+        return 0;
     for (int i = 0; ifs[i]; i++)
     {
        if (c == ifs[i])
             return 1;
     }
-    return c == -2;
+    return 0;
 }

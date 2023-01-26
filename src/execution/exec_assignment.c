@@ -21,7 +21,7 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
         for (int i = 0; tmp[i]; i++)
         {
             if (is_ifs(tmp[i]))
-                    tmp[i] = -2;
+                    tmp[i] = ' ';
         }
         setenv(var_name, tmp, 1);
         mem_free(tmp);
