@@ -88,7 +88,6 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
         
         if (!tmp)
             continue;
-        int l = len;
         len = strlen(str) + strlen(tmp);
         str = mem_realloc(str, len + 2);
         strcat(str, tmp);
