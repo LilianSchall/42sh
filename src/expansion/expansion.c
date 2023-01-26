@@ -19,17 +19,14 @@ static char *get_all_unquoted(char **argv)
     char *result = mem_malloc(len + 1);
     i = 1;
     result[0] = 0;
-    char *delim = mem_calloc(sizeof(char), 2);
-    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
         if (argv[i + 1])
-            strcat(result, delim);
+            strcat(result, " ");
         i++;
         // printf("%s\n", result);
     }
-    mem_free(delim);
     result[len] = 0;
     return result;
 }
@@ -54,8 +51,6 @@ static char *get_var_aro(char **argv, int quoted)
     i = 1;
     char *quot = mem_calloc(sizeof(char), 2);
     quot[0] = -1;
-    char *delim = mem_calloc(sizeof(char), 2);
-    quot[0] = -2;
 
     while (argv[i])
     {
@@ -63,12 +58,11 @@ static char *get_var_aro(char **argv, int quoted)
         strcat(result, argv[i]);
         strcat(result, quot);
         if (argv[i + 1])
-            strcat(result, delim);
+            strcat(result, " ");
         i++;
         // printf("%s\n", result);
     }
     mem_free(quot);
-    mem_free(delim);
     result[len - 2] = 0;
     memmove(result, result + 1, len - 1);
     return result;
@@ -91,12 +85,10 @@ static char *get_var_star(char **argv, int quoted)
     char *result = mem_malloc(len);
     i = 1;
     result[0] = 0;
-    char *delim = mem_calloc(sizeof(char), 2);
-    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
-        strcat(result, delim);
+        strcat(result, " ");
         i++;
         // printf("%s\n", result);
     }
@@ -151,6 +143,11 @@ static char *get_var_n(const char *name, char **argv)
     return NULL;
 }
 
+static char *get_var_tilde(void)
+{
+    return gc_strdup(getenv("HOME"));
+}
+
 static char *get_spec_var(const char *name, char **argv, int quoted)
 {
     // printf("is quoted = %d\n", quoted);
@@ -172,6 +169,26 @@ static char *get_spec_var(const char *name, char **argv, int quoted)
     return NULL;
 }
 
+static void get_end(const char **str, const char **end, int brackets)
+{
+    if (brackets)
+    {
+        while (**end && **end != '}')
+            (*end)++;
+        if (**end == '}')
+            (*end)++;
+        else
+            *end = *str;
+    }
+    else
+    {
+        while (**end && !is_ifs(**end) && !isspace(**end) && **end != '$')
+            (*end)++;
+        if (*(*end) == '$')
+            (*end)++;
+    }
+}
+
 char *expand_var(const char *str, char **argv, int quoted)
 {
     char *result = mem_malloc(strlen(str) + 1);
@@ -182,34 +199,15 @@ char *expand_var(const char *str, char **argv, int quoted)
         {
             str++;
             // Find the variable name and end
-            const char *var_name;
-            const char *end;
             int brackets = 0;
             if (*str == '{')
                 brackets = 1;
 
-            var_name = str + brackets;
-            end = var_name;
-            if (brackets)
-            {
-                while (*end && *end != '}')
-                    end++;
-                if (*end == '}')
-                {
-                    end++;
-                }
-                else
-                {
-                    end = str;
-                }
-            }
-            else
-            {
-                while (*end && !is_ifs(*end) && !isspace(*end) && *end != '$')
-                    end++;
-                if (*(end) == '$')
-                    end++;
-            }
+            const char *var_name = str + brackets;
+            const char *end = var_name;
+            
+            get_end(&str, &end, brackets);
+            
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
 
@@ -217,6 +215,7 @@ char *expand_var(const char *str, char **argv, int quoted)
                 var = get_spec_var(tmp, argv, quoted);
 
             mem_free(tmp);
+            
             if (var)
             {
                 // Replace the variable with its value
@@ -228,11 +227,8 @@ char *expand_var(const char *str, char **argv, int quoted)
                 p += len;
                 str = end;
             }
-            else
-            {
-                // No variable found, remove the ${variable} or $variable
+            else // No variable found, remove the ${variable} or $variable
                 str = end;
-            }
         }
         else
         {
@@ -255,8 +251,12 @@ char *expand_symbol_array(struct symbol **values, char **argv)
         char *expanded = NULL;
         if (values[i]->is_expandable)
         {
-            expanded =
-                expand_var(values[i]->value, argv, values[i]->is_double_quoted);
+            if (!strcmp("~", values[i]->value))
+                expanded = get_var_tilde();
+            else
+            {
+                expanded = expand_var(values[i]->value, argv, values[i]->is_double_quoted);
+            }
         }
         else
         {

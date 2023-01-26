@@ -2,6 +2,7 @@
 #define EXPANSION_H
 
 #include <ctype.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
