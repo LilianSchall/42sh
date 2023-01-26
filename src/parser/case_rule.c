@@ -1,7 +1,7 @@
 #include "parser.h"
 
-static struct AST *form_iter(struct linked_list *token_list,
-        bool trigger_warn, struct AST *iter, bool is_default)
+static struct AST *form_iter(struct linked_list *token_list, bool trigger_warn,
+                             struct AST *iter, bool is_default)
 {
     struct token *token = list_head(token_list);
     struct AST *word = NULL;
@@ -10,11 +10,12 @@ static struct AST *form_iter(struct linked_list *token_list,
         list_pop(token_list);
         free_token(token);
         list_head(token_list);
-        
+
         token = list_head(token_list);
 
-        if (!token || (!is_non_delimitator(token->type)
-            && !is_substitution_ruled(token->type)))
+        if (!token
+            || (!is_non_delimitator(token->type)
+                && !is_substitution_ruled(token->type)))
         {
             free_AST(iter);
             return NULL;
@@ -49,7 +50,7 @@ static struct AST *form_iter(struct linked_list *token_list,
 }
 
 static struct linked_list *case_item_rule(struct linked_list *token_list,
-        bool trigger_warn, int *err)
+                                          bool trigger_warn, int *err)
 {
     *err = 0;
     bool is_default = false;
@@ -65,13 +66,14 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
         token = list_head(token_list);
         *err = 1; // we set it to 1 so that we know that we have parsed 1 item
     }
-    
-    if (!token || (!is_non_delimitator(token->type)
-                && !is_substitution_ruled(token->type)))
+
+    if (!token
+        || (!is_non_delimitator(token->type)
+            && !is_substitution_ruled(token->type)))
         return NULL;
-    
+
     char *sym = get_cat_symbols(token->values);
-    
+
     if (!strcmp(sym, "*"))
     {
         is_default = true;
@@ -80,18 +82,18 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
     }
     mem_free(sym);
 
-    struct AST *word = !is_default 
-        ? substitution_rule(token_list, trigger_warn) : NULL;
-    
+    struct AST *word =
+        !is_default ? substitution_rule(token_list, trigger_warn) : NULL;
+
     if (!word && !is_default)
         return NULL;
 
     struct AST *iter = new_AST(NULL, ITER, new_list());
     list_append(iter->linked_list, word);
-    
+
     iter = form_iter(token_list, trigger_warn, iter, is_default);
     token = list_head(token_list);
-    
+
     if (!token || token->type != CLOSE_PARENTHESE)
     {
         free_AST(iter);
@@ -111,9 +113,10 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
 }
 
 static struct AST *case_clause_rule(struct linked_list *token_list,
-        bool trigger_warn, int *err)
+                                    bool trigger_warn, int *err)
 {
-    struct linked_list *case_item = case_item_rule(token_list, trigger_warn, err);
+    struct linked_list *case_item =
+        case_item_rule(token_list, trigger_warn, err);
 
     if (!case_item)
     {
@@ -133,7 +136,7 @@ static struct AST *case_clause_rule(struct linked_list *token_list,
         purge_newline_token(token_list);
 
         case_item = case_item_rule(token_list, trigger_warn, err);
-        
+
         if (*err)
         {
             free_AST(tree);
@@ -155,10 +158,10 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = NULL;
     struct AST *word = NULL;
-    struct log_info info = { .sym = "case", .rulename = "rule_case_rule",
-        .trigger_warn = trigger_warn };
+    struct log_info info = { .sym = "case",
+                             .rulename = "rule_case_rule",
+                             .trigger_warn = trigger_warn };
     int err = 0;
-
 
     if (!(token = consume_token(token_list, CASE, info)))
         return NULL;
@@ -167,8 +170,9 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 
     token = list_head(token_list);
 
-    if (!token || (!is_non_delimitator(token->type) 
-        && !is_substitution_ruled(token->type)))
+    if (!token
+        || (!is_non_delimitator(token->type)
+            && !is_substitution_ruled(token->type)))
         goto rule_case_err;
 
     word = substitution_rule(token_list, trigger_warn);
@@ -189,10 +193,10 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 
     free_token(token);
     token = NULL;
-    
+
     purge_newline_token(token_list);
     struct AST *case_clause = case_clause_rule(token_list, false, &err);
-    
+
     if (err)
         goto rule_case_err;
 
@@ -211,7 +215,7 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 
     return case_clause;
 
-    rule_case_err:
+rule_case_err:
 
     if (trigger_warn)
         warnx("Missing word in rule_case_rule");

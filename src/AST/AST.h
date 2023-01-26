@@ -16,6 +16,7 @@ struct env
 enum AST_type
 {
     CASE_C,
+    HERE_DOC,
     D_SUBSHELL, // $(..)
     SUBSHELL, // (..)
     FUNCTION,
@@ -31,7 +32,7 @@ enum AST_type
 };
 
 struct AST
-{
+{ 
     struct token *value;
     enum AST_type type;
     struct linked_list *linked_list;

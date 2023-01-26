@@ -61,7 +61,7 @@ static bool my_isspace(char c)
 }
 
 static struct token *create_token(char **word_begin_ptr, char **input,
-                           char **token_value)
+                                  char **token_value)
 {
     struct symbol sym = { 0 };
     int capacity = DEFAULT_NB_SYMBOLS;
@@ -109,7 +109,7 @@ static struct token *create_token(char **word_begin_ptr, char **input,
 }
 
 static struct token *parse_quoted_word(char **word_begin_ptr,
-                                struct lexer_states states, char **input)
+                                       struct lexer_states states, char **input)
 {
     static CREATE_DELIMITATORS(delims);
 
@@ -164,7 +164,8 @@ static bool is_chevron(char c)
 }
 
 static struct token *parse_double_quoted_word(char **word_begin_ptr,
-                                       struct lexer_states states, char **input)
+                                              struct lexer_states states,
+                                              char **input)
 {
     static CREATE_DELIMITATORS(delims);
     if (!(*word_begin_ptr))
@@ -224,7 +225,8 @@ static struct token *parse_double_quoted_word(char **word_begin_ptr,
 }
 
 static struct token *parse_unquoted_word(char **word_begin_ptr,
-                                  struct lexer_states states, char **input)
+                                         struct lexer_states states,
+                                         char **input)
 {
     static CREATE_DICO(token_value);
     static CREATE_DELIMITATORS(delims);
@@ -358,8 +360,9 @@ static struct token *parse_comment(char **input, struct lexer_states states)
     return NULL;
 }
 
-static void execute_lexing(struct linked_list *token_list, char **word_begin_ptr,
-                    char **input, struct lexer_states states)
+static void execute_lexing(struct linked_list *token_list,
+                           char **word_begin_ptr, char **input,
+                           struct lexer_states states)
 {
     struct token *current_token = NULL;
     if (*states.reading_comm)

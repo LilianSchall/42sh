@@ -37,6 +37,7 @@ src = files(
 	'execution/exec_redirection.c',
 	'execution/exec_pipe.c',
 	'execution/exec_function.c',
+	'execution/exec_here_doc.c',
     'expansion/expansion.c',
     'functions/functions.c',
 	'commons/commons.c',
