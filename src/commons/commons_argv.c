@@ -4,7 +4,7 @@
 static char **split_string(char *str)
 {
     // fprintf(stderr, "%s$\n", str);
-    char **result = mem_malloc(sizeof(char *) * 2);
+    char **result = mem_calloc(sizeof(char *), 2);
     char *p = str;
     int i = 0;
     while (*p == ' ' || *p == '\n')
@@ -25,8 +25,6 @@ static char **split_string(char *str)
             }
             else
                 memmove(p, p + 1, len + 1);
-            if (*p == 0)
-                quoted = !quoted;
         }
         else if (!quoted && isspace(*p))
         {
@@ -46,11 +44,6 @@ static char **split_string(char *str)
                 *p = ' ';
             p++;
         }
-    }
-    if (p == str || (!quoted && is_ifs(*(p - 1))))
-    {
-        result[i] = NULL;
-        return result;
     }
     int len = p - start;
     result[i] = mem_malloc(len + 1);
