@@ -57,14 +57,18 @@ struct AST *new_ITER_COMMAND(char *command, char *val1, char *val2)
     if(val2 != NULL)
         ast_arg_2 = new_AST(new_token(new_unique_symbols(copy_string(val2), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);
     
-    struct linked_list *ll_ast = new_list();
+//here
+    struct linked_list *ll_ast = NULL;
     if(command != NULL)
+    {
+        ll_ast = new_list();
         ll_ast = list_append(ll_ast, ast_command);
-    if(val1 != NULL)
-        ll_ast = list_append(ll_ast, ast_arg_1);
-    if(val2 != NULL)
-        ll_ast = list_append(ll_ast, ast_arg_2);        
-
+        if(val1 != NULL)
+            ll_ast = list_append(ll_ast, ast_arg_1);
+        if(val2 != NULL)
+            ll_ast = list_append(ll_ast, ast_arg_2);    
+    }
+ //here
 
     struct AST *ast_f = new_AST(new_token(new_unique_symbols(strdup(""), false, false, false), (enum token_type) WORD), (enum AST_type) ITER, ll_ast);
 
