@@ -38,6 +38,8 @@ enum token_type
     FI,
     DOUBLE_SEMICOLON,
     IO_NUMBER, // FD to redirect
+    INF_INF,
+    INF_INF_MIN,
     R_SUP, // >
     R_SUP_PIPE, // >|
     R_SUP_SUP, // >>
@@ -64,7 +66,7 @@ enum token_type
         [DOLL_OPEN_PARENTHESE] = "$(",                                         \
         [CLOSE_PARENTHESE] = ")",                                              \
         [BACKQUOTE] = "`",                                                     \
-        [ENDBACKQUOTE] = "`",                                                     \
+        [ENDBACKQUOTE] = "`",                                                  \
         [FOR] = "for",                                                         \
         [IN] = "in",                                                           \
         [DO] = "do",                                                           \
@@ -80,6 +82,8 @@ enum token_type
         [FI] = "fi",                                                           \
         [DOUBLE_SEMICOLON] = ";;",                                             \
         [IO_NUMBER] = "",                                                      \
+        [INF_INF] = "<<",                                                      \
+        [INF_INF_MIN] = "<<-",                                                 \
         [R_SUP] = ">",                                                         \
         [R_SUP_PIPE] = ">|",                                                   \
         [R_SUP_SUP] = ">>",                                                    \
