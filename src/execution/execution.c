@@ -156,7 +156,10 @@ int execute_AST(struct AST *tree, char **argv, struct linked_list *functions)
         return 0;
 
     if (!functions)
+    {
+        setenv("IFS", " \t\n", 1);
         srand(time(NULL));
+    }
 
     struct env env = { .argv = argv,
                        .functions = functions ? functions : new_list() };

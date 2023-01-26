@@ -1,13 +1,13 @@
 #include "expansion/expansion.h"
 
-char *get_var_pid(void)
+static char *get_var_pid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", getpid());
     return res;
 }
 
-char *get_all_unquoted(char **argv)
+static char *get_all_unquoted(char **argv)
 {
     int len = 0;
     int i = 1;
@@ -19,19 +19,22 @@ char *get_all_unquoted(char **argv)
     char *result = mem_malloc(len + 1);
     i = 1;
     result[0] = 0;
+    char *delim = mem_calloc(sizeof(char), 2);
+    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
         if (argv[i + 1])
-            strcat(result, " ");
+            strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
+    mem_free(delim);
     result[len] = 0;
     return result;
 }
 
-char *get_var_aro(char **argv, int quoted)
+static char *get_var_aro(char **argv, int quoted)
 {
     if (!argv)
         return NULL;
@@ -49,26 +52,29 @@ char *get_var_aro(char **argv, int quoted)
     char *result = mem_malloc(len);
     result[0] = 0;
     i = 1;
-    char *delim = mem_malloc(2 * sizeof(char));
-    delim[0] = -1;
-    delim[1] = 0;
+    char *quot = mem_calloc(sizeof(char), 2);
+    quot[0] = -1;
+    char *delim = mem_calloc(sizeof(char), 2);
+    quot[0] = -2;
+
     while (argv[i])
     {
-        strcat(result, delim);
+        strcat(result, quot);
         strcat(result, argv[i]);
-        strcat(result, delim);
+        strcat(result, quot);
         if (argv[i + 1])
-            strcat(result, " ");
+            strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
+    mem_free(quot);
     mem_free(delim);
     result[len - 2] = 0;
     memmove(result, result + 1, len - 1);
     return result;
 }
 
-char *get_var_star(char **argv, int quoted)
+static char *get_var_star(char **argv, int quoted)
 {
     if (!argv)
         return NULL;
@@ -85,10 +91,12 @@ char *get_var_star(char **argv, int quoted)
     char *result = mem_malloc(len);
     i = 1;
     result[0] = 0;
+    char *delim = mem_calloc(sizeof(char), 2);
+    delim[0] = -2;
     while (argv[i])
     {
         strcat(result, argv[i]);
-        strcat(result, " ");
+        strcat(result, delim);
         i++;
         // printf("%s\n", result);
     }
@@ -96,7 +104,7 @@ char *get_var_star(char **argv, int quoted)
     return result;
 }
 
-char *get_var_sharp(char **argv)
+static char *get_var_sharp(char **argv)
 {
     int i = 0;
     if (argv)
@@ -109,21 +117,21 @@ char *get_var_sharp(char **argv)
     return res;
 }
 
-char *get_var_random(void)
+static char *get_var_random(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", rand() % 32767);
     return res;
 }
 
-char *get_var_uid(void)
+static char *get_var_uid(void)
 {
     char *res = mem_malloc(sizeof(char) * 9);
     sprintf(res, "%d", getuid());
     return res;
 }
 
-char *get_var_n(const char *name, char **argv)
+static char *get_var_n(const char *name, char **argv)
 {
     if (!argv)
         return NULL;
@@ -143,7 +151,7 @@ char *get_var_n(const char *name, char **argv)
     return NULL;
 }
 
-char *get_spec_var(const char *name, char **argv, int quoted)
+static char *get_spec_var(const char *name, char **argv, int quoted)
 {
     // printf("is quoted = %d\n", quoted);
     // printf("special var name = %s\n", name);
@@ -197,7 +205,7 @@ char *expand_var(const char *str, char **argv, int quoted)
             }
             else
             {
-                while (*end && *end != ' ' && *end != '$')
+                while (*end && !is_ifs(*end) && !isspace(*end) && *end != '$')
                     end++;
                 if (*(end) == '$')
                     end++;

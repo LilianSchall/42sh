@@ -72,4 +72,7 @@ void free_argv(char **argv);
 // if not, it returns -1
 int my_itoa(char *string);
 
+// check if char c is a filed spliter
+int is_ifs(char c);
+
 #endif /* !COMMONS_H */
