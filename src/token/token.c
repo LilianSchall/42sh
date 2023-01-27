@@ -49,6 +49,8 @@ void print_token_list(struct linked_list *list)
             printf("backquote");
         else if (token->type == ENDBACKQUOTE)
             printf("endbackquote");
+        else if (token->type == HEREDOC)
+            printf("heredoc");
         else
             printf("%s", dico[token->type]);
         i++;

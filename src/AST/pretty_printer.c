@@ -129,6 +129,21 @@ static void print_case(struct AST *tree)
     }
 }
 
+static void print_heredoc(struct AST *tree)
+{
+    struct linked_node *node = tree->linked_list->head;
+    struct AST *io = node->data;
+    node = node->next;
+
+    struct AST *exec = node->data;
+    node = node->next;
+    struct AST *to = node->data;
+
+    printf("heredoc %s to %s: ", io->value->values[0]->value,
+           to->value->values[0]->value);
+    __pretty_printer(exec);
+}
+
 static void __pretty_printer(struct AST *tree)
 {
     if (tree == NULL)
@@ -161,6 +176,8 @@ static void __pretty_printer(struct AST *tree)
         print_operator(tree);
     else if (tree->type == CASE_C)
         print_case(tree);
+    else if (tree->type == HERE_DOC)
+        print_heredoc(tree);
 
     printf("}");
 }

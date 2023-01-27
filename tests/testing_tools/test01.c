@@ -44,6 +44,14 @@ struct AST *new_AST_COMMAND(char *command, char *val1, char *val2)
     return ast_f;
 }
 
+struct AST *new_AST_ARG(char *string)
+{
+
+    struct AST *ast_f = new_AST(new_token(new_unique_symbols(strdup(string), false, false, false), (enum token_type) WORD), (enum AST_type) ARG, NULL);
+
+    return ast_f;
+}
+
 struct AST *new_ITER_COMMAND(char *command, char *val1, char *val2)
 {
     struct AST *ast_command ;
