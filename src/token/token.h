@@ -50,6 +50,7 @@ enum token_type
     R_PIPE, // |
     NEG, // !
     VARASSIGNMENT, // test=3
+    HEREDOC,
     ERROR,
 };
 
@@ -94,6 +95,7 @@ enum token_type
         [R_PIPE] = "|",                                                        \
         [NEG] = "!",                                                           \
         [VARASSIGNMENT] = "",                                                  \
+        [HEREDOC] = "",                                                     \
         [ERROR] = NULL,                                                        \
     }
 
@@ -109,11 +111,12 @@ enum token_type
     }
 
 #define CREATE_REDIRECTIONS(Name)                                              \
-    char *Name[] = { ">>", ">&", "<&", ">|", "<>", NULL }
+    char *Name[] = { ">>", ">&", "<&", ">|", "<>", "<<", "<-", NULL }
 
 #define CREATE_REDIRECT_SCOUT(Name)                                            \
     enum token_type Name[] = { R_SUP, R_SUP_PIPE, R_SUP_SUP, R_SUP_AND,        \
-                               R_INF, R_INF_AND,  R_INF_SUP }
+                               R_INF, R_INF_AND,  R_INF_SUP, INF_INF,        \
+                               INF_INF_MIN }
 
 struct token
 {

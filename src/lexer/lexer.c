@@ -356,7 +356,46 @@ static struct token *parse_comment(char **input, struct lexer_states states)
     return NULL;
 }
 
-static void execute_lexing(struct linked_list *token_list,
+static struct token *parse_heredocs(char **word_begin_ptr, char **input,
+        struct lexer_states states)
+{
+    struct token *token = NULL;
+    static char *tmp = NULL;
+    if (!(*word_begin_ptr))
+    {
+        if (isspace(*input) && !(GETCHAR(input, 0) == '\n'))
+            return NULL;
+        *word_begin_ptr = *input + 1; // so we can escape the \n
+        tmp = mem_calloc(strlen(*states.heredoc_separator) + 1, 1);
+    }
+
+    strncpy(tmp, *input, strlen(*states.heredoc_separator));
+
+    if (!strcmp(tmp, *states.heredoc_separator))
+    {
+        // we found the other HEREDOC
+        token = create_token(word_begin_ptr, input, NULL);
+        *input += strlen(*states.heredoc_separator) - 1;
+        mem_free(tmp);
+        mem_free(*states.heredoc_separator);
+        *states.heredoc_separator = NULL;
+        *states.reading_heredoc_separator = false;
+    }
+    return token;
+}
+
+static void create_heredoc_separator(struct token *token, 
+                                     struct lexer_states states)
+{
+    char *tmp = get_cat_symbols(token->values);            
+    char *heredoc = mem_calloc(strlen(tmp) + 2, 1);
+    strcat(heredoc, "\n");
+    strcat(heredoc, tmp);
+    mem_free(tmp);
+    *states.heredoc_separator = heredoc;
+}
+
+static bool execute_lexing(struct linked_list *token_list,
                            char **word_begin_ptr, char **input,
                            struct lexer_states states)
 {
@@ -368,6 +407,8 @@ static void execute_lexing(struct linked_list *token_list,
         current_token = parse_quoted_word(word_begin_ptr, states, input);
     else if (*states.reading_double_quote)
         current_token = parse_double_quoted_word(word_begin_ptr, states, input);
+    else if (*states.heredoc_separator)
+        current_token = parse_heredocs(word_begin_ptr, input, states);
     else
         current_token = parse_unquoted_word(word_begin_ptr, states, input);
 
@@ -380,10 +421,24 @@ static void execute_lexing(struct linked_list *token_list,
                 current_token->type = ENDBACKQUOTE;
             *states.reading_backquote = !*states.reading_backquote;
         }
+        else if (*states.reading_heredoc_separator)
+        {
+            if (!is_non_delimitator(current_token->type))
+                return true;
+            create_heredoc_separator(current_token, states);
+            current_token->type = HEREDOC;
+        }
+        else if (current_token->type == INF_INF 
+                || current_token->type == INF_INF_MIN)
+        {
+            *states.reading_heredoc_separator = true;
+        }
         // we add it to list
         token_list = list_append(token_list, current_token);
         *word_begin_ptr = NULL;
     }
+
+    return false;
 }
 
 static void clean_token_list(struct linked_list *token_list)
@@ -409,12 +464,16 @@ struct linked_list *build_token_list(char *input, int *err)
     bool reading_quote = false;
     bool reading_double_quote = false;
     bool reading_backquote = false;
+    bool reading_heredoc_separator = false;
+    char *heredoc_separator = NULL;
 
     struct lexer_states states = {
         .reading_quote = &reading_quote,
         .reading_double_quote = &reading_double_quote,
         .reading_comm = &reading_comm,
         .reading_backquote = &reading_backquote,
+        .reading_heredoc_separator = &reading_heredoc_separator,
+        .heredoc_separator = &heredoc_separator,
     };
 
     char *word_begin_ptr = NULL;
@@ -422,8 +481,15 @@ struct linked_list *build_token_list(char *input, int *err)
     struct linked_list *token_list = new_list();
 
     for (; *input != '\0'; input++)
-        execute_lexing(token_list, &word_begin_ptr, &input, states);
-
+    {
+        if (execute_lexing(token_list, &word_begin_ptr, &input, states))
+        {
+            deep_free_list(token_list, free_token);
+            if (err)
+                *err = 1;
+            return NULL;
+        }
+    }
     if (reading_quote || reading_double_quote
         || reading_backquote) // quote missmatch
     {

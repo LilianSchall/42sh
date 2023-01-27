@@ -18,6 +18,8 @@ struct lexer_states
     bool *reading_double_quote;
     bool *reading_comm;
     bool *reading_backquote;
+    bool *reading_heredoc_separator;
+    char **heredoc_separator;
 };
 
 // this function builds the token_list based on the given input
