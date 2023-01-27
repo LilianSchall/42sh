@@ -49,8 +49,8 @@ static struct AST *form_iter(struct linked_list *token_list, bool trigger_warn,
     return iter;
 }
 
-static struct linked_list *new_case_item_list(struct linked_list *token_list, 
-        struct AST *iter)
+static struct linked_list *new_case_item_list(struct linked_list *token_list,
+                                              struct AST *iter)
 {
     struct AST *compound = list_rule(token_list);
     struct linked_list *list = new_list();
@@ -168,7 +168,8 @@ static struct AST *case_clause_rule(struct linked_list *token_list,
 }
 
 static struct AST *parse_case_clause(struct linked_list *token_list,
-        struct log_info info, struct AST *word, int *err)
+                                     struct log_info info, struct AST *word,
+                                     int *err)
 {
     struct token *token = list_head(token_list);
     info.sym = "in";
@@ -203,7 +204,6 @@ static struct AST *parse_case_clause(struct linked_list *token_list,
     return case_clause;
 }
 
-
 struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = NULL;
@@ -236,7 +236,7 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
     list_append(tmp->linked_list, word);
     word = tmp;
     purge_newline_token(token_list);
-    
+
     struct AST *case_clause = parse_case_clause(token_list, info, word, &err);
 
     if (!err)

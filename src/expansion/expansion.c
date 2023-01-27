@@ -205,9 +205,9 @@ char *expand_var(const char *str, char **argv, int quoted)
 
             const char *var_name = str + brackets;
             const char *end = var_name;
-            
+
             get_end(&str, &end, brackets);
-            
+
             char *tmp = strndup(var_name, end - var_name - brackets);
             char *var = getenv(tmp);
 
@@ -215,7 +215,7 @@ char *expand_var(const char *str, char **argv, int quoted)
                 var = get_spec_var(tmp, argv, quoted);
 
             mem_free(tmp);
-            
+
             if (var)
             {
                 // Replace the variable with its value
@@ -255,7 +255,8 @@ char *expand_symbol_array(struct symbol **values, char **argv)
                 expanded = get_var_tilde();
             else
             {
-                expanded = expand_var(values[i]->value, argv, values[i]->is_double_quoted);
+                expanded = expand_var(values[i]->value, argv,
+                                      values[i]->is_double_quoted);
             }
         }
         else

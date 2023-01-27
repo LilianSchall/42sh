@@ -1,7 +1,7 @@
 #include "parser.h"
 
 static struct AST *arithmetic_expansion_rule(struct linked_list *token_list,
-        bool trigger_warn)
+                                             bool trigger_warn)
 {
     struct token *token = list_head(token_list);
     if (!token || token->type != WORD)
@@ -10,7 +10,7 @@ static struct AST *arithmetic_expansion_rule(struct linked_list *token_list,
             warnx("Missing word for arithmetic expansion !");
         return NULL;
     }
-    
+
     struct token *expr = token;
     list_pop(token_list);
     token = list_head(token_list);
@@ -49,7 +49,7 @@ struct AST *substitution_rule(struct linked_list *token_list, bool trigger_warn)
         return new_AST(token, ARG, NULL);
 
     // it was '$(' so we free it
-    
+
     if (token->type == DOLL_OPEN_PARENTHESE_PARENTHESE)
     {
         free_token(token);

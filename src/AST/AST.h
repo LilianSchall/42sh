@@ -33,7 +33,7 @@ enum AST_type
 };
 
 struct AST
-{ 
+{
     struct token *value;
     enum AST_type type;
     struct linked_list *linked_list;

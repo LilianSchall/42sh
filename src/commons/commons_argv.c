@@ -34,7 +34,7 @@ static char **split_string(char *str)
             result[i][len] = 0;
             i++;
             result = mem_realloc(result, sizeof(char *) * (i + 2));
-            result[i+1] = NULL;
+            result[i + 1] = NULL;
             while (isspace(*p))
                 p++;
             start = p;
@@ -65,13 +65,13 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
 
     if (!temp || list_size(temp) == 0)
     {
-        return mem_calloc(sizeof(char*), 1);
+        return mem_calloc(sizeof(char *), 1);
     }
 
     struct linked_node *ln = temp->head;
 
     int len = 0;
-    char *str = mem_calloc(sizeof(char*), 1);
+    char *str = mem_calloc(sizeof(char *), 1);
     for (; ln; ln = ln->next)
     {
         struct AST *child = ln->data;
@@ -80,7 +80,8 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
             tmp = execute_AST_D_SUBSHELL(child, env);
         else if (child->type == ARITH)
         {
-            char *temp = expand_var(child->value->values[0]->value, env->argv, 0);
+            char *temp =
+                expand_var(child->value->values[0]->value, env->argv, 0);
             tmp = evalexpr(temp);
             mem_free(temp);
         }
@@ -100,7 +101,8 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
     // printf("%s\n", str);
     char **argv = split_string(str);
     mem_free(str);
-    for (*argc = 0; argv[*argc]; *argc += 1);
+    for (*argc = 0; argv[*argc]; *argc += 1)
+        ;
     return argv;
 }
 

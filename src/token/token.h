@@ -69,7 +69,7 @@ enum token_type
         [DOLL_OPEN_PARENTHESE] = "$(",                                         \
         [DOLL_OPEN_PARENTHESE_PARENTHESE] = "$((",                             \
         [CLOSE_PARENTHESE] = ")",                                              \
-        [CLOSE_PARENTHESE_PARENTHESE] = "))",                                   \
+        [CLOSE_PARENTHESE_PARENTHESE] = "))",                                  \
         [BACKQUOTE] = "`",                                                     \
         [ENDBACKQUOTE] = "`",                                                  \
         [FOR] = "for",                                                         \
@@ -99,7 +99,7 @@ enum token_type
         [R_PIPE] = "|",                                                        \
         [NEG] = "!",                                                           \
         [VARASSIGNMENT] = "",                                                  \
-        [HEREDOC] = "",                                                     \
+        [HEREDOC] = "",                                                        \
         [ERROR] = NULL,                                                        \
     }
 
@@ -108,19 +108,19 @@ enum token_type
                     '#', '\\', '\"', '\'', ' ', '\t', '\n', '\0' }
 
 #define CREATE_NON_DELIMITATOR(Name)                                           \
-    enum token_type Name[] = {                                                 \
-        WORD, OPEN_BRACE, FOR,  IN,   DO,   DONE, WHILE,         UNTIL, CASE,  \
-        ESAC, IF,         THEN, ELIF, ELSE, FI,   VARASSIGNMENT, NEG, \
-        CLOSE_BRACE \
-    }
+    enum token_type Name[] = { WORD, OPEN_BRACE, FOR,   IN,                    \
+                               DO,   DONE,       WHILE, UNTIL,                 \
+                               CASE, ESAC,       IF,    THEN,                  \
+                               ELIF, ELSE,       FI,    VARASSIGNMENT,         \
+                               NEG,  CLOSE_BRACE }
 
 #define CREATE_REDIRECTIONS(Name)                                              \
     char *Name[] = { ">>", ">&", "<&", ">|", "<>", "<<", "<<-", NULL }
 
 #define CREATE_REDIRECT_SCOUT(Name)                                            \
-    enum token_type Name[] = { R_SUP, R_SUP_PIPE, R_SUP_SUP, R_SUP_AND,        \
-                               R_INF, R_INF_AND,  R_INF_SUP, INF_INF,        \
-                               INF_INF_MIN }
+    enum token_type Name[] = { R_SUP,     R_SUP_PIPE, R_SUP_SUP,               \
+                               R_SUP_AND, R_INF,      R_INF_AND,               \
+                               R_INF_SUP, INF_INF,    INF_INF_MIN }
 
 struct token
 {
