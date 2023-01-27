@@ -45,6 +45,7 @@ struct fifo *tokenize(const char *str, int *err)
             {
                 str++;
                 fifo_push(fifo, create_node(0, POW));
+                continue;
             }
             fifo_push(fifo, create_node(0, MUL));
         }
@@ -117,6 +118,8 @@ struct fifo *check_expr(struct fifo *fifo, int *err)
             }
             node->unary = 1;
         }
+        lastnode = node;
+        fifo_push(out, node);
     }
     if (brackets)
     {
@@ -210,7 +213,7 @@ struct node *ast_build(char *str, int *err)
     out = get_output_stack_infix(str, err);
     if (*err)
         return NULL;
-    struct node *tree = build_tree(out, err);
+    struct node *tree = build_tree(out, err); 
     lifo_destroy(out);
     if (*err)
         return NULL;

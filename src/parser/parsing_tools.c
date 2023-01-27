@@ -97,5 +97,6 @@ bool is_non_delimitator(enum token_type type)
 
 bool is_substitution_ruled(enum token_type type)
 {
-    return type == WORD || type == DOLL_OPEN_PARENTHESE || type == BACKQUOTE;
+    return type == WORD || type == DOLL_OPEN_PARENTHESE || type == BACKQUOTE
+        || type == DOLL_OPEN_PARENTHESE_PARENTHESE;
 }

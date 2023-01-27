@@ -72,14 +72,18 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
 
     int len = 0;
     char *str = mem_calloc(sizeof(char*), 1);
-    while (ln)
+    for (; ln; ln = ln->next)
     {
         struct AST *child = ln->data;
         char *tmp = NULL;
         if (child->type == D_SUBSHELL)
             tmp = execute_AST_D_SUBSHELL(child, env);
         else if (child->type == ARITH)
-            tmp = evalexpr(child->value->values[0]->value);
+        {
+            char *temp = expand_var(child->value->values[0]->value, env->argv, 0);
+            tmp = evalexpr(temp);
+            mem_free(temp);
+        }
         else
             tmp = expand_symbol_array(child->value->values, env->argv);
         if (!tmp)
@@ -91,7 +95,6 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
         str[len + 1] = 0;
 
         mem_free(tmp);
-        ln = ln->next;
     }
     str[len] = 0;
     // printf("%s\n", str);

@@ -144,6 +144,13 @@ static void print_heredoc(struct AST *tree)
     __pretty_printer(exec);
 }
 
+static void print_arith(struct AST *tree)
+{
+    char *sym = get_cat_symbols(tree->value->values);
+    printf("arithmetic expr: \"%s\" ", sym);
+    mem_free(sym);
+}
+
 static void __pretty_printer(struct AST *tree)
 {
     if (tree == NULL)
@@ -178,6 +185,8 @@ static void __pretty_printer(struct AST *tree)
         print_case(tree);
     else if (tree->type == HERE_DOC)
         print_heredoc(tree);
+    else if (tree->type == ARITH)
+        print_arith(tree);
 
     printf("}");
 }
