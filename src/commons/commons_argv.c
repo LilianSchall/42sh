@@ -34,6 +34,7 @@ static char **split_string(char *str)
             result[i][len] = 0;
             i++;
             result = mem_realloc(result, sizeof(char *) * (i + 2));
+            result[i+1] = NULL;
             while (isspace(*p))
                 p++;
             start = p;
@@ -45,11 +46,12 @@ static char **split_string(char *str)
             p++;
         }
     }
+    if (*(p - 1) && isspace(*(p - 1)))
+        return result;
     int len = p - start;
     result[i] = mem_malloc(len + 1);
     memcpy(result[i], start, len);
     result[i][len] = 0;
-    result[i + 1] = NULL;
     i = 0;
     return result;
 }
