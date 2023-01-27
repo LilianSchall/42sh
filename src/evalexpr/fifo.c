@@ -2,7 +2,7 @@
 
 struct fifo *fifo_init(void)
 {
-    struct fifo *f = malloc(sizeof(struct fifo));
+    struct fifo *f = mem_malloc(sizeof(struct fifo));
     f->head = NULL;
     f->tail = NULL;
     f->size = 0;

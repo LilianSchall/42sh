@@ -22,25 +22,27 @@ int power(int a, int b)
 
 int ast_evaluate(const struct node *root, int *err)
 {
-    switch (root->type)
+    if (root->type == ADD)
     {
-    case ADD:
         if (root->unary)
             return ast_evaluate(root->right_child, err);
         return ast_evaluate(root->left_child, err)
             + ast_evaluate(root->right_child, err);
-        break;
-    case SUB:
+    }
+    if (root->type == SUB)
+    {
         if (root->unary)
             return -ast_evaluate(root->right_child, err);
         return ast_evaluate(root->left_child, err)
             - ast_evaluate(root->right_child, err);
-        break;
-    case MUL:
+    }
+    if (root->type == MUL)
+    {
         return ast_evaluate(root->left_child, err)
             * ast_evaluate(root->right_child, err);
-        break;
-    case DIV: {
+    }
+    if (root->type == DIV)
+    {
         int r = ast_evaluate(root->right_child, err);
         if (!r)
         {
@@ -48,9 +50,9 @@ int ast_evaluate(const struct node *root, int *err)
             return 0;
         }
         return ast_evaluate(root->left_child, err) / r;
-        break;
     }
-    case MOD: {
+    if (root->type == MOD)
+    {
         int r = ast_evaluate(root->right_child, err);
         if (!r)
         {
@@ -58,21 +60,16 @@ int ast_evaluate(const struct node *root, int *err)
             return 0;
         }
         return ast_evaluate(root->left_child, err) % r;
-        break;
     }
-    case POW: {
+    else if (root->type == POW)
+    {
         int res = ast_evaluate(root->right_child, err);
         if (res < 0)
         {
             *err = 3;
             return 0;
         }
-        return power(ast_evaluate(root->left_child, err),
-                     ast_evaluate(root->right_child, err));
-        break;
+        return power(ast_evaluate(root->left_child, err), res);
     }
-    default:
-        return root->value;
-        break;
-    }
+    return root->value;
 }

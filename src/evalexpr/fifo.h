@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 #include "evalexpr_ast.h"
+#include "garbage_collector/garbage_collector.h"
 #include "lifo.h"
 
 struct fifo

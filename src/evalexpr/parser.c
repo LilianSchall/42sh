@@ -8,7 +8,7 @@
 
 struct node *create_node(int value, enum node_type type)
 {
-    struct node *node = malloc(sizeof(struct node));
+    struct node *node = mem_malloc(sizeof(struct node));
     node->type = type;
     node->value = value;
     node->unary = 0;
@@ -35,51 +35,45 @@ struct fifo *tokenize(const char *str, int *err)
         }
         if (!(*str))
             break;
-        switch (*str)
-        {
-        case '+': {
+        if (*str == '+')
             fifo_push(fifo, create_node(0, ADD));
-            break;
-        }
-        case '-': {
+        else if (*str == '-')
             fifo_push(fifo, create_node(0, SUB));
-            break;
-        }
-        case '*': {
+        else if (*str == '*')
+        {
+            if (*(str + 1) == '*')
+            {
+                str++;
+                fifo_push(fifo, create_node(0, POW));
+            }
             fifo_push(fifo, create_node(0, MUL));
-            break;
         }
-        case '/': {
+        else if (*str == '/')
             fifo_push(fifo, create_node(0, DIV));
-            break;
-        }
-        case '%': {
+        else if (*str == '%')
             fifo_push(fifo, create_node(0, MOD));
-            break;
-        }
-        case '^': {
-            fifo_push(fifo, create_node(0, POW));
-            break;
-        }
-        case '(': {
+        else if (*str == '(')
             fifo_push(fifo, create_node(0, LB));
-            break;
-        }
-        case ')': {
+        else if (*str == ')')
             fifo_push(fifo, create_node(0, RB));
-            break;
-        }
-        default:
+        else
+        {
             if (!isspace(*str))
             {
                 fifo_destroy(fifo);
                 *err = 1;
                 return NULL;
             }
-            break;
         }
     }
     return fifo;
+}
+
+void set_err(int *err, struct fifo *fifo1, struct fifo *fifo2)
+{
+    *err = 2;
+    fifo_destroy(fifo1);
+    fifo_destroy(fifo2);
 }
 
 struct fifo *check_expr(struct fifo *fifo, int *err)
@@ -99,20 +93,16 @@ struct fifo *check_expr(struct fifo *fifo, int *err)
             if ((lastnode && lastnode->type < ADD && lastnode->type != LB)
                 || (fifo_head(fifo) && fifo_head(fifo)->type < RB))
             {
-                *err = 2;
-                free(node);
-                fifo_destroy(out);
-                fifo_destroy(fifo);
+                set_err(err, fifo, out);
+                mem_free(node);
                 return NULL;
             }
         }
         if (node->type >= ADD
             && (!fifo_head(fifo) || fifo_head(fifo)->type == RB))
         {
-            *err = 2;
-            free(node);
-            fifo_destroy(out);
-            fifo_destroy(fifo);
+            set_err(err, fifo, out);
+            mem_free(node);
             return NULL;
         }
         if (node->type >= ADD
@@ -121,10 +111,8 @@ struct fifo *check_expr(struct fifo *fifo, int *err)
         {
             if (!fifo_head(fifo) || node->type >= MUL)
             {
-                *err = 2;
-                free(node);
-                fifo_destroy(out);
-                fifo_destroy(fifo);
+                set_err(err, fifo, out);
+                mem_free(node);
                 return NULL;
             }
             node->unary = 1;
@@ -132,9 +120,7 @@ struct fifo *check_expr(struct fifo *fifo, int *err)
     }
     if (brackets)
     {
-        *err = 2;
-        fifo_destroy(out);
-        fifo_destroy(fifo);
+        set_err(err, fifo, out);
         return NULL;
     }
     fifo_destroy(fifo);
@@ -185,16 +171,16 @@ struct lifo *get_output_stack_infix(char *str, int *err)
         {
             while (lifo_head(s) && lifo_head(s)->type != LB)
                 lifo_push(out, lifo_pop(s));
-            free(lifo_pop(s));
-            free(node);
+            mem_free(lifo_pop(s));
+            mem_free(node);
         }
     }
     while (lifo_head(s))
     {
         lifo_push(out, lifo_pop(s));
     }
-    free(fifo);
-    free(s);
+    mem_free(fifo);
+    mem_free(s);
     return out;
 }
 
@@ -237,5 +223,5 @@ void ast_delete(struct node *root)
         return;
     ast_delete(root->right_child);
     ast_delete(root->left_child);
-    free(root);
+    mem_free(root);
 }

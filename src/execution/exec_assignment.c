@@ -32,7 +32,9 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
     }
     else // arithmethic expansion
     {
-        tmp = evalexpr(value_ast->value->values[0]->value); 
+        char *temp = expand_var(value_ast->value->values[0]->value, env->argv, 0);
+        tmp = evalexpr(temp);
+        mem_free(temp);
     }
     setenv(var_name, tmp, 1);
     mem_free(tmp);
