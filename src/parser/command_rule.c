@@ -38,6 +38,39 @@ static struct AST *handle_redirection(struct linked_list *token_list,
     return tree;
 }
 
+static void exec_shell_command(struct linked_list *token_list,
+        enum token_type type, struct AST **tree, bool trigger_warn)
+{
+    if (type == IF || type == WHILE || type == UNTIL || type == FOR 
+        || type == OPEN_BRACE || type == OPEN_PARENTHESE || type == CASE)
+    {
+        struct AST *shell_com_tree =
+            shell_command_rule(token_list, trigger_warn);
+
+        if (!shell_com_tree)
+        {
+            free_AST(*tree);
+            *tree = NULL;
+            return;
+        }
+
+        // purge newline token
+        // purge_newline_token(token_list);
+
+        list_append(
+            (*tree)->linked_list,
+            handle_redirection(token_list, shell_com_tree, trigger_warn));
+    }
+    else
+    {
+        if (trigger_warn)
+            warnx("No match for token at command_rule");
+        free_AST(*tree);
+        *tree = NULL;
+        return;
+    }
+}
+
 struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = list_head(token_list);
@@ -81,33 +114,8 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
                         ? handle_redirection(token_list, child, trigger_warn)
                         : child);
     }
-    else if (token->type == IF || token->type == WHILE || token->type == UNTIL
-             || token->type == FOR || token->type == OPEN_BRACE
-             || token->type == OPEN_PARENTHESE || token->type == CASE)
-    {
-        struct AST *shell_com_tree =
-            shell_command_rule(token_list, trigger_warn);
-
-        if (!shell_com_tree)
-        {
-            free_AST(tree);
-            return NULL;
-        }
-
-        // purge newline token
-        // purge_newline_token(token_list);
-
-        list_append(
-            tree->linked_list,
-            handle_redirection(token_list, shell_com_tree, trigger_warn));
-    }
     else
-    {
-        if (trigger_warn)
-            warnx("No match for token at command_rule");
-        free_AST(tree);
-        return NULL;
-    }
+        exec_shell_command(token_list, token->type, &tree, trigger_warn); 
 
     return tree;
 }

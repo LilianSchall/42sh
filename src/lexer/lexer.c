@@ -105,8 +105,8 @@ static struct token *create_token(char **word_begin_ptr, char **input,
     return new_token(symbols, type);
 }
 
-static struct token *parse_quoted_word(char **word_begin_ptr,
-                                       struct lexer_states states, char **input)
+static struct token *parse_quoted_word(char **word_begin_ptr, char **input,
+                                       struct lexer_states states)
 {
     static CREATE_DELIMITATORS(delims);
 
@@ -160,9 +160,8 @@ static bool is_chevron(char c)
     return c == '>' || c == '<';
 }
 
-static struct token *parse_double_quoted_word(char **word_begin_ptr,
-                                              struct lexer_states states,
-                                              char **input)
+static struct token *parse_double_quoted_word(char **word_begin_ptr, char **input,
+                                              struct lexer_states states)
 {
     static CREATE_DELIMITATORS(delims);
     if (!(*word_begin_ptr))
@@ -221,13 +220,57 @@ static struct token *parse_double_quoted_word(char **word_begin_ptr,
     return NULL;
 }
 
-static struct token *parse_unquoted_word(char **word_begin_ptr,
-                                         struct lexer_states states,
-                                         char **input)
+static struct token *lex_new_token(char **word_begin_ptr, char **input,
+        char *delims, char **token_value)
 {
-    static CREATE_DICO(token_value);
-    static CREATE_DELIMITATORS(delims);
     static CREATE_REDIRECTIONS(redirections);
+
+    struct token *token = NULL;
+    char tmp[4];
+    tmp[0] = GETCHAR(input, 0);
+    tmp[1] = GETCHAR(input, 1);
+    tmp[2] = GETCHAR(input, 1) != 0 ? GETCHAR(input, 2) : 0;
+    tmp[3] = 0;
+
+    // else if two same delimitators are following each other
+    if (!isspace(GETCHAR(input, 0))
+        && *input == *word_begin_ptr
+        && ((GETCHAR(input, 0) == GETCHAR(input, 1)
+            || sub_special_tokens(tmp, redirections) != -1)))
+    // then it is not a delimitator but a special token
+    // so we wait to reach the end of this special token
+    {
+        return NULL;
+    }
+
+    // now we have a token
+    // that is at the end no matter what
+
+    if (find_delims(GETCHAR(word_begin_ptr, 0), delims) == -1
+        && *input <= *word_begin_ptr + 1)
+    {
+        // if we do not lex a special $ token
+        if (GETCHAR(word_begin_ptr, 0) != '$')
+            *input -= 1; // we have to go back by -1
+
+        token = create_token(word_begin_ptr, input, token_value);
+        return token;
+    }
+    else
+        token = create_token(word_begin_ptr, input, token_value);
+
+    if (*input > *word_begin_ptr + 1)
+        offset_char(input, -1);
+
+    return token;
+
+}
+
+static struct token *parse_unquoted_word(char **word_begin_ptr, char **input,
+                                         struct lexer_states states)
+{
+    static CREATE_DELIMITATORS(delims);
+    static CREATE_DICO(token_value);
 
     if (GETCHAR(input, 0) == '#' && *word_begin_ptr == NULL)
     {
@@ -304,45 +347,8 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
         *states.reading_double_quote = true;
         return NULL;
     }
-
-    struct token *token = NULL;
-    char tmp[4];
-    tmp[0] = GETCHAR(input, 0);
-    tmp[1] = GETCHAR(input, 1);
-    tmp[2] = GETCHAR(input, 1) != 0 ? GETCHAR(input, 2) : 0;
-    tmp[3] = 0;
-
-    // else if two same delimitators are following each other
-    if (!isspace(GETCHAR(input, 0))
-        && *input == *word_begin_ptr
-        && ((GETCHAR(input, 0) == GETCHAR(input, 1)
-            || sub_special_tokens(tmp, redirections) != -1)))
-    // then it is not a delimitator but a special token
-    // so we wait to reach the end of this special token
-    {
-        return NULL;
-    }
-
-    // now we have a token
-    // that is at the end no matter what
-
-    if (find_delims(GETCHAR(word_begin_ptr, 0), delims) == -1
-        && *input <= *word_begin_ptr + 1)
-    {
-        // if we do not lex a special $ token
-        if (GETCHAR(word_begin_ptr, 0) != '$')
-            *input -= 1; // we have to go back by -1
-
-        token = create_token(word_begin_ptr, input, token_value);
-        return token;
-    }
-    else
-        token = create_token(word_begin_ptr, input, token_value);
-
-    if (*input > *word_begin_ptr + 1)
-        offset_char(input, -1);
-
-    return token;
+    
+    return lex_new_token(word_begin_ptr, input, delims, token_value);
 }
 
 static struct token *parse_comment(char **input, struct lexer_states states)
@@ -422,13 +428,13 @@ static bool execute_lexing(struct linked_list *token_list,
         current_token = parse_comment(input, states);
     // we based our parsing on wheter we read a quoted word or not
     else if (*states.reading_quote)
-        current_token = parse_quoted_word(word_begin_ptr, states, input);
+        current_token = parse_quoted_word(word_begin_ptr, input, states);
     else if (*states.reading_double_quote)
-        current_token = parse_double_quoted_word(word_begin_ptr, states, input);
+        current_token = parse_double_quoted_word(word_begin_ptr, input, states);
     else if (*states.heredoc_separator)
         current_token = parse_heredocs(word_begin_ptr, input, states);
     else
-        current_token = parse_unquoted_word(word_begin_ptr, states, input);
+        current_token = parse_unquoted_word(word_begin_ptr, input, states);
 
     // if there is a new token
     if (current_token)
@@ -450,6 +456,14 @@ static bool execute_lexing(struct linked_list *token_list,
                 || current_token->type == INF_INF_MIN)
         {
             *states.reading_heredoc_separator = true;
+        }
+        else if (current_token->type == DOLL_OPEN_PARENTHESE
+                && GETCHAR(input, 1) == '(')
+        {
+            offset_char(input, 1);
+            current_token->type = DOLL_OPEN_PARENTHESE_PARENTHESE;
+            current_token->values[1] = new_symbol(gc_strdup("("),
+                    false, false, false);
         }
         // we add it to list
         token_list = list_append(token_list, current_token);
