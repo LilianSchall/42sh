@@ -89,3 +89,10 @@ char *get_cat_symbols(struct symbol **values)
 
     return str;
 }
+
+bool is_quoted(struct symbol *sym)
+{
+    if (!sym)
+        return false;
+    return sym->is_single_quoted || sym->is_double_quoted;
+}

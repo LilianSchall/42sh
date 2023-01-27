@@ -74,7 +74,7 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
 
     char *sym = get_cat_symbols(token->values);
 
-    if (!strcmp(sym, "*"))
+    if (!strcmp(sym, "*") && !(is_quoted(token->values[0])))
     {
         is_default = true;
         list_pop(token_list);
