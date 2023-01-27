@@ -8,8 +8,8 @@ static size_t my_strlen(char *str, int type)
 
     if (type != 0)
         i++;
-
-    while (str[i] > 0 || str[i] == -1)
+    // we stop at a delimiter marker only if we are in unquoted
+    while (str[i] > 0 || (str[i] == -1 && type != 0))
     {
         if (str[i] > 0) // if it is a char and not a marker
             len++; // then we count it as part of the symbol
