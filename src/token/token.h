@@ -111,7 +111,7 @@ enum token_type
     }
 
 #define CREATE_REDIRECTIONS(Name)                                              \
-    char *Name[] = { ">>", ">&", "<&", ">|", "<>", "<<", "<-", NULL }
+    char *Name[] = { ">>", ">&", "<&", ">|", "<>", "<<", "<<-", NULL }
 
 #define CREATE_REDIRECT_SCOUT(Name)                                            \
     enum token_type Name[] = { R_SUP, R_SUP_PIPE, R_SUP_SUP, R_SUP_AND,        \

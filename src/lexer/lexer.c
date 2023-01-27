@@ -305,10 +305,11 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
         return NULL;
     }
 
-    char tmp[3];
+    char tmp[4];
     tmp[0] = GETCHAR(input, 0);
     tmp[1] = GETCHAR(input, 1);
-    tmp[2] = 0;
+    tmp[2] = GETCHAR(input, 1) != 0 ? GETCHAR(input, 2) : 0;
+    tmp[3] = 0;
 
     // else if two same delimitators are following each other
     if (!isspace(GETCHAR(input, 0))
@@ -370,7 +371,8 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
     static char *tmp = NULL;
     if (!(*word_begin_ptr))
     {
-        if (isspace(*input) && !(GETCHAR(input, 0) == '\n'))
+        puts("no begin");
+        if (isspace(GETCHAR(input, 0)) && GETCHAR(input, 0) != '\n')
             return NULL;
         *word_begin_ptr = *input + 1; // so we can escape the \n
         tmp = mem_calloc(strlen(*states.heredoc_separator) + 1, 1);
