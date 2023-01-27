@@ -39,9 +39,10 @@ static struct AST *handle_redirection(struct linked_list *token_list,
 }
 
 static void exec_shell_command(struct linked_list *token_list,
-        enum token_type type, struct AST **tree, bool trigger_warn)
+                               enum token_type type, struct AST **tree,
+                               bool trigger_warn)
 {
-    if (type == IF || type == WHILE || type == UNTIL || type == FOR 
+    if (type == IF || type == WHILE || type == UNTIL || type == FOR
         || type == OPEN_BRACE || type == OPEN_PARENTHESE || type == CASE)
     {
         struct AST *shell_com_tree =
@@ -115,7 +116,7 @@ struct AST *command_rule(struct linked_list *token_list, bool trigger_warn)
                         : child);
     }
     else
-        exec_shell_command(token_list, token->type, &tree, trigger_warn); 
+        exec_shell_command(token_list, token->type, &tree, trigger_warn);
 
     return tree;
 }

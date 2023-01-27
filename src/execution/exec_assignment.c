@@ -22,17 +22,18 @@ int execute_AST_assignment(struct AST *tree, struct env *env)
         for (int i = 0; tmp[i]; i++)
         {
             if (is_ifs(tmp[i]))
-                    tmp[i] = ' ';
+                tmp[i] = ' ';
         }
     }
     // the child is a subshell -> subshell and take stdout as value
-    else if (value_ast->type == D_SUBSHELL) 
+    else if (value_ast->type == D_SUBSHELL)
     {
         tmp = execute_AST_D_SUBSHELL(value_ast, env);
     }
     else // arithmethic expansion
     {
-        char *temp = expand_var(value_ast->value->values[0]->value, env->argv, 0);
+        char *temp =
+            expand_var(value_ast->value->values[0]->value, env->argv, 0);
         tmp = evalexpr(temp);
         mem_free(temp);
     }

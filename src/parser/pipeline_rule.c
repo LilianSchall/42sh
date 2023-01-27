@@ -1,7 +1,8 @@
 #include "parser.h"
 
 static struct AST *correct_pipeline_tree(struct AST *neg_tree,
-        struct AST *pipe_tree, struct AST *command_tree)
+                                         struct AST *pipe_tree,
+                                         struct AST *command_tree)
 {
     if (neg_tree)
     {
@@ -67,7 +68,7 @@ struct AST *pipeline_rule(struct linked_list *token_list, bool trigger_warn)
         list_append(pipe_tree->linked_list, command_tree);
         token = list_head(token_list);
     }
-    
+
     return correct_pipeline_tree(neg_tree, pipe_tree, command_tree);
 
 pipeline_error:

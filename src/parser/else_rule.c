@@ -1,7 +1,7 @@
 #include "parser.h"
 
-static bool parse_cond_clause(struct linked_list *token_list,
-        struct AST **cond, struct AST **then_clause, struct log_info info)
+static bool parse_cond_clause(struct linked_list *token_list, struct AST **cond,
+                              struct AST **then_clause, struct log_info info)
 {
     info.sym = "ELIF";
     struct token *elif_token = consume_token(token_list, ELIF, info);
@@ -41,9 +41,9 @@ struct AST *else_clause_rule(struct linked_list *token_list, bool trigger_warn)
     struct log_info info = { .sym = "ELSE",
                              .rulename = "else_clause_rule",
                              .trigger_warn = trigger_warn };
-    
+
     struct AST *cond = NULL;
-    struct AST *then_clause = NULL; 
+    struct AST *then_clause = NULL;
 
     struct token *else_token = consume_token(token_list, ELSE, info);
     if (else_token)

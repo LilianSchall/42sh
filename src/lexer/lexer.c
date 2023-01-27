@@ -160,7 +160,8 @@ static bool is_chevron(char c)
     return c == '>' || c == '<';
 }
 
-static struct token *parse_double_quoted_word(char **word_begin_ptr, char **input,
+static struct token *parse_double_quoted_word(char **word_begin_ptr,
+                                              char **input,
                                               struct lexer_states states)
 {
     static CREATE_DELIMITATORS(delims);
@@ -221,7 +222,7 @@ static struct token *parse_double_quoted_word(char **word_begin_ptr, char **inpu
 }
 
 static struct token *lex_new_token(char **word_begin_ptr, char **input,
-        char *delims, char **token_value)
+                                   char *delims, char **token_value)
 {
     static CREATE_REDIRECTIONS(redirections);
 
@@ -233,10 +234,9 @@ static struct token *lex_new_token(char **word_begin_ptr, char **input,
     tmp[3] = 0;
 
     // else if two same delimitators are following each other
-    if (!isspace(GETCHAR(input, 0))
-        && *input == *word_begin_ptr
+    if (!isspace(GETCHAR(input, 0)) && *input == *word_begin_ptr
         && ((GETCHAR(input, 0) == GETCHAR(input, 1)
-            || sub_special_tokens(tmp, redirections) != -1)))
+             || sub_special_tokens(tmp, redirections) != -1)))
     // then it is not a delimitator but a special token
     // so we wait to reach the end of this special token
     {
@@ -263,7 +263,6 @@ static struct token *lex_new_token(char **word_begin_ptr, char **input,
         offset_char(input, -1);
 
     return token;
-
 }
 
 static struct token *parse_unquoted_word(char **word_begin_ptr, char **input,
@@ -347,7 +346,7 @@ static struct token *parse_unquoted_word(char **word_begin_ptr, char **input,
         *states.reading_double_quote = true;
         return NULL;
     }
-    
+
     return lex_new_token(word_begin_ptr, input, delims, token_value);
 }
 
@@ -371,7 +370,7 @@ static void reset_heredoc_separator(struct lexer_states states)
 }
 
 static struct token *parse_heredocs(char **word_begin_ptr, char **input,
-        struct lexer_states states)
+                                    struct lexer_states states)
 {
     struct token *token = NULL;
     static char *tmp = NULL;
@@ -382,11 +381,11 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
         *word_begin_ptr = *input + 1; // so we can escape the \n
         tmp = mem_calloc(strlen(*states.heredoc_separator) + 1, 1);
     }
-    
+
     if (GETCHAR(input, 1) == '\0')
     {
         warnx("warning: here-document delimited by end-of-file (wanted '%s')",
-                *states.heredoc_separator + 1);
+              *states.heredoc_separator + 1);
         char *end = *input + 1;
         token = create_token(word_begin_ptr, &end, NULL);
         mem_free(tmp);
@@ -409,17 +408,17 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
 }
 
 static struct token *parse_arith_expr(char **word_begin_ptr, char **input,
-        struct lexer_states states)
+                                      struct lexer_states states)
 {
     // we will lex this one in one time
-    size_t nb_parentheses = 2; //we already lex the first two parentheses
+    size_t nb_parentheses = 2; // we already lex the first two parentheses
     *states.reading_arith_expr = false;
 
     *word_begin_ptr = *input;
 
     while (nb_parentheses != 0)
     {
-        if (GETCHAR(input, 0) == '\0' 
+        if (GETCHAR(input, 0) == '\0'
             || (GETCHAR(input, 1) == '\0' && nb_parentheses > 1))
             return NULL;
         char c = GETCHAR(input, 0);
@@ -433,18 +432,18 @@ static struct token *parse_arith_expr(char **word_begin_ptr, char **input,
     if (GETCHAR(input, -1) != GETCHAR(input, -2))
         return NULL;
 
-    offset_char(input,-2);
+    offset_char(input, -2);
 
     struct token *token = create_token(word_begin_ptr, input, NULL);
-    offset_char(input,-1);
+    offset_char(input, -1);
 
     return token;
 }
 
-static void create_heredoc_separator(struct token *token, 
+static void create_heredoc_separator(struct token *token,
                                      struct lexer_states states)
 {
-    char *tmp = get_cat_symbols(token->values);            
+    char *tmp = get_cat_symbols(token->values);
     char *heredoc = mem_calloc(strlen(tmp) + 2, 1);
     strcat(heredoc, "\n");
     strcat(heredoc, tmp);
@@ -491,18 +490,18 @@ static bool execute_lexing(struct linked_list *token_list,
             create_heredoc_separator(current_token, states);
             current_token->type = HEREDOC;
         }
-        else if (current_token->type == INF_INF 
-                || current_token->type == INF_INF_MIN)
+        else if (current_token->type == INF_INF
+                 || current_token->type == INF_INF_MIN)
         {
             *states.reading_heredoc_separator = true;
         }
         else if (current_token->type == DOLL_OPEN_PARENTHESE
-                && GETCHAR(input, 1) == '(')
+                 && GETCHAR(input, 1) == '(')
         {
             offset_char(input, 1);
             current_token->type = DOLL_OPEN_PARENTHESE_PARENTHESE;
-            current_token->values[1] = new_symbol(gc_strdup("("),
-                    false, false, false);
+            current_token->values[1] =
+                new_symbol(gc_strdup("("), false, false, false);
             *states.reading_arith_expr = true;
         }
         // we add it to list

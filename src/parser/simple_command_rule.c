@@ -29,8 +29,9 @@ static void stick_correctly_child(struct AST **tree, struct AST **redirect_tree,
     }
 }
 
-static bool parse_prefix(struct linked_list *token_list, struct AST **tree, 
-        struct AST **redirect_tree, struct AST **last_redirect_tree)
+static bool parse_prefix(struct linked_list *token_list, struct AST **tree,
+                         struct AST **redirect_tree,
+                         struct AST **last_redirect_tree)
 {
     struct token *token = list_head(token_list);
 
@@ -58,7 +59,8 @@ static bool parse_prefix(struct linked_list *token_list, struct AST **tree,
 }
 
 static bool parse_args(struct linked_list *token_list, struct AST **tree,
-        struct AST **redirect_tree, struct AST **last_redirect_tree)
+                       struct AST **redirect_tree,
+                       struct AST **last_redirect_tree)
 {
     struct token *token = list_head(token_list);
 
@@ -81,8 +83,7 @@ static bool parse_args(struct linked_list *token_list, struct AST **tree,
         if (!(*tree)->linked_list)
             (*tree)->linked_list = new_list();
 
-        stick_correctly_child(tree, redirect_tree, last_redirect_tree,
-                              child);
+        stick_correctly_child(tree, redirect_tree, last_redirect_tree, child);
 
         // make a look ahead of 1 to know when to stop
         token = list_head(token_list);
@@ -98,13 +99,13 @@ struct AST *simple_command_rule(struct linked_list *token_list,
 
     struct AST *redirect_tree = NULL;
     struct AST *last_redirect_tree = NULL;
-   
+
     if (!parse_prefix(token_list, &tree, &redirect_tree, &last_redirect_tree))
     {
         if (trigger_warn)
             warnx("Missing word WORD at simple_command_rule");
         return NULL;
-    } 
+    }
 
     struct token *token = list_head(token_list);
 

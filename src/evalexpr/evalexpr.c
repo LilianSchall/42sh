@@ -1,6 +1,6 @@
 #include "evalexpr.h"
 
-char* evalexpr(char *str)
+char *evalexpr(char *str)
 {
     int err = 0;
     struct node *tree = ast_build(str, &err);
@@ -16,7 +16,7 @@ char* evalexpr(char *str)
         return NULL;
     }
     ast_delete(tree);
-    char *result = mem_malloc(sizeof(char*) * 17);
+    char *result = mem_malloc(sizeof(char *) * 17);
     sprintf(result, "%d", res);
     return result;
 }

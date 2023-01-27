@@ -189,7 +189,7 @@ int is_ifs(char c)
         return 0;
     for (int i = 0; ifs[i]; i++)
     {
-       if (c == ifs[i])
+        if (c == ifs[i])
             return 1;
     }
     return 0;

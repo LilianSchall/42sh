@@ -130,8 +130,7 @@ struct fifo *check_expr(struct fifo *fifo, int *err)
             return NULL;
         }
         if (node->type >= ADD
-            && (!lastnode
-                || (lastnode->type >= ADD || lastnode->type == LB)))
+            && (!lastnode || (lastnode->type >= ADD || lastnode->type == LB)))
         {
             if (!fifo_head(fifo) || node->type >= MUL)
             {
@@ -236,7 +235,7 @@ struct node *ast_build(char *str, int *err)
     out = get_output_stack_infix(str, err);
     if (*err)
         return NULL;
-    struct node *tree = build_tree(out, err); 
+    struct node *tree = build_tree(out, err);
     lifo_destroy(out);
     if (*err)
         return NULL;

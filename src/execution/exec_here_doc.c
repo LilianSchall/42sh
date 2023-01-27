@@ -1,6 +1,5 @@
 #include "execution/execution.h"
 
-
 static char *get_string(struct AST *tree)
 {
     struct AST *ast_iter = tree->linked_list->head->next->next->data;
@@ -8,7 +7,6 @@ static char *get_string(struct AST *tree)
     char *string = ast_iter->value->values[0]->value;
     return string;
 }
-
 
 static void remove_tab(struct AST *tree)
 {
@@ -62,7 +60,7 @@ static int execute_AST_pipe_v2(struct AST *tree, struct env *env)
     // execute la commande
     char *string = get_string(tree);
     printf("%s", string);
-    if(string[strlen(string) - 1] != '\n')
+    if (string[strlen(string) - 1] != '\n')
         printf("\n");
 
     fflush(stdout);
