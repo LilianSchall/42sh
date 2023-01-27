@@ -71,7 +71,7 @@ struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
 
     struct AST *redirect_tree = new_AST(token, is_heredoc
         ? HERE_DOC : REDIRECTION, new_list());
-    if (!word)
+    if (!target)
     {
         err = "WORD OR HEREDOCS";
         goto redirection_error;
@@ -82,7 +82,7 @@ struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
         io_number = get_standard_io_number(redirect_tree->value->type);
 
     list_append(redirect_tree->linked_list, new_AST(io_number, ARG, NULL));
-    list_append(redirect_tree->linked_list, new_AST(word, ARG, NULL));
+    list_append(redirect_tree->linked_list, target);
 
     return redirect_tree;
 

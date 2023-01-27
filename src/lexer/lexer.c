@@ -374,7 +374,8 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
     if (!strcmp(tmp, *states.heredoc_separator))
     {
         // we found the other HEREDOC
-        token = create_token(word_begin_ptr, input, NULL);
+        char *end = *input + 1;
+        token = create_token(word_begin_ptr, &end, NULL);
         *input += strlen(*states.heredoc_separator) - 1;
         mem_free(tmp);
         mem_free(*states.heredoc_separator);

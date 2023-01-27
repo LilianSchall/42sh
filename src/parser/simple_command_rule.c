@@ -4,7 +4,7 @@ static void stick_correctly_child(struct AST **tree, struct AST **redirect_tree,
                                   struct AST **last_redirect_tree,
                                   struct AST *child)
 {
-    if (child->type == REDIRECTION)
+    if (child->type == REDIRECTION || child->type == HERE_DOC)
     {
         // we need to append the child to the latest redirection
 
