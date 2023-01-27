@@ -72,15 +72,12 @@ static struct token *create_token(char **word_begin_ptr, char **input,
     do
     {
         int offset = get_symbol(&begin, input, &sym);
-        if (!strlen(sym.value))
-            mem_free(sym.value);
-        else
-        {
-            struct symbol *new_sym = mem_malloc(sizeof(struct symbol));
-            memcpy(new_sym, &sym, sizeof(struct symbol));
+        if (!sym.value)
+            break;
+        struct symbol *new_sym = mem_malloc(sizeof(struct symbol));
+        memcpy(new_sym, &sym, sizeof(struct symbol));
 
-            symbols = add_sym_to_array(symbols, new_sym, &capacity);
-        }
+        symbols = add_sym_to_array(symbols, new_sym, &capacity);
         begin += offset;
     } while (begin < *input);
 
@@ -297,6 +294,16 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
         *states.reading_quote = true;
         return NULL;
     }
+    // same thing for double quote, we skip the double quote and enter
+    // double_quoted mode
+    // the omitted quote will be replaced by a DOUBLE_QUOTE_MARKER
+    // at the end the whole word will be regenerated
+    else if (GETCHAR(input, 0) == '"')
+    {
+        skip_char(input, 0, DOUBLE_QUOTE_MARKER);
+        *states.reading_double_quote = true;
+        return NULL;
+    }
 
     char tmp[3];
     tmp[0] = GETCHAR(input, 0);
@@ -311,17 +318,6 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
     // then it is not a delimitator but a special token
     // so we wait to reach the end of this special token
     {
-        return NULL;
-    }
-
-    // same thing for double quote, we skip the double quote and enter
-    // double_quoted mode
-    // the omitted quote will be replaced by a DOUBLE_QUOTE_MARKER
-    // at the end the whole word will be regenerated
-    else if (GETCHAR(input, 0) == '"')
-    {
-        skip_char(input, 0, DOUBLE_QUOTE_MARKER);
-        *states.reading_double_quote = true;
         return NULL;
     }
 
