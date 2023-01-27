@@ -356,6 +356,13 @@ static struct token *parse_comment(char **input, struct lexer_states states)
     return NULL;
 }
 
+static void reset_heredoc_separator(struct lexer_states states)
+{
+    mem_free(*states.heredoc_separator);
+    *states.heredoc_separator = NULL;
+    *states.reading_heredoc_separator = false;
+}
+
 static struct token *parse_heredocs(char **word_begin_ptr, char **input,
         struct lexer_states states)
 {
@@ -368,6 +375,17 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
         *word_begin_ptr = *input + 1; // so we can escape the \n
         tmp = mem_calloc(strlen(*states.heredoc_separator) + 1, 1);
     }
+    
+    if (GETCHAR(input, 1) == '\0')
+    {
+        warnx("warning: here-document delimited by end-of-file (wanted '%s')",
+                *states.heredoc_separator + 1);
+        char *end = *input + 1;
+        token = create_token(word_begin_ptr, &end, NULL);
+        mem_free(tmp);
+        reset_heredoc_separator(states);
+        return token;
+    }
 
     strncpy(tmp, *input, strlen(*states.heredoc_separator));
 
@@ -378,9 +396,7 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
         token = create_token(word_begin_ptr, &end, NULL);
         *input += strlen(*states.heredoc_separator) - 1;
         mem_free(tmp);
-        mem_free(*states.heredoc_separator);
-        *states.heredoc_separator = NULL;
-        *states.reading_heredoc_separator = false;
+        reset_heredoc_separator(states);
     }
     return token;
 }
