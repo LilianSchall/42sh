@@ -72,7 +72,7 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
 
     int len = 0;
     char *str = mem_calloc(sizeof(char*), 1);
-    while (ln)
+    for (; ln; ln = ln->next)
     {
         struct AST *child = ln->data;
         char *tmp = NULL;
@@ -91,7 +91,6 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
         str[len + 1] = 0;
 
         mem_free(tmp);
-        ln = ln->next;
     }
     str[len] = 0;
     // printf("%s\n", str);
