@@ -20,7 +20,9 @@ enum token_type
     CLOSE_BRACE,
     OPEN_PARENTHESE,
     DOLL_OPEN_PARENTHESE,
+    DOLL_OPEN_PARENTHESE_PARENTHESE,
     CLOSE_PARENTHESE,
+    CLOSE_PARENTHESE_PARENTHESE,
     BACKQUOTE,
     ENDBACKQUOTE,
     FOR,
@@ -65,7 +67,9 @@ enum token_type
         [CLOSE_BRACE] = "}",                                                   \
         [OPEN_PARENTHESE] = "(",                                               \
         [DOLL_OPEN_PARENTHESE] = "$(",                                         \
+        [DOLL_OPEN_PARENTHESE_PARENTHESE] = "$((",                             \
         [CLOSE_PARENTHESE] = ")",                                              \
+        [CLOSE_PARENTHESE_PARENTHESE] = "))",                                   \
         [BACKQUOTE] = "`",                                                     \
         [ENDBACKQUOTE] = "`",                                                  \
         [FOR] = "for",                                                         \

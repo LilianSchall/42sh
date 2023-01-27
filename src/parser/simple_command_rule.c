@@ -29,39 +29,84 @@ static void stick_correctly_child(struct AST **tree, struct AST **redirect_tree,
     }
 }
 
-struct AST *simple_command_rule(struct linked_list *token_list,
-                                bool trigger_warn)
+static bool parse_prefix(struct linked_list *token_list, struct AST **tree, 
+        struct AST **redirect_tree, struct AST **last_redirect_tree)
 {
-    struct AST *tree = NULL;
     struct token *token = list_head(token_list);
 
-    struct AST *redirect_tree = NULL;
-    struct AST *last_redirect_tree = NULL;
-
     if (token == NULL)
-    {
-        if (trigger_warn)
-            warnx("Missing word WORD at simple_command_rule");
-        return tree;
-    }
+        return false;
     // parsing the possible prefix
     while (token != NULL
            && (token->type == IO_NUMBER || is_redirect(token)
                || token->type == VARASSIGNMENT))
     {
-        struct AST *child = prefix_rule(token_list, trigger_warn);
+        struct AST *child = prefix_rule(token_list, false);
 
         if (child == NULL)
         {
-            free_AST(redirect_tree);
-            redirect_tree = NULL;
+            free_AST(*redirect_tree);
+            *redirect_tree = NULL;
         }
         else
-            stick_correctly_child(&tree, &redirect_tree, &last_redirect_tree,
+            stick_correctly_child(tree, redirect_tree, last_redirect_tree,
                                   child);
 
         token = list_head(token_list);
     }
+    return true;
+}
+
+static bool parse_args(struct linked_list *token_list, struct AST **tree,
+        struct AST **redirect_tree, struct AST **last_redirect_tree)
+{
+    struct token *token = list_head(token_list);
+
+    // parsing arguments
+    while (token != NULL
+           && (is_non_delimitator(token->type)
+               || is_substitution_ruled(token->type) || token->type == IO_NUMBER
+               || is_redirect(token)))
+    {
+        struct AST *child = element_rule(token_list, false);
+
+        if (child == NULL)
+        {
+            free_AST(*tree);
+            free_AST(*redirect_tree);
+            *tree = NULL;
+            return false;
+        }
+
+        if (!(*tree)->linked_list)
+            (*tree)->linked_list = new_list();
+
+        stick_correctly_child(tree, redirect_tree, last_redirect_tree,
+                              child);
+
+        // make a look ahead of 1 to know when to stop
+        token = list_head(token_list);
+    }
+
+    return true;
+}
+
+struct AST *simple_command_rule(struct linked_list *token_list,
+                                bool trigger_warn)
+{
+    struct AST *tree = NULL;
+
+    struct AST *redirect_tree = NULL;
+    struct AST *last_redirect_tree = NULL;
+   
+    if (!parse_prefix(token_list, &tree, &redirect_tree, &last_redirect_tree))
+    {
+        if (trigger_warn)
+            warnx("Missing word WORD at simple_command_rule");
+        return NULL;
+    } 
+
+    struct token *token = list_head(token_list);
 
     if (!token || !is_substitution_ruled(token->type))
     {
@@ -94,35 +139,12 @@ struct AST *simple_command_rule(struct linked_list *token_list,
     }
     list_append(tree->linked_list, name);
     // the name is now transformed as arg of command AST
-
-    token = list_head(token_list);
-
-    // parsing arguments
-    while (token != NULL
-           && (is_non_delimitator(token->type)
-               || is_substitution_ruled(token->type) || token->type == IO_NUMBER
-               || is_redirect(token)))
+    if (!parse_args(token_list, &tree, &redirect_tree, &last_redirect_tree))
     {
-        struct AST *child = element_rule(token_list, trigger_warn);
-
-        if (child == NULL)
-        {
-            free_AST(tree);
-            free_AST(redirect_tree);
-            tree = NULL;
-            goto simple_command_end;
-        }
-
-        if (!tree->linked_list)
-            tree->linked_list = new_list();
-
-        stick_correctly_child(&tree, &redirect_tree, &last_redirect_tree,
-                              child);
-
-        // make a look ahead of 1 to know when to stop
-        token = list_head(token_list);
+        if (trigger_warn)
+            warnx("Missing element WORD at simple_command_rule");
+        goto simple_command_end;
     }
-
     // as we have command, we should remove every child
     // that are assignments
     // remove_AST(tree, ASSIGNMENT);

@@ -49,6 +49,17 @@ static struct AST *form_iter(struct linked_list *token_list, bool trigger_warn,
     return iter;
 }
 
+static struct linked_list *new_case_item_list(struct linked_list *token_list, 
+        struct AST *iter)
+{
+    struct AST *compound = list_rule(token_list);
+    struct linked_list *list = new_list();
+    list_append(list, iter);
+    list_append(list, compound ? compound : new_AST(NULL, SEQUENCE, NULL));
+
+    return list;
+}
+
 static struct linked_list *case_item_rule(struct linked_list *token_list,
                                           bool trigger_warn, int *err)
 {
@@ -110,13 +121,8 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
     free_token(token);
 
     purge_newline_token(token_list);
-    struct AST *compound = list_rule(token_list);
-    struct linked_list *list = new_list();
-    list_append(list, iter);
-    list_append(list, compound ? compound : new_AST(NULL, SEQUENCE, NULL));
-
     *err = 0;
-    return list;
+    return new_case_item_list(token_list, iter);
 }
 
 static struct AST *case_clause_rule(struct linked_list *token_list,
@@ -161,6 +167,43 @@ static struct AST *case_clause_rule(struct linked_list *token_list,
     return tree;
 }
 
+static struct AST *parse_case_clause(struct linked_list *token_list,
+        struct log_info info, struct AST *word, int *err)
+{
+    struct token *token = list_head(token_list);
+    info.sym = "in";
+    if (!(token = consume_token(token_list, IN, info)))
+    {
+        free_AST(word);
+        return NULL;
+    }
+
+    free_token(token);
+    token = NULL;
+
+    purge_newline_token(token_list);
+    struct AST *case_clause = case_clause_rule(token_list, false, err);
+
+    if (*err)
+        return NULL;
+
+    if (!case_clause)
+        case_clause = new_AST(NULL, CASE_C, new_list());
+
+    info.sym = "esac";
+    if (!(token = consume_token(token_list, ESAC, info)))
+    {
+        free_AST(word);
+        return NULL;
+    }
+    free_token(token);
+
+    list_insert(case_clause->linked_list, word, 0);
+
+    return case_clause;
+}
+
+
 struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = NULL;
@@ -193,37 +236,11 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
     list_append(tmp->linked_list, word);
     word = tmp;
     purge_newline_token(token_list);
+    
+    struct AST *case_clause = parse_case_clause(token_list, info, word, &err);
 
-    info.sym = "in";
-    if (!(token = consume_token(token_list, IN, info)))
-    {
-        free_AST(word);
-        return NULL;
-    }
-
-    free_token(token);
-    token = NULL;
-
-    purge_newline_token(token_list);
-    struct AST *case_clause = case_clause_rule(token_list, false, &err);
-
-    if (err)
-        goto rule_case_err;
-
-    if (!case_clause)
-        case_clause = new_AST(NULL, CASE_C, new_list());
-
-    info.sym = "esac";
-    if (!(token = consume_token(token_list, ESAC, info)))
-    {
-        free_AST(word);
-        return NULL;
-    }
-    free_token(token);
-
-    list_insert(case_clause->linked_list, word, 0);
-
-    return case_clause;
+    if (!err)
+        return case_clause;
 
 rule_case_err:
 
