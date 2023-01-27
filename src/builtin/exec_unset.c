@@ -23,6 +23,7 @@ int unset_fn(int argc, char *argv[], struct linked_list *functions)
         for (int i = 1; i < argc; i++)
         {
             unsetenv(argv[i]);
+            remove_function(functions, argv[i]);
         }
     }
     return 0;
