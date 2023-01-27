@@ -11,6 +11,7 @@
 
 extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 struct AST *new_ITER_COMMAND(char *command, char *val1, char *val2);
+extern struct AST *new_AST_ARG(char *string);
 
 void redirect(void);
 
@@ -32,7 +33,7 @@ Test(exec_here_doc, here_doc_2, .init = redirect)
     struct AST *ast_io = new_AST(new_token(new_unique_symbols(copy_string("0"), false, false, false), (enum token_type) IO_NUMBER), 
     (enum AST_type) ARG, NULL);
 
-    struct AST *ast_iter = new_ITER_COMMAND("		5\n4\n	1\n2\n", NULL, NULL);
+    struct AST *ast_iter = new_AST_ARG("		5\n4\n	1\n2\n");
     
     struct linked_list *ll_here = new_list();
     ll_here = list_append(ll_here, ast_io);
