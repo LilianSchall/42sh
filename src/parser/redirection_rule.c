@@ -11,6 +11,31 @@ static struct token *get_standard_io_number(enum token_type type)
                      IO_NUMBER);
 }
 
+static struct AST *parse_target(struct linked_list *token_list,
+                                bool *is_heredoc)
+{
+    struct token *token = list_head(token_list);
+
+    if (!token)
+        return NULL;
+
+    if (token->type == HEREDOC)
+    {
+        *is_heredoc = true;
+        list_pop(token_list);
+        free_token(token);
+        token = list_head(token_list);
+    }
+
+    if (!token || token->type != WORD)
+    {
+        return NULL;
+    }
+    list_pop(token_list);
+
+    return new_AST(token, ARG, NULL);
+}
+
 struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
 {
     struct token *token = list_head(token_list);
@@ -41,13 +66,14 @@ struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
     }
 
     list_pop(token_list);
-    struct AST *redirect_tree = new_AST(token, REDIRECTION, new_list());
+    bool is_heredoc = false;
+    struct AST *target = parse_target(token_list, &is_heredoc);
 
-    struct token *word = list_head(token_list);
-
-    if (!word || word->type != WORD)
+    struct AST *redirect_tree = new_AST(token, is_heredoc
+        ? HERE_DOC : REDIRECTION, new_list());
+    if (!word)
     {
-        err = "WORD";
+        err = "WORD OR HEREDOCS";
         goto redirection_error;
     }
     list_pop(token_list);
