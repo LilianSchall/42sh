@@ -408,6 +408,39 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
     return token;
 }
 
+static struct token *parse_arith_expr(char **word_begin_ptr, char **input,
+        struct lexer_states states)
+{
+    // we will lex this one in one time
+    size_t nb_parentheses = 2; //we already lex the first two parentheses
+    *states.reading_arith_expr = false;
+
+    *word_begin_ptr = *input;
+
+    while (nb_parentheses != 0)
+    {
+        if (GETCHAR(input, 0) == '\0' 
+            || (GETCHAR(input, 1) == '\0' && nb_parentheses > 1))
+            return NULL;
+        char c = GETCHAR(input, 0);
+        if (c == '(')
+            nb_parentheses++;
+        else if (c == ')')
+            nb_parentheses--;
+        offset_char(input, 1);
+    }
+
+    if (GETCHAR(input, -1) != GETCHAR(input, -2))
+        return NULL;
+
+    offset_char(input,-2);
+
+    struct token *token = create_token(word_begin_ptr, input, NULL);
+    offset_char(input,-1);
+
+    return token;
+}
+
 static void create_heredoc_separator(struct token *token, 
                                      struct lexer_states states)
 {
@@ -433,6 +466,12 @@ static bool execute_lexing(struct linked_list *token_list,
         current_token = parse_double_quoted_word(word_begin_ptr, input, states);
     else if (*states.heredoc_separator)
         current_token = parse_heredocs(word_begin_ptr, input, states);
+    else if (*states.reading_arith_expr)
+    {
+        current_token = parse_arith_expr(word_begin_ptr, input, states);
+        if (!current_token)
+            return true;
+    }
     else
         current_token = parse_unquoted_word(word_begin_ptr, input, states);
 
@@ -464,6 +503,7 @@ static bool execute_lexing(struct linked_list *token_list,
             current_token->type = DOLL_OPEN_PARENTHESE_PARENTHESE;
             current_token->values[1] = new_symbol(gc_strdup("("),
                     false, false, false);
+            *states.reading_arith_expr = true;
         }
         // we add it to list
         token_list = list_append(token_list, current_token);
@@ -498,6 +538,7 @@ struct linked_list *build_token_list(char *input, int *err)
     bool reading_backquote = false;
     bool reading_heredoc_separator = false;
     char *heredoc_separator = NULL;
+    bool reading_arith_expr = false;
 
     struct lexer_states states = {
         .reading_quote = &reading_quote,
@@ -506,6 +547,7 @@ struct linked_list *build_token_list(char *input, int *err)
         .reading_backquote = &reading_backquote,
         .reading_heredoc_separator = &reading_heredoc_separator,
         .heredoc_separator = &heredoc_separator,
+        .reading_arith_expr = &reading_arith_expr,
     };
 
     char *word_begin_ptr = NULL;
