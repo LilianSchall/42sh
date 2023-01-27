@@ -60,7 +60,11 @@ static int execute_AST_pipe_v2(struct AST *tree, struct env *env)
     dup2(fd[1], STDOUT_FILENO);
 
     // execute la commande
-    printf("%s", get_string(tree));
+    char *string = get_string(tree);
+    printf("%s", string);
+    if(string[strlen(string) - 1] != '\n')
+        printf("\n");
+
     fflush(stdout);
 
     dup2(save, STDOUT_FILENO);
