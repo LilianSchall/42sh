@@ -40,6 +40,7 @@ src = files(
 	'execution/exec_here_doc.c',
     'expansion/expansion.c',
     'evalexpr/evalexpr.c',
+    'evalexpr/evaluate.c',
     'evalexpr/parser.c',
     'evalexpr/fifo.c',
     'evalexpr/lifo.c',
