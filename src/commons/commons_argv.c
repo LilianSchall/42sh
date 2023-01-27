@@ -78,9 +78,10 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
         char *tmp = NULL;
         if (child->type == D_SUBSHELL)
             tmp = execute_AST_D_SUBSHELL(child, env);
+        else if (child->type == ARITH)
+            tmp = evalexpr(child->value->values[0]->value);
         else
             tmp = expand_symbol_array(child->value->values, env->argv);
-        
         if (!tmp)
             continue;
         len = strlen(str) + strlen(tmp);
