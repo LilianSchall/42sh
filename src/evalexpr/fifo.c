@@ -2,7 +2,7 @@
 
 struct fifo *fifo_init(void)
 {
-    struct fifo *f = malloc(sizeof(struct fifo));
+    struct fifo *f = mem_malloc(sizeof(struct fifo));
     f->head = NULL;
     f->tail = NULL;
     f->size = 0;
@@ -12,7 +12,7 @@ struct fifo *fifo_init(void)
 void fifo_destroy(struct fifo *fifo)
 {
     fifo_clear(fifo);
-    free(fifo);
+    mem_free(fifo);
 }
 
 size_t fifo_size(struct fifo *fifo)
@@ -60,7 +60,7 @@ struct node *fifo_pop(struct fifo *fifo)
         fifo->head = tmp->next;
     }
     struct node *node = tmp->data;
-    free(tmp);
+    mem_free(tmp);
     fifo->size -= 1;
     return node;
 }
@@ -68,7 +68,7 @@ struct node *fifo_pop(struct fifo *fifo)
 void fifo_clear(struct fifo *fifo)
 {
     while (fifo->size)
-        free(fifo_pop(fifo));
+        mem_free(fifo_pop(fifo));
 }
 
 void fifo_print(const struct fifo *fifo)

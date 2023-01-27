@@ -2,7 +2,7 @@
 
 struct list *init_list(struct node *elt)
 {
-    struct list *l = malloc(sizeof(struct list));
+    struct list *l = mem_malloc(sizeof(struct list));
     l->next = NULL;
     l->data = elt;
     return l;
@@ -10,7 +10,7 @@ struct list *init_list(struct node *elt)
 
 struct lifo *lifo_init(void)
 {
-    struct lifo *f = malloc(sizeof(struct lifo));
+    struct lifo *f = mem_malloc(sizeof(struct lifo));
     f->head = NULL;
     f->size = 0;
     return f;
@@ -19,7 +19,7 @@ struct lifo *lifo_init(void)
 void lifo_destroy(struct lifo *lifo)
 {
     lifo_clear(lifo);
-    free(lifo);
+    mem_free(lifo);
 }
 
 size_t lifo_size(struct lifo *lifo)
@@ -57,7 +57,7 @@ struct node *lifo_pop(struct lifo *lifo)
     tmp = lifo->head;
     lifo->head = tmp->next;
     struct node *node = tmp->data;
-    free(tmp);
+    mem_free(tmp);
     lifo->size -= 1;
     return node;
 }
@@ -65,7 +65,7 @@ struct node *lifo_pop(struct lifo *lifo)
 void lifo_clear(struct lifo *lifo)
 {
     while (lifo->size)
-        free(lifo_pop(lifo));
+        mem_free(lifo_pop(lifo));
 }
 
 void lifo_print(const struct lifo *lifo)
