@@ -49,6 +49,10 @@ int my_strdup(char *str, struct symbol *sym);
 // returns -1 if it hasn't found any
 int find_special_tokens(char *str, char **special_tokens);
 
+// search if the given str is a substring of a special token
+// and returns its index: returns -1 if it hasn't found any
+int sub_special_tokens(char *str, char **special_tokens);
+
 // search if the given char c is a delimitator and returns its index
 // returns -1 if it hasn't found any
 int find_delims(char c, char *delims);

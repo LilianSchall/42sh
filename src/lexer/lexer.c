@@ -305,6 +305,7 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
         return NULL;
     }
 
+    struct token *token = NULL;
     char tmp[4];
     tmp[0] = GETCHAR(input, 0);
     tmp[1] = GETCHAR(input, 1);
@@ -313,9 +314,9 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
 
     // else if two same delimitators are following each other
     if (!isspace(GETCHAR(input, 0))
+        && *input == *word_begin_ptr
         && ((GETCHAR(input, 0) == GETCHAR(input, 1)
-             && *input == *word_begin_ptr)
-            || find_special_tokens(tmp, redirections) != -1))
+            || sub_special_tokens(tmp, redirections) != -1)))
     // then it is not a delimitator but a special token
     // so we wait to reach the end of this special token
     {
@@ -325,7 +326,6 @@ static struct token *parse_unquoted_word(char **word_begin_ptr,
     // now we have a token
     // that is at the end no matter what
 
-    struct token *token = NULL;
     if (find_delims(GETCHAR(word_begin_ptr, 0), delims) == -1
         && *input <= *word_begin_ptr + 1)
     {
