@@ -17,6 +17,7 @@ struct node *create_node(int value, enum node_type type)
     return node;
 }
 
+// return var value in n
 int get_var(char c, int *n)
 {
     char *tmp = mem_calloc(sizeof(char), 2);
@@ -24,7 +25,7 @@ int get_var(char c, int *n)
     char *var = getenv(tmp);
     mem_free(tmp);
     if (!var)
-        return 0;
+        return 1;
     for (int i = 0; var[i]; i++)
     {
         if (var[i] < '0' || var[i] > '9')
