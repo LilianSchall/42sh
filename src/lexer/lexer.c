@@ -371,7 +371,6 @@ static struct token *parse_heredocs(char **word_begin_ptr, char **input,
     static char *tmp = NULL;
     if (!(*word_begin_ptr))
     {
-        puts("no begin");
         if (isspace(GETCHAR(input, 0)) && GETCHAR(input, 0) != '\n')
             return NULL;
         *word_begin_ptr = *input + 1; // so we can escape the \n
