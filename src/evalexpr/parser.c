@@ -17,6 +17,23 @@ struct node *create_node(int value, enum node_type type)
     return node;
 }
 
+int get_var(char c, int *n)
+{
+    char *tmp = mem_calloc(sizeof(char), 2);
+    tmp[0] = c;
+    char *var = getenv(tmp);
+    mem_free(tmp);
+    if (!var)
+        return 0;
+    for (int i = 0; var[i]; i++)
+    {
+        if (var[i] < '0' || var[i] > '9')
+            return 0;
+    }
+    *n = atoi(var);
+    return 1;
+}
+
 struct fifo *tokenize(const char *str, int *err)
 {
     struct fifo *fifo = fifo_init();
@@ -59,7 +76,12 @@ struct fifo *tokenize(const char *str, int *err)
             fifo_push(fifo, create_node(0, RB));
         else
         {
-            if (!isspace(*str))
+            int n = 0;
+            if (get_var(*str, &n))
+            {
+                fifo_push(fifo, create_node(n, NUMBER));
+            }
+            else if (!isspace(*str))
             {
                 fifo_destroy(fifo);
                 *err = 1;
