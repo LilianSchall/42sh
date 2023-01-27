@@ -1,10 +1,18 @@
 #include "execution/execution.h"
 
-static void remove_tab(struct AST *tree)
+
+static char *get_string(struct AST *tree)
 {
     struct AST *ast_iter = tree->linked_list->head->next->next->data;
-    struct AST *ast_arg = ast_iter->linked_list->head->data;
-    char *string = ast_arg->value->values[0]->value;
+
+    char *string = ast_iter->value->values[0]->value;
+    return string;
+}
+
+
+static void remove_tab(struct AST *tree)
+{
+    char *string = get_string(tree);
 
     int oldLen = strlen(string);
     int newLen = 0;
@@ -23,14 +31,6 @@ static void remove_tab(struct AST *tree)
             string[i] = string[i + 1];
         }
     }
-}
-
-static char *get_string(struct AST *tree)
-{
-    struct AST *ast_iter = tree->linked_list->head->next->next->data;
-    struct AST *ast_arg = ast_iter->linked_list->head->data;
-    char *string = ast_arg->value->values[0]->value;
-    return string;
 }
 
 static int get_io_number(struct AST *tree)
