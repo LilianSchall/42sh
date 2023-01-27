@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "AST/AST.h"
+#include "evalexpr/evalexpr.h"
 #include "execution/execution.h"
 #include "expansion/expansion.h"
 #include "garbage_collector/garbage_collector.h"
