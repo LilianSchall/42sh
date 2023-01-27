@@ -74,7 +74,7 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
 
     char *sym = get_cat_symbols(token->values);
 
-    if (!strcmp(sym, "*"))
+    if (!strcmp(sym, "*") && !(is_quoted(token->values[0])))
     {
         is_default = true;
         list_pop(token_list);
@@ -92,6 +92,13 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
     list_append(iter->linked_list, word);
 
     iter = form_iter(token_list, trigger_warn, iter, is_default);
+
+    if (!iter)
+    {
+        free_AST(iter);
+        return NULL;
+    }
+
     token = list_head(token_list);
 
     if (!token || token->type != CLOSE_PARENTHESE)
@@ -103,10 +110,10 @@ static struct linked_list *case_item_rule(struct linked_list *token_list,
     free_token(token);
 
     purge_newline_token(token_list);
-
+    struct AST *compound = list_rule(token_list);
     struct linked_list *list = new_list();
     list_append(list, iter);
-    list_append(list, list_rule(token_list));
+    list_append(list, compound ? compound : new_AST(NULL, SEQUENCE, NULL));
 
     *err = 0;
     return list;
@@ -173,7 +180,10 @@ struct AST *rule_case_rule(struct linked_list *token_list, bool trigger_warn)
     if (!token
         || (!is_non_delimitator(token->type)
             && !is_substitution_ruled(token->type)))
+    {
+        token = NULL; // unreference token
         goto rule_case_err;
+    }
 
     word = substitution_rule(token_list, trigger_warn);
     token = NULL;

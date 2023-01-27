@@ -30,4 +30,6 @@ void print_symbols(struct symbol **values);
 
 char *get_cat_symbols(struct symbol **values);
 
+bool is_quoted(struct symbol *sym);
+
 #endif /* !SYMBOL_H */

@@ -61,7 +61,7 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
 {
     struct linked_list *temp = tree->linked_list;
 
-    if (!temp)
+    if (!temp || list_size(temp) == 0)
     {
         return mem_calloc(sizeof(char*), 1);
     }
