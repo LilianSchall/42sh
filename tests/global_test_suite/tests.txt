@@ -24,7 +24,7 @@ echo coucou;ls;ls
 echo coucou; echo cest moi;
 echo coucou; ls; ls; ls
 echo coucou;
-cd -
+cd ..;cd -
 cd ..
 cd
 cd ../../../../../../../../../../../../../
