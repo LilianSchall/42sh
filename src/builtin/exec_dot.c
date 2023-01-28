@@ -72,17 +72,15 @@ int dot_fn(int argc, char **argv, struct linked_list *functions)
         input = get_file_content(filename);
         mem_free(filename);
     }
-
-    if (strlen(input) == 0)
-    {
-        mem_free(input);
-        return 0;
-    }
-
     if (input == NULL)
     {
         fprintf(stderr, "42sh: file not found\n");
         return 2;
+    }
+    if (strlen(input) == 0)
+    {
+        mem_free(input);
+        return 0;
     }
 
     struct linked_list *tokens = build_token_list(input, NULL);
