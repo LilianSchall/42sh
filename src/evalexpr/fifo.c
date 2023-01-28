@@ -78,7 +78,7 @@ void fifo_print(const struct fifo *fifo)
     struct list *tmp = fifo->head;
     while (tmp)
     {
-        printf("%d\n", tmp->data->value);
+        printf("value = %d, type = %d\n", tmp->data->value, tmp->data->type);
         tmp = tmp->next;
     }
 }
