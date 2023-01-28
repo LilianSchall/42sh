@@ -25,6 +25,8 @@ static char **split_string(char *str)
             }
             else
                 memmove(p, p + 1, len + 1);
+            if (!*p)
+                quoted = !quoted;
         }
         else if (!quoted && isspace(*p))
         {
@@ -46,13 +48,12 @@ static char **split_string(char *str)
             p++;
         }
     }
-    if (*(p - 1) && isspace(*(p - 1)))
+    if (!quoted && *(p - 1) && isspace(*(p - 1)))
         return result;
     int len = p - start;
     result[i] = mem_malloc(len + 1);
     memcpy(result[i], start, len);
     result[i][len] = 0;
-    i = 0;
     return result;
 }
 
@@ -101,8 +102,7 @@ char **new_argv(struct AST *tree, int *argc, struct env *env)
     // printf("%s\n", str);
     char **argv = split_string(str);
     mem_free(str);
-    for (*argc = 0; argv[*argc]; *argc += 1)
-        ;
+    for (*argc = 0; argv[*argc]; *argc += 1);
     return argv;
 }
 
