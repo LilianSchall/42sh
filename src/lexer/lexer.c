@@ -90,7 +90,7 @@ static struct token *create_token(char **word_begin_ptr, char **input,
     int index = find_special_tokens(symbols[0]->value, token_value);
     enum token_type type = ERROR;
 
-    if (strstr(symbols[0]->value, "="))
+    if (strstr(symbols[0]->value, "=") && token_value)
         type = VARASSIGNMENT;
     else if (symbols[1] == NULL) // it means there is only one symbol
     {
@@ -215,8 +215,18 @@ static struct token *parse_double_quoted_word(char **word_begin_ptr,
         {
             *states.reading_double_quote = false;
             skip_char(input, 0, DOUBLE_QUOTE_MARKER);
-            return create_token(word_begin_ptr, input, NULL);
+            struct token *token = create_token(word_begin_ptr, input, NULL);
+            if (!strcmp(token->values[0]->value, "))"))
+                token->type = CLOSE_PARENTHESE_PARENTHESE;
+            return token;
         }
+    }
+    else if (strlen(*input) >= 3 && !strncmp(*input, "$((", 3))
+    {
+        *states.go_quoted_mode = true;
+        *states.reading_double_quote = false;
+        offset_char(input, -1);
+        return create_token(word_begin_ptr, input, NULL);
     }
     return NULL;
 }
@@ -437,6 +447,12 @@ static struct token *parse_arith_expr(char **word_begin_ptr, char **input,
     struct token *token = create_token(word_begin_ptr, input, NULL);
     offset_char(input, -1);
 
+    if (*states.go_quoted_mode)
+    {
+        *states.reading_double_quote = true;
+        *states.go_quoted_mode = false;
+    }
+
     return token;
 }
 
@@ -538,6 +554,7 @@ struct linked_list *build_token_list(char *input, int *err)
     bool reading_heredoc_separator = false;
     char *heredoc_separator = NULL;
     bool reading_arith_expr = false;
+    bool go_quoted_mode = false;
 
     struct lexer_states states = {
         .reading_quote = &reading_quote,
@@ -547,6 +564,7 @@ struct linked_list *build_token_list(char *input, int *err)
         .reading_heredoc_separator = &reading_heredoc_separator,
         .heredoc_separator = &heredoc_separator,
         .reading_arith_expr = &reading_arith_expr,
+        .go_quoted_mode = &go_quoted_mode,
     };
 
     char *word_begin_ptr = NULL;

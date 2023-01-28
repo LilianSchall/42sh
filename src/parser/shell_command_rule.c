@@ -35,7 +35,7 @@ static struct AST *subshell_subrule(struct linked_list *token_list,
 
     free_token(token);
 
-    struct AST *compound = compound_list_rule(token_list, trigger_warn);
+    struct AST *compound = list_rule(token_list);
 
     if (!compound)
         return NULL;
