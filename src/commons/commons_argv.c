@@ -50,7 +50,7 @@ static char **split_string(char *str)
             p++;
         }
     }
-    if (!quoted && *(p - 1) && isspace(*(p - 1)))
+    if (!quoted && p - 1 >= str && *(p - 1) && isspace(*(p - 1)))
         return result;
     int len = p - start;
     result[i] = mem_malloc(len + 1);
