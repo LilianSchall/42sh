@@ -93,7 +93,7 @@ static struct token *create_token(char **word_begin_ptr, char **input,
     int index = find_special_tokens(symbols[0]->value, token_value);
     enum token_type type = ERROR;
 
-    if (strstr(symbols[0]->value, "=") && token_value)
+    if (strstr(symbols[0]->value, "="))
         type = VARASSIGNMENT;
     else if (symbols[1] == NULL) // it means there is only one symbol
     {
