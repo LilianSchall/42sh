@@ -167,7 +167,8 @@ static char *get_spec_var(const char *name, char **argv, int quoted)
     return NULL;
 }
 
-static char *get_var(const char **str, const char **end, char **argv, int quoted)
+static char *get_var(const char **str, const char **end, char **argv,
+                     int quoted)
 {
     if (**str == '$')
     {
@@ -176,7 +177,7 @@ static char *get_var(const char **str, const char **end, char **argv, int quoted
     int brackets = 0;
     if (**str == '{')
         brackets = 1;
-    
+
     const char *var_name = *str + brackets;
     *end = var_name;
 
@@ -191,13 +192,13 @@ static char *get_var(const char **str, const char **end, char **argv, int quoted
     }
     else
     {
-        while (**end && !is_ifs(**end) && !isspace(**end)
-                && **end != '$' && **end != '/')
-        {   
+        while (**end && !is_ifs(**end) && !isspace(**end) && **end != '$'
+               && **end != '/')
+        {
             (*end)++;
         }
     }
-    
+
     char *tmp = strndup(var_name, *end - var_name - brackets);
     char *var = getenv(tmp);
 
@@ -227,7 +228,7 @@ char *expand_var(const char *str, char **argv, int quoted)
         else if (*str == '$' && *(str + 1) && !isspace(*(str + 1)))
         {
             str++;
-            
+
             const char *end = NULL;
             // get the value of the variable found after $, NULL if none
             char *var = get_var(&str, &end, argv, quoted);
