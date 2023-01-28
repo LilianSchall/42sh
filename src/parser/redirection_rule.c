@@ -76,7 +76,6 @@ struct AST *redirection_rule(struct linked_list *token_list, bool trigger_warn)
         err = "WORD OR HEREDOCS";
         goto redirection_error;
     }
-    list_pop(token_list);
 
     if (!io_number)
         io_number = get_standard_io_number(redirect_tree->value->type);
