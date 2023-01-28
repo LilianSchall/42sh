@@ -156,8 +156,6 @@ static char *get_spec_var(const char *name, char **argv, int quoted)
         return get_var_aro(argv, quoted);
     else if (!strcmp(name, "*"))
         return get_var_star(argv, quoted);
-    else if (!strcmp(name, "$"))
-        return get_var_pid();
     else if (!strcmp(name, "#"))
         return get_var_sharp(argv);
     else if (!strcmp(name, "RANDOM"))
@@ -169,8 +167,19 @@ static char *get_spec_var(const char *name, char **argv, int quoted)
     return NULL;
 }
 
-static void get_end(const char **str, const char **end, int brackets)
+static char *get_var(const char **str, const char **end, char **argv, int quoted)
 {
+    if (**str == '$')
+    {
+        return get_var_pid();
+    }
+    int brackets = 0;
+    if (**str == '{')
+        brackets = 1;
+    
+    const char *var_name = *str + brackets;
+    *end = var_name;
+
     if (brackets)
     {
         while (**end && **end != '}')
@@ -182,11 +191,20 @@ static void get_end(const char **str, const char **end, int brackets)
     }
     else
     {
-        while (**end && !is_ifs(**end) && !isspace(**end) && **end != '$')
+        while (**end && !is_ifs(**end) && !isspace(**end)
+                && **end != '$' && **end != '/')
+        {   
             (*end)++;
-        if (*(*end) == '$')
-            (*end)++;
+        }
     }
+    
+    char *tmp = strndup(var_name, *end - var_name - brackets);
+    char *var = getenv(tmp);
+
+    if (!var)
+        var = get_spec_var(tmp, argv, quoted);
+    mem_free(tmp);
+    return var;
 }
 
 char *expand_var(const char *str, char **argv, int quoted)
@@ -195,32 +213,29 @@ char *expand_var(const char *str, char **argv, int quoted)
     char *p = result;
     while (*str)
     {
-        if (*str == '$' && *(str + 1) && !isspace(*(str + 1)))
+        int cur_len = p - result;
+        if (*str == '~' && *(str + 1) && *(str + 1) != '/')
+        {
+            char *tilde = get_var_tilde();
+            int l = strlen(tilde);
+            result = mem_realloc(result, cur_len + l + strlen(str + 1) + 1);
+            p = result + cur_len;
+            memcpy(p, tilde, l);
+            p += l;
+            str++;
+        }
+        else if (*str == '$' && *(str + 1) && !isspace(*(str + 1)))
         {
             str++;
-            // Find the variable name and end
-            int brackets = 0;
-            if (*str == '{')
-                brackets = 1;
-
-            const char *var_name = str + brackets;
-            const char *end = var_name;
-
-            get_end(&str, &end, brackets);
-
-            char *tmp = strndup(var_name, end - var_name - brackets);
-            char *var = getenv(tmp);
-
-            if (!var)
-                var = get_spec_var(tmp, argv, quoted);
-
-            mem_free(tmp);
+            
+            const char *end = NULL;
+            // get the value of the variable found after $, NULL if none
+            char *var = get_var(&str, &end, argv, quoted);
 
             if (var)
             {
                 // Replace the variable with its value
                 int len = strlen(var);
-                int cur_len = p - result;
                 result = mem_realloc(result, cur_len + len + strlen(end) + 1);
                 p = result + cur_len;
                 memcpy(p, var, len);
