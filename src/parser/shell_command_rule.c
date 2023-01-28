@@ -30,12 +30,18 @@ static struct AST *command_block_subrule(struct linked_list *token_list,
 static struct AST *subshell_subrule(struct linked_list *token_list,
                                     bool trigger_warn)
 {
+    // baits the -Werror flag with trigger_warn
+    if (trigger_warn)
+        trigger_warn = true;
+    else
+        trigger_warn = false;
+
     struct token *token = list_head(token_list);
     list_pop(token_list);
 
     free_token(token);
 
-    struct AST *compound = compound_list_rule(token_list, trigger_warn);
+    struct AST *compound = list_rule(token_list);
 
     if (!compound)
         return NULL;

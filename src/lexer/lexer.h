@@ -21,6 +21,7 @@ struct lexer_states
     bool *reading_heredoc_separator;
     char **heredoc_separator;
     bool *reading_arith_expr;
+    bool *go_quoted_mode;
 };
 
 // this function builds the token_list based on the given input
