@@ -1,5 +1,7 @@
 #include "commons/commons.h"
 
+
+
 // take a string in parameter and return a argv of all words
 static char **split_string(char *str)
 {
@@ -7,8 +9,8 @@ static char **split_string(char *str)
     char **result = mem_calloc(sizeof(char *), 2);
     char *p = str;
     int i = 0;
-    while (*p == ' ' || *p == '\n')
-        p++;
+    for (;*p == ' ' || *p == '\n'; ++p);
+
     char *start = p;
     int quoted = 0;
     while (*p)

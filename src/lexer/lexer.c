@@ -41,6 +41,9 @@ static void skip_char(char **stream, int offset, int replace_value)
 // it returns the nb of char read
 static int get_symbol(char **word_begin_ptr, char **input, struct symbol *sym)
 {
+    if (GETCHAR(input, 0) == '\0')
+        return my_strdup(*word_begin_ptr, sym);
+
     // this offset is used to correctly parse delimitors and operators
     // that are less then 3 char
     int offset = *word_begin_ptr + 1 < *input ? 0 : 1;
