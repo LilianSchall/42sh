@@ -162,7 +162,6 @@ struct lifo *get_output_stack_infix(char *str, int *err)
     struct fifo *fifo = tokenize(str, err);
     if (*err)
         return NULL;
-    fifo_print(fifo);
     fifo = check_expr(fifo, err);
     if (*err)
         return NULL;
