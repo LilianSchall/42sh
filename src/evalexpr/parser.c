@@ -17,6 +17,11 @@ struct node *create_node(int value, enum node_type type)
     return node;
 }
 
+int is_letter(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
 // return var value in n
 int get_var(char c, int *n)
 {
@@ -78,7 +83,7 @@ struct fifo *tokenize(const char *str, int *err)
         else
         {
             int n = 0;
-            if (get_var(*str, &n))
+            if (get_var(*str, &n) && is_letter(*str))
             {
                 fifo_push(fifo, create_node(n, NUMBER));
             }
@@ -157,6 +162,7 @@ struct lifo *get_output_stack_infix(char *str, int *err)
     struct fifo *fifo = tokenize(str, err);
     if (*err)
         return NULL;
+    fifo_print(fifo);
     fifo = check_expr(fifo, err);
     if (*err)
         return NULL;
