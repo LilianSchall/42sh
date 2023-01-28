@@ -7,9 +7,8 @@ static char **split_string(char *str)
     char **result = mem_calloc(sizeof(char *), 2);
     char *p = str;
     int i = 0;
-    for (; *p == ' ' || *p == '\n'; ++p)
-        ;
-
+    while (*p == ' ' || *p == '\n')
+        p++;
     char *start = p;
     int quoted = 0;
     while (*p)
@@ -34,8 +33,7 @@ static char **split_string(char *str)
             int len = p - start;
             result[i] = mem_malloc(len + 1);
             memmove(result[i], start, len);
-            result[i][len] = 0;
-            i++;
+            result[i++][len] = 0;
             result = mem_realloc(result, sizeof(char *) * (i + 2));
             result[i + 1] = NULL;
             while (isspace(*p))
