@@ -50,6 +50,11 @@
   </ol>
 </details>
 
+<!-- SYNOPSIS -->
+## Synopsis: ⚠️ Think yourself, don't cheat!
+
+This project has been made public in order to promote the accomplishment of it by the 4 contributors of the repository. Future student of EPITA **MUST** not recreate this repository or they will be flagged as cheaters. Be advised.
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
