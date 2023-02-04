@@ -11,7 +11,7 @@
 <!-- PROJECT LOGO -->
 <div align="center">
   <a href="https://github.com/LilianSchall/42sh">
-    <img src="images/42sh.png" alt="Logo" width="700" height="260">
+    <img src="images/42sh.png" alt="Logo" width="400" height="300">
   </a>
 
   <h3 align="center">42sh</h3>

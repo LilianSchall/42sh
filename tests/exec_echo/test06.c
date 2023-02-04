@@ -13,7 +13,7 @@ extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
 int exec6(void)
 {
 
-    struct AST *ast_final = new_AST_COMMAND("cat", "-e", "tests/tests.md");
+    struct AST *ast_final = new_AST_COMMAND("cat", "-e", "tests/tests.txt");
 
     execute_AST(ast_final, NULL, NULL);
 
