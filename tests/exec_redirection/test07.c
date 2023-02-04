@@ -9,7 +9,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 extern struct AST * new_AST_COMMAND(char *command, char *val1, char *val2);
-// cat < README.md
+// cat < tests/tests.txt
 
 void redirect_7(void)
 {
@@ -26,7 +26,7 @@ Test(exec_redirection, redirection_7, .init = redirect_7)
     struct AST *ast_fd_from = new_AST(new_token(new_unique_symbols(copy_string("0"), false, false, false), (enum token_type) IO_NUMBER), 
     (enum AST_type) ARG, NULL);
 
-    struct AST *ast_fd_to = new_AST(new_token(new_unique_symbols(copy_string("README.md"), false, false, false), (enum token_type) WORD), 
+    struct AST *ast_fd_to = new_AST(new_token(new_unique_symbols(copy_string("tests/tests.txt"), false, false, false), (enum token_type) WORD), 
     (enum AST_type) ARG, NULL);
     
     struct linked_list *ll_redir = new_list();

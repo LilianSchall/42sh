@@ -43,7 +43,7 @@ Test(exec_redirection, redirection_8, .init = redirect_8)
     struct AST *ast_fd_from2 = new_AST(new_token(new_unique_symbols(copy_string("0"), false, false, false), (enum token_type) IO_NUMBER), 
     (enum AST_type) ARG, NULL);
 
-    struct AST *ast_fd_to2 = new_AST(new_token(new_unique_symbols(copy_string("README.md"), false, false, false), (enum token_type) WORD), 
+    struct AST *ast_fd_to2 = new_AST(new_token(new_unique_symbols(copy_string("tests/tests.txt"), false, false, false), (enum token_type) WORD), 
     (enum AST_type) ARG, NULL);
     
     struct linked_list *ll_redir2 = new_list();
